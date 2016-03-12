@@ -143,11 +143,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="circle.cpp" />
+    <ClCompile Include="grass.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="object.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="default.h" />
+    <ClInclude Include="grass.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="circle.h" />
+    <ClInclude Include="object.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

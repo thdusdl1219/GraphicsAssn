@@ -1,11 +1,11 @@
-#include <windows.h> 
-#include <math.h>
-#include <gl/gl.h> 
-#include <gl/glut.h>
+#pragma once
+#include "default.h"
 #include "circle.h"
-#define CIRCLE_RADIUS 0.05
+#include "grass.h"
 
-cir* circle = new cir();
+
+cir* circle;
+grass* grass1;
 
 void init(void);
 void display(void);
