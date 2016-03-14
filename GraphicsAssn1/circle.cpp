@@ -32,7 +32,7 @@ void cir::decX() {
 		x -= 1.0 / MAP_DIVIDE_X;
 }
 
-void cir::createCircle()
+void cir::create()
 {
 
 	int i;

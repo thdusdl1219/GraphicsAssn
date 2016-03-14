@@ -1,9 +1,9 @@
 #pragma once
 #include "object.h"
 
-class grass : public myObject {
+class tree : public myObject {
 public:
-	grass(float x, float y);
+	tree(float x, float y);
 	void create();
 private:
 };

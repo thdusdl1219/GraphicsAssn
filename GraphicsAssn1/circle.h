@@ -4,7 +4,7 @@
 class cir : public myObject {
 public:
 	cir(float x, float y, float r);
-	void createCircle();
+	void create();
 	float getR();
 	void incY();
 	void decY();

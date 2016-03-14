@@ -38,12 +38,18 @@ void init(void) {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glShadeModel(GL_FLAT);
 	circle = new cir(0.07, 0.5, CIRCLE_RADIUS);
-	grass1 = new grass(0, 0);
+	grass1 = new grass(0 * (1.0 / MAP_DIVIDE_X), 0);
+	grass2 = new grass(3 * (1.0 / MAP_DIVIDE_X), 0);
+	tree1 = new tree(0 * (1.0 / MAP_DIVIDE_X), 0);
+	tree2 = new tree(3 * (1.0 / MAP_DIVIDE_X), 0);
 }
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
-	grass1->createGrass();
-	circle->createCircle();
+	grass1->create();
+	grass2->create();
+	tree1->create();
+	tree2->create();
+	circle->create();
 	glutSwapBuffers();
 }
 void reshape(int w, int h) {
@@ -54,19 +60,35 @@ void reshape(int w, int h) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
+void refreshAll(STATE s) {
+	if (s == UP) {
+		circle->incY();
+	}
+	else if (s == DOWN) {
+		circle->decY();
+	}
+	else if (s == RIGHT) {
+		circle->incX();
+	}
+	else if (s == LEFT) {
+		circle->decX();
+	}
+	
+}
+
 void specialkeyboard(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
-			circle->incY();
+		refreshAll(UP);
 		break;
 	case GLUT_KEY_DOWN:
-			circle->decY();
+		refreshAll(DOWN);
 		break;
 	case GLUT_KEY_RIGHT:
-			circle->incX();
+		refreshAll(RIGHT);
 		break;
 	case GLUT_KEY_LEFT:
-			circle->decX();
+		refreshAll(LEFT);
 		break;
 	}
 	glutPostRedisplay();
