@@ -3,13 +3,22 @@
 #include "circle.h"
 #include "grass.h"
 #include "tree.h"
+#include "car.h"
 
 
 cir* circle;
+
 grass* grass1;
 grass* grass2;
+
 tree* tree1;
 tree* tree2;
+tree* tree3;
+tree* tree4;
+
+car* Car[2];
+
+
 
 void init(void);
 void display(void);

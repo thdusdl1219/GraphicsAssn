@@ -41,8 +41,8 @@ void cir::create()
 							 //GLfloat radius = 0.8f; //radius
 	GLfloat twicePi = 2.0f * 3.141592;
 
-	printf("x : %f", x);
-
+	//printf("x : %f", x);
+	//printf("y : %f\n", y);
 	
 	glBegin(GL_TRIANGLE_FAN);
 	glColor3f(1.0, 0.0, 0.0);

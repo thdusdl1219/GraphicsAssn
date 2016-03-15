@@ -105,6 +105,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Opengl32.lib;freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -142,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="car.cpp" />
     <ClCompile Include="circle.cpp" />
     <ClCompile Include="grass.cpp" />
     <ClCompile Include="main.cpp" />
@@ -149,6 +152,7 @@
     <ClCompile Include="tree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="car.h" />
     <ClInclude Include="default.h" />
     <ClInclude Include="grass.h" />
     <ClInclude Include="main.h" />
