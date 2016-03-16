@@ -13,6 +13,11 @@
 #define RATIO WINDOW_HEIGHT / WINDOW_WIDTH
 #define WORLD_SIZE 1.0
 
+
+const float incX = WORLD_SIZE / MAP_DIVIDE_X;
+const float incY = WORLD_SIZE / MAP_DIVIDE_Y;
+
+
 enum STATE {
 	UP,
 	DOWN,

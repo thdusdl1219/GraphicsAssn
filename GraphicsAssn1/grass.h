@@ -6,4 +6,5 @@ public:
 	grass(float x, float y);
 	void create();
 private:
+	//
 };

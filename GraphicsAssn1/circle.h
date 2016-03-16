@@ -10,7 +10,9 @@ public:
 	void decY();
 	void incX();
 	void decX();
+	void setInitPos();
 private:
 	float r;
+	float mapRadius;
 };
 

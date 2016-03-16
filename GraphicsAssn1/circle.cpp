@@ -5,11 +5,12 @@
 cir::cir(float x, float y, float r) : myObject(x, y)
 {
 	this->r = r;
+	mapRadius = r * RATIO;
 }
 
 
 float cir::getR() {
-	return r;
+	return mapRadius;
 }
 
 void cir::incY() {
@@ -54,4 +55,10 @@ void cir::create()
 			);
 	}
 	glEnd();
+}
+
+void cir::setInitPos()
+{
+	x = 0.07;
+	y = 0.5;
 }
