@@ -291,7 +291,7 @@ void specialkeyboard(int key, int x, int y) {
 		refreshAll(RIGHT);
 		break;
 	case GLUT_KEY_LEFT:
-		refreshAll(LEFT);
+		// refreshAll(LEFT);
 		break;
 	}
 	glutPostRedisplay();
@@ -299,13 +299,18 @@ void specialkeyboard(int key, int x, int y) {
 
 void ReDisplayTimer(int value)
 {
+	if (circle->getX() >= WORLD_SIZE - incX)
+		exit(0);
+
 	for (int i = 0; i < realnCar; i++){
 		Car[i]->move();
 	} 
 	bool cCol = colDetection(circle, Car);
 	if (cCol == true) {
-		circle->setInitPos();
-	} 
+		// circle->setInitPos();
+		// 어싸인 문서에 게임 종료시키라고 명시
+		exit(0);
+	}
 
 	glutPostRedisplay();
 	glutTimerFunc(1000 / 60, ReDisplayTimer, 1); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
