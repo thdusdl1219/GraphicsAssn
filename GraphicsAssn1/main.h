@@ -4,33 +4,29 @@
 #include "grass.h"
 #include "tree.h"
 #include "car.h"
+#include "line.h"
 
+#define NTREE_IN_GRASS 10
+#define MAX_CARN 9
+#define CAR_SPACE 4
 
-const int nGrass = 3;
-const int nTree = 4;
-const int nCar = 4;
-const int nLine = 2;
+const int nGrass = 6;
+const int nTree = (nGrass - 2) * NTREE_IN_GRASS;
+const int nLine = 9;
+const int nRoad = 14;
+const int nCar = nRoad * MAX_CARN;
+int realnCar;
 
 float gPos[nGrass];
 float tPos[nTree];
-float cPos[nCar];
+float roadPos[nRoad];
 float linePos[nLine];
-float World_L = 0;
-float World_R = WORLD_SIZE / 1.5;
-float World_B = 0;
-float World_T = WORLD_SIZE;
 
 cir* circle;
 
 grass* Grass[nGrass];
-
-
+line* Line[nLine];
 tree* Tree[nTree];
-tree* tree1;
-tree* tree2;
-tree* tree3;
-tree* tree4;
-
 car* Car[nCar];
 
 

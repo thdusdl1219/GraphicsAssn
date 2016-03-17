@@ -147,6 +147,7 @@
     <ClCompile Include="car.cpp" />
     <ClCompile Include="circle.cpp" />
     <ClCompile Include="grass.cpp" />
+    <ClCompile Include="line.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="tree.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="car.h" />
     <ClInclude Include="default.h" />
     <ClInclude Include="grass.h" />
+    <ClInclude Include="line.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="circle.h" />
     <ClInclude Include="object.h" />

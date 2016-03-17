@@ -1,10 +1,17 @@
 #include "circle.h"
 #include "default.h"
 
+float World_L = 0;
+float World_B = 0;
+float World_R = WORLD_SIZE / DIVIDE_WINDOW;
+float World_T = WORLD_SIZE / DIVIDE_WINDOW;
+
 
 cir::cir(float x, float y, float r) : myObject(x, y)
 {
 	this->r = r;
+	this->initX = x;
+	this->initY = y;
 	mapRadius = r * RATIO;
 }
 
@@ -14,22 +21,22 @@ float cir::getR() {
 }
 
 void cir::incY() {
-	if (y < 1 - CIRCLE_RADIUS - (1.0 / MAP_DIVIDE_Y))
+	if (y < 1 - (1.0 / MAP_DIVIDE_Y))
 		y += 1.0 / MAP_DIVIDE_Y;
 }
 
 void cir::decY() {
-	if (y > CIRCLE_RADIUS + (1.0 / MAP_DIVIDE_Y))
+	if (y > (1.0 / MAP_DIVIDE_Y))
 		y -= 1.0 / MAP_DIVIDE_Y;
 }
 
 void cir::incX() {
-	if (x < 1 - CIRCLE_RADIUS * RATIO - (1.0 / MAP_DIVIDE_X))
+	if (x < 1 - (1.0 / MAP_DIVIDE_X))
 		x += 1.0 / MAP_DIVIDE_X;
 }
 
 void cir::decX() {
-	if (x > CIRCLE_RADIUS * RATIO + (1.0 / MAP_DIVIDE_X))
+	if (x > (1.0 / MAP_DIVIDE_X))
 		x -= 1.0 / MAP_DIVIDE_X;
 }
 
@@ -59,6 +66,13 @@ void cir::create()
 
 void cir::setInitPos()
 {
-	x = 0.07;
-	y = 0.5;
+	x = initX;
+	y = initY;
+	World_L = 0;
+	World_R = WORLD_SIZE / DIVIDE_WINDOW;
+	World_B = 0;
+	World_T = WORLD_SIZE / DIVIDE_WINDOW;
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(World_L, World_R, World_B, World_T);
 }

@@ -1,6 +1,6 @@
 #include "main.h"
-
-
+#include<cstdlib>
+#include<ctime>
 
 void ReDisplayTimer(int value);
 
@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(300, 500);
 	glutCreateWindow(argv[0]);
 	init();
 	glutDisplayFunc(display);
@@ -21,28 +21,51 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-void drawOneLine(float x1, float y1, float x2, float y2)
-{
-	glColor3f(1.0, 1.0, 0.0);
-	glBegin(GL_LINES);	
-	glVertex2f(x1, y1);
-	glVertex2f(x2, y2);
-	glEnd();
-}
+
 void init(void) {
 	glClearColor(0.3, 0.3, 0.3, 0.0);
 	glShadeModel(GL_FLAT);
-	
+	srand(time(NULL));
 
 	//init grass position
 	gPos[0] = 0 * (incX);
-	gPos[1] = 3 * (incX);
-	gPos[2] = 6 * (incX);
+	gPos[1] = 2 * (incX);
+	gPos[2] = 5 * (incX);
+	gPos[3] = 9 * (incX);
+	gPos[4] = 14 * (incX);
+	gPos[5] = 19 * (incX);
 	//the padding for relative position of tree with grass
-	const float padding = WORLD_SIZE / 100.0;
+
+	//init road position
+	roadPos[0] = 1 * (incX);
+	roadPos[1] = 3 * (incX);
+	roadPos[2] = 4 * (incX);
+	roadPos[3] = 6 * (incX);
+	roadPos[4] = 7 * (incX);
+	roadPos[5] = 8 * (incX);
+	roadPos[6] = 10 * (incX);
+	roadPos[7] = 11 * (incX);
+	roadPos[8] = 12 * (incX);
+	roadPos[9] = 13 * (incX);
+	roadPos[10] = 15 * (incX);
+	roadPos[11] = 16 * (incX);
+	roadPos[12] = 17 * (incX);
+	roadPos[13] = 18 * (incX);
 	
+	//init line position
+	linePos[0] = 4 * (incX);
+	linePos[1] = 7 * (incX);
+	linePos[2] = 8 * (incX);
+	linePos[3] = 11 * (incX);
+	linePos[4] = 12 * (incX);
+	linePos[5] = 13 * (incX);
+	linePos[6] = 16 * (incX);
+	linePos[7] = 17 * (incX);
+	linePos[8] = 18 * (incX);
+	//init line position end
+
 	//init circle, player
-	circle = new cir(0.07, WORLD_SIZE / 2, CIRCLE_RADIUS);
+	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
 
 	//init Grass
 	for (int i = 0; i < nGrass; i++)
@@ -51,22 +74,46 @@ void init(void) {
 	}	
 		
 	//init Tree
-	for (int i = 0; i < nTree; i++)
+	for (int i = 0; i < nGrass - 2; i++)
 	{
-		Tree[i] = new tree(gPos[1] + padding, i* (2*incY));
+		for (int j = 0; j < NTREE_IN_GRASS; j++) {
+			int yPos = rand() % NTREE_IN_GRASS;
+			Tree[i * NTREE_IN_GRASS + j] = new tree(gPos[i + 1], incY * yPos * 2);
+		}
+	}
+
+	for (int i = 0; i < nLine; i++)
+	{
+		Line[i] = new line(linePos[i], 0);
 	}
 	
 	//init Car	
-	cPos[0] = gPos[0] + incX;
-	Car[0] = new car(cPos[0], 0, "UP");
-	cPos[1] = cPos[0] + incX;
-	Car[1] = new car(cPos[1], WORLD_SIZE, "DOWN");
+	int count = 0;
+	for (int i = 0; i < nRoad; i++)
+	{
+		std::string dir;
+		float yPos;
+		if (i % 2 == 0)
+		{
+			dir = "UP";
+			yPos = 0;
+		}
+		else
+		{
+			dir = "DOWN";
+			yPos = WORLD_SIZE;
+		}
+		for (int j = 0; j < (rand() % MAX_CARN) + 1; j++)
+		{
+			if (yPos)
+				yPos -= incY * (rand() % CAR_SPACE + 2) * j;
+			else
+				yPos += incY * (rand() % CAR_SPACE + 2) * j;
+			Car[count++] = new car(roadPos[i], yPos, dir);
+		}
 
-	cPos[2] = gPos[1] + incX;
-	Car[2] = new car(cPos[2], WORLD_SIZE/2, "DOWN");
-	cPos[3] = cPos[2] + incX;
-	Car[3] = new car(cPos[3], 0, "UP");
-
+	}
+	realnCar = count - 1;
 }
 
 void display(void) {
@@ -80,7 +127,7 @@ void display(void) {
 	{
 		Tree[i]->create();
 	}
-	for (int i = 0; i < nCar; i++)
+	for (int i = 0; i < realnCar; i++)
 	{
 		Car[i]->create();
 	}
@@ -93,8 +140,7 @@ void display(void) {
 	glLineStipple(2, 0x00FF);
 	for (int i = 0; i < nLine; i++)
 	{
-		linePos[i] = (gPos[i] + incX + gPos[i+1]) / 2;	
-		drawOneLine(linePos[i], WORLD_SIZE, linePos[i], 0);
+		Line[i]->create();
 	}	
 	glDisable(GL_LINE_STIPPLE);
 
@@ -118,7 +164,7 @@ bool colDetection(cir* circle, car** Car)
 	float cirY = circle->getY();
 	float cirR = circle->getR();
 	
-	for (int i = 0; i < nCar; i++){
+	for (int i = 0; i < realnCar; i++){
 		float carX = Car[i]->getX();
 		float carY = Car[i]->getY();
 	
@@ -173,25 +219,41 @@ void refreshAll(STATE s) {
 	if (s == UP) {
 		circle->incY();		
 		bool tCol = colDetection(circle, Tree);
-			if(tCol == true)
-				circle->decY();		
+		if(tCol == true)
+			circle->decY();		
+		else if (World_T < WORLD_SIZE && circle->getY() > WORLD_SIZE / DIVIDE_WINDOW / 2)
+		{
+			World_T += incY;
+			World_B += incY;
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluOrtho2D(World_L, World_R, World_B, World_T);
+		}
 	}
 	else if (s == DOWN) {
 		circle->decY();		
 		bool tCol = colDetection(circle, Tree);
 		if (tCol == true)
 			circle->incY();		
+		else if (World_B >= incY && circle->getY() < WORLD_SIZE / DIVIDE_WINDOW / 2 * (DIVIDE_WINDOW * 2 - 1))
+		{
+			World_T -= incY;
+			World_B -= incY;
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluOrtho2D(World_L, World_R, World_B, World_T);
+		}
 	}
 	else if (s == RIGHT) {
 		circle->incX();		
 		bool tCol = colDetection(circle, Tree);
 		if (tCol == true)
-			circle->decX();	
+			circle->decX();
 		//맵 전환 부분 코드
-		if (circle->getX() >= World_R)
+		else if (World_R < WORLD_SIZE && circle->getX() > WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
-			World_L = gPos[1];
-			World_R = WORLD_SIZE;			
+			World_L += incX;
+			World_R += incX;
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			gluOrtho2D(World_L, World_R, World_B, World_T);
@@ -203,10 +265,10 @@ void refreshAll(STATE s) {
 		if (tCol == true)
 			circle->incX();
 		//맵 전환 부분 코드
-		if (circle->getX() <= gPos[1])
+		else if (World_L >= incX && circle->getX() < WORLD_SIZE / DIVIDE_WINDOW / 2 * (DIVIDE_WINDOW * 2 - 1))
 		{
-			World_L = 0;
-			World_R = WORLD_SIZE / 1.5;
+			World_L -= incX;
+			World_R -= incX;
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			gluOrtho2D(World_L, World_R, World_B, World_T);
@@ -216,6 +278,8 @@ void refreshAll(STATE s) {
 }
 
 void specialkeyboard(int key, int x, int y) {
+	printf("Cpos : %f, %f\n", circle->getX(), circle->getY());
+	printf("Wpos : %f, %f, %f, %f\n", World_B, World_L, World_R, World_T);
 	switch (key) {
 	case GLUT_KEY_UP:
 		refreshAll(UP);
@@ -235,12 +299,13 @@ void specialkeyboard(int key, int x, int y) {
 
 void ReDisplayTimer(int value)
 {
-	for (int i = 0; i < nCar; i++){
+	for (int i = 0; i < realnCar; i++){
 		Car[i]->move();
-	}
+	} 
 	bool cCol = colDetection(circle, Car);
-	if (cCol == true)
+	if (cCol == true) {
 		circle->setInitPos();
+	} 
 
 	glutPostRedisplay();
 	glutTimerFunc(1000 / 60, ReDisplayTimer, 1); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.

@@ -2,6 +2,7 @@
 #include "default.h"
 
 
+
 car::car(float x, float y, const std::string direction) : myObject(x, y) {
 	this->direction = direction;
 }
