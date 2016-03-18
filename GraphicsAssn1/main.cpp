@@ -116,6 +116,18 @@ void init(void) {
 	realnCar = count - 1;
 }
 
+
+void renderBitmapCharacter(float x, float y, void *font, char *string)
+{
+	glColor3f(1.0, 0.0, 0.0);
+	char *c;
+	glRasterPos2f(x, y);
+	for (c = string; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *c);		
+	}
+}
+
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
@@ -143,10 +155,14 @@ void display(void) {
 		Line[i]->create();
 	}	
 	glDisable(GL_LINE_STIPPLE);
-
+	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
+	glutPostRedisplay();
 	glutSwapBuffers();
 }
-void reshape(int w, int h) {
+
+
+
+void reshape(int w, int h) {	
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -154,6 +170,8 @@ void reshape(int w, int h) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
+
+
 
 //코드 재활용면에서의 개선의 여지가 있음. car** Car 대신 myObject를 사용할 수 있지만..
 //오버로딩을 이용해서 대신 구현
@@ -297,8 +315,14 @@ void specialkeyboard(int key, int x, int y) {
 	glutPostRedisplay();
 }
 
+
 void ReDisplayTimer(int value)
 {
+	if (value == 0){
+		Sleep(1000);
+		exit(0);
+	}
+
 	if (circle->getX() >= WORLD_SIZE - incX)
 		exit(0);
 
@@ -306,12 +330,21 @@ void ReDisplayTimer(int value)
 		Car[i]->move();
 	} 
 	bool cCol = colDetection(circle, Car);
+
 	if (cCol == true) {
 		// circle->setInitPos();
 		// 어싸인 문서에 게임 종료시키라고 명시
-		exit(0);
+		float width = (World_R - World_L) / 2.0;
+		float height = (World_T - World_B) / 2.0;
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();		
+		gluOrtho2D(gOverPosX-width+0.1, gOverPosX+width, gOverPosY-height, gOverPosY+height);
+		value = 0;
+		//glutPostRedisplay();		
+		//exit(0);
 	}
 
 	glutPostRedisplay();
-	glutTimerFunc(1000 / 60, ReDisplayTimer, 1); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
+	glutTimerFunc(1000 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
 }

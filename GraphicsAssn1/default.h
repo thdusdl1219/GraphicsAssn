@@ -18,7 +18,8 @@
 const float incX = WORLD_SIZE / MAP_DIVIDE_X;
 const float incY = WORLD_SIZE / MAP_DIVIDE_Y;
 const float CIRCLE_RADIUS = incX / 2;
-
+const float gOverPosX = 500.0;
+const float gOverPosY = 500.0;
 enum STATE {
 	UP,
 	DOWN,
