@@ -1,4 +1,5 @@
 #pragma once
+#include "default.h"
 class myObject {
 public :
 	myObject(float x, float y);

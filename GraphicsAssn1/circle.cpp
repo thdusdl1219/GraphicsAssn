@@ -56,7 +56,7 @@ void cir::create()
 	//printf("x : %f", x);
 	//printf("y : %f\n", y);
 	
-	glBegin(GL_TRIANGLE_FAN);
+	/* glBegin(GL_TRIANGLE_FAN);
 	glColor3f(1.0, 0.0, 0.0);
 	glVertex2f(x, y); // center of circle
 	for (i = 0; i <= triangleAmount; i++) {
@@ -65,7 +65,7 @@ void cir::create()
 			y + (r * sin(i * twicePi / triangleAmount))
 			);
 	}
-	glEnd();
+	glEnd(); */
 }
 
 void cir::setInitPos()
@@ -91,7 +91,7 @@ void cir::goPortal(portal** Portal)
 	World_R = 1.0;
 	World_B = y - (0.5 - (1.0 - y));
 	World_T = 1.0;
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(World_L, World_R, World_B, World_T);
+	// glMatrixMode(GL_PROJECTION);
+	// glLoadIdentity();
+	// gluOrtho2D(World_L, World_R, World_B, World_T);
 }

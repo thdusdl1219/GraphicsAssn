@@ -6,6 +6,7 @@
 #include "car.h"
 #include "line.h"
 #include "portal.h"
+#include "Shader.h"
 
 #define NTREE_IN_GRASS 10
 #define MAX_CARN 9
@@ -25,12 +26,18 @@ float roadPos[nRoad];
 float linePos[nLine];
 
 cir* circle;
+Shader* circleShader;
 
 grass* Grass[nGrass];
+Shader* grassShader;
 line* Line[nLine];
+Shader* lineShader;
 tree* Tree[nTree];
+Shader* TreeShader;
 car* Car[nCar];
+Shader* CarShader;
 portal* Portal[nPortal];
+Shader* PortalShader;
 
 
 

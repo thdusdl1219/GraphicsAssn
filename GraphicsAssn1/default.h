@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h> 
+#include "mat.h"
 #include <math.h>
 #include <gl/gl.h> 
 #include <gl/glut.h>

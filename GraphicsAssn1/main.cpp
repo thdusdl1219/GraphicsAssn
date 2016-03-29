@@ -5,17 +5,26 @@
 void ReDisplayTimer(int value);
 
 int main(int argc, char** argv) {
+
+	GLenum err = glewInit();
+	if (GLEW_OK)
+		exit(0);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+
 	glutInitWindowPosition(300, 500);
 	glutCreateWindow(argv[0]);
+
 	init();
+
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);	 
 	glutSpecialFunc(specialkeyboard);
+
 	//타이머 등록
 	glutTimerFunc(1000 / 60, ReDisplayTimer, 1);
+
 	glutMainLoop();
 
 	return 0;
@@ -66,17 +75,20 @@ void init(void) {
 
 	//init circle, player
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
+	circleShader = new Shader("circle.vs", "circle.fs");
 
 	//init portals
 	Portal[0] = new portal(gPos[1], incY * 19);
 	Portal[1] = new portal(gPos[4], incY * 19);
 	Portal[2] = new portal(gPos[4] + 3 * incX, incY * 19);
+	PortalShader = new Shader("portal.vs", "portal.fs");
 
 	//init Grass
 	for (int i = 0; i < nGrass; i++)
 	{
 		Grass[i] = new grass(gPos[i], 0);
-	}	
+	}
+	grassShader = new Shader("grass.vs", "grass.fs");
 		
 	//init Tree
 	for (int i = 0; i < nGrass - 2; i++)
@@ -86,11 +98,13 @@ void init(void) {
 			Tree[i * NTREE_IN_GRASS + j] = new tree(gPos[i + 1], incY * yPos * 2);
 		}
 	}
+	TreeShader = new Shader("tree.vs", "tree.fs");
 
 	for (int i = 0; i < nLine; i++)
 	{
 		Line[i] = new line(linePos[i], 0);
 	}
+	lineShader = new Shader("line.vs", "line.fs");
 	
 	//init Car	
 	int count = 0;
@@ -124,13 +138,13 @@ void init(void) {
 
 void renderBitmapCharacter(float x, float y, void *font, char *string)
 {
-	glColor3f(1.0, 0.0, 0.0);
+	/* glColor3f(1.0, 0.0, 0.0);
 	char *c;
 	glRasterPos2f(x, y);
 	for (c = string; *c != '\0'; c++)
 	{
 		glutBitmapCharacter(font, *c);		
-	}
+	} */
 }
 
 void display(void) {
@@ -162,13 +176,13 @@ void display(void) {
 
 
 	//Draw line.
-	glEnable(GL_LINE_STIPPLE);
-	glLineStipple(2, 0x00FF);
+	// glEnable(GL_LINE_STIPPLE);
+	// glLineStipple(2, 0x00FF);
 	for (int i = 0; i < nLine; i++)
 	{
 		Line[i]->create();
 	}	
-	glDisable(GL_LINE_STIPPLE);
+	// glDisable(GL_LINE_STIPPLE);
 	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
 	glutPostRedisplay();
 	glutSwapBuffers();
@@ -177,12 +191,12 @@ void display(void) {
 
 
 void reshape(int w, int h) {	
-	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(World_L, World_R, World_B, World_T);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	// glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	// glMatrixMode(GL_PROJECTION);
+	// glLoadIdentity();
+	// gluOrtho2D(World_L, World_R, World_B, World_T);
+	// glMatrixMode(GL_MODELVIEW);
+	// glLoadIdentity();
 }
 
 
@@ -283,9 +297,9 @@ void refreshAll(STATE s) {
 		{
 			World_T += incY;
 			World_B += incY;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(World_L, World_R, World_B, World_T);
+			// glMatrixMode(GL_PROJECTION);
+			// glLoadIdentity();
+			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	else if (s == DOWN) {
@@ -300,9 +314,9 @@ void refreshAll(STATE s) {
 		{
 			World_T -= incY;
 			World_B -= incY;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(World_L, World_R, World_B, World_T);
+			// glMatrixMode(GL_PROJECTION);
+			// glLoadIdentity();
+			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	else if (s == RIGHT) {
@@ -318,9 +332,9 @@ void refreshAll(STATE s) {
 		{
 			World_L += incX;
 			World_R += incX;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(World_L, World_R, World_B, World_T);
+			// glMatrixMode(GL_PROJECTION);
+			// glLoadIdentity();
+			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	else if (s == LEFT) {
@@ -336,9 +350,9 @@ void refreshAll(STATE s) {
 		{
 			World_L -= incX;
 			World_R -= incX;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(World_L, World_R, World_B, World_T);
+			// glMatrixMode(GL_PROJECTION);
+			// glLoadIdentity();
+			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	
@@ -386,9 +400,9 @@ void ReDisplayTimer(int value)
 		float width = (World_R - World_L) / 2.0;
 		float height = (World_T - World_B) / 2.0;
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();		
-		gluOrtho2D(gOverPosX-width+0.1, gOverPosX+width, gOverPosY-height, gOverPosY+height);
+		// glMatrixMode(GL_PROJECTION);
+		// glLoadIdentity();		
+		// gluOrtho2D(gOverPosX-width+0.1, gOverPosX+width, gOverPosY-height, gOverPosY+height);
 		value = 0;
 		//glutPostRedisplay();		
 		//exit(0);
