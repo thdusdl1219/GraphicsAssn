@@ -17,6 +17,7 @@ void car::create(GLuint shader) {
 		vec2(x + (WORLD_SIZE / MAP_DIVIDE_X), y + (WORLD_SIZE / MAP_DIVIDE_Y))
 	};
 
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec2), &vertices[0], GL_STATIC_DRAW);
@@ -25,7 +26,7 @@ void car::create(GLuint shader) {
 	GLint posAttrib = glGetAttribLocation(shader, "pos");
 	glEnableVertexAttribArray(posAttrib);
 	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
+	glDisableVertexAttribArray(posAttrib);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
 	glDeleteBuffers(1, &vbo);
 	/* glColor3f(0.0, 1.0, 1.0);
