@@ -85,20 +85,20 @@ void init(void) {
 
 	//init circle, player
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
-	circleShader = new Shader("grass.vs", "circle.fs");
+	circleShader = new Shader("object.vs", "circle.fs");
 
 	//init portals
 	Portal[0] = new portal(gPos[1], incY * 19);
 	Portal[1] = new portal(gPos[4], incY * 19);
 	Portal[2] = new portal(gPos[4] + 3 * incX, incY * 19);
-	PortalShader = new Shader("grass.vs", "portal.fs");
+	PortalShader = new Shader("object.vs", "portal.fs");
 
 	//init Grass
 	for (int i = 0; i < nGrass; i++)
 	{
 		Grass[i] = new grass(gPos[i], 0);
 	}
-	grassShader = new Shader("grass.vs", "grass.fs");
+	grassShader = new Shader("object.vs", "grass.fs");
 		
 	//init Tree
 	for (int i = 0; i < nGrass - 2; i++)
@@ -108,13 +108,13 @@ void init(void) {
 			Tree[i * NTREE_IN_GRASS + j] = new tree(gPos[i + 1], incY * yPos * 2);
 		}
 	}
-	TreeShader = new Shader("grass.vs", "tree.fs");
+	TreeShader = new Shader("object.vs", "tree.fs");
 
 	for (int i = 0; i < nLine; i++)
 	{
 		Line[i] = new line(linePos[i], 0);
 	}
-	lineShader = new Shader("grass.vs", "line.fs");
+	lineShader = new Shader("object.vs", "line.fs");
 	
 	//init Car	
 	int count = 0;
@@ -142,7 +142,7 @@ void init(void) {
 		}
 
 	}
-	CarShader = new Shader("grass.vs", "car.fs");
+	CarShader = new Shader("object.vs", "car.fs");
 	realnCar = count - 1;
 
 }
@@ -383,7 +383,7 @@ void specialkeyboard(int key, int x, int y) {
 		refreshAll(RIGHT);
 		break;
 	case GLUT_KEY_LEFT:
-		// refreshAll(LEFT);
+		refreshAll(LEFT);
 		break;
 	}
 	glutPostRedisplay();

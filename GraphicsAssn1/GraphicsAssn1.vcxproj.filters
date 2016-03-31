@@ -88,16 +88,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="circle.vs">
-      <Filter>리소스 파일\shaders</Filter>
-    </None>
     <None Include="circle.fs">
       <Filter>리소스 파일\shaders</Filter>
     </None>
     <None Include="grass.fs">
-      <Filter>리소스 파일\shaders</Filter>
-    </None>
-    <None Include="grass.vs">
       <Filter>리소스 파일\shaders</Filter>
     </None>
     <None Include="tree.fs">
@@ -110,6 +104,9 @@
       <Filter>리소스 파일\shaders</Filter>
     </None>
     <None Include="portal.fs">
+      <Filter>리소스 파일\shaders</Filter>
+    </None>
+    <None Include="object.vs">
       <Filter>리소스 파일\shaders</Filter>
     </None>
   </ItemGroup>
