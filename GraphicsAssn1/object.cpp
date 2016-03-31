@@ -6,7 +6,7 @@ myObject::myObject(float x, float y) {
 }
 
 void myObject::refresh() {
-
+	
 }
 
 float myObject::getX() {

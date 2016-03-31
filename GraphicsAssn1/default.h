@@ -1,10 +1,13 @@
 #pragma once
 #include <windows.h> 
 #include <math.h>
+#include <GL/glew.h>
+#include <GL/glut.h>
 #include <gl/gl.h> 
-#include <gl/glut.h>
-#include <cstdio>
 
+
+#include <cstdio>
+#include <iostream>
 
 #define MAP_DIVIDE_X 20
 #define MAP_DIVIDE_Y 20

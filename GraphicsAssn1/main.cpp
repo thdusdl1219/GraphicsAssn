@@ -10,10 +10,20 @@ int main(int argc, char** argv) {
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutInitWindowPosition(300, 500);
 	glutCreateWindow(argv[0]);
+
+/*
+	glutInitContextVersion(3, 1);
+	glutInitContextProfile(GLUT_CORE_PROFILE);
+
+*/
+
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);	 
 	glutSpecialFunc(specialkeyboard);
+	
+	glewInit();
+
 	//타이머 등록
 	glutTimerFunc(1000 / 60, ReDisplayTimer, 1);
 	glutMainLoop();
@@ -393,6 +403,8 @@ void ReDisplayTimer(int value)
 		//glutPostRedisplay();		
 		//exit(0);
 	}
+	
+	
 
 	glutPostRedisplay();
 	glutTimerFunc(1000 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
