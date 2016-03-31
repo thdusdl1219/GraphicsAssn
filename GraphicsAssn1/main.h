@@ -5,7 +5,6 @@
 #include "tree.h"
 #include "car.h"
 #include "line.h"
-#include "portal.h"
 
 #define NTREE_IN_GRASS 10
 #define MAX_CARN 9
@@ -15,7 +14,6 @@ const int nGrass = 6;
 const int nTree = (nGrass - 2) * NTREE_IN_GRASS;
 const int nLine = 9;
 const int nRoad = 14;
-const int nPortal = 3;
 const int nCar = nRoad * MAX_CARN;
 int realnCar;
 
@@ -30,7 +28,6 @@ grass* Grass[nGrass];
 line* Line[nLine];
 tree* Tree[nTree];
 car* Car[nCar];
-portal* Portal[nPortal];
 
 
 

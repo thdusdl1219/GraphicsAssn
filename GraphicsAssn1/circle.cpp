@@ -1,7 +1,5 @@
 #include "circle.h"
 #include "default.h"
-#include <cstdlib>
-#include <ctime>
 
 float World_L = 0;
 float World_B = 0;
@@ -16,8 +14,6 @@ cir::cir(float x, float y, float r) : myObject(x, y)
 	this->initY = y;
 	mapRadius = r * RATIO;
 }
-
-
 
 
 float cir::getR() {
@@ -76,21 +72,6 @@ void cir::setInitPos()
 	World_R = WORLD_SIZE / DIVIDE_WINDOW;
 	World_B = 0;
 	World_T = WORLD_SIZE / DIVIDE_WINDOW;
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(World_L, World_R, World_B, World_T);
-}
-
-void cir::goPortal(portal** Portal)
-{
-	srand(time(NULL));
-	int goP = rand() % 2 + 1;
-	x = Portal[goP]->getX() + 0.5 * (1.0 / MAP_DIVIDE_X);
-	y = Portal[goP]->getY() + 0.5 * (1.0 / MAP_DIVIDE_Y);
-	World_L = x - (0.5 - (1.0 - x));
-	World_R = 1.0;
-	World_B = y - (0.5 - (1.0 - y));
-	World_T = 1.0;
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(World_L, World_R, World_B, World_T);

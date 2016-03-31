@@ -77,11 +77,6 @@ void init(void) {
 	//init circle, player
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
 
-	//init portals
-	Portal[0] = new portal(gPos[1], incY * 19);
-	Portal[1] = new portal(gPos[4], incY * 19);
-	Portal[2] = new portal(gPos[4] + 3 * incX, incY * 19);
-
 	//init Grass
 	for (int i = 0; i < nGrass; i++)
 	{
@@ -154,21 +149,12 @@ void display(void) {
 	{
 		Tree[i]->create();
 	}
-
-	for (int i = 0; i < nPortal; i++)
-	{
-		Portal[i]->create();
-	}
-
 	for (int i = 0; i < realnCar; i++)
 	{
 		Car[i]->create();
 	}
 
-
 	circle->create();
-	
-	
 
 
 	//Draw line.
@@ -257,38 +243,12 @@ bool colDetection(cir* circle, tree** Tree)
 	
 }
 
-bool colDetection(cir* circle, portal** Portal)
-{
-	float cirX = circle->getX();
-	float cirY = circle->getY();
-
-	
-	float PortalX = Portal[0]->getX();
-	float PortalY = Portal[0]->getY();
-
-
-
-	if ((cirX >= PortalX && cirX <= PortalX + incX)
-		&&
-		(cirY >= PortalY && cirY <= PortalY + incY))
-	{
-
-
-			return true;
-	}
-	return false;
-
-}
-
 void refreshAll(STATE s) {
 	if (s == UP) {
 		circle->incY();		
 		bool tCol = colDetection(circle, Tree);
-		bool tPor = colDetection(circle, Portal);
 		if(tCol == true)
 			circle->decY();		
-		if (tPor == true)
-			circle->goPortal(Portal);
 		else if (World_T < WORLD_SIZE && circle->getY() > WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
 			World_T += incY;
@@ -301,11 +261,8 @@ void refreshAll(STATE s) {
 	else if (s == DOWN) {
 		circle->decY();		
 		bool tCol = colDetection(circle, Tree);
-		bool tPor = colDetection(circle, Portal);
 		if (tCol == true)
 			circle->incY();		
-		if (tPor == true)
-			circle->goPortal(Portal);
 		else if (World_B >= incY && circle->getY() < WORLD_SIZE / DIVIDE_WINDOW / 2 * (DIVIDE_WINDOW * 2 - 1))
 		{
 			World_T -= incY;
@@ -318,11 +275,8 @@ void refreshAll(STATE s) {
 	else if (s == RIGHT) {
 		circle->incX();		
 		bool tCol = colDetection(circle, Tree);
-		bool tPor = colDetection(circle, Portal);
 		if (tCol == true)
 			circle->decX();
-		if (tPor == true)
-			circle->goPortal(Portal);
 		//맵 전환 부분 코드
 		else if (World_R < WORLD_SIZE && circle->getX() > WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
@@ -336,11 +290,8 @@ void refreshAll(STATE s) {
 	else if (s == LEFT) {
 		circle->decX();		
 		bool tCol = colDetection(circle, Tree);
-		bool tPor = colDetection(circle, Portal);
 		if (tCol == true)
 			circle->incX();
-		if (tPor == true)
-			circle->goPortal(Portal);
 		//맵 전환 부분 코드
 		else if (World_L >= incX && circle->getX() < WORLD_SIZE / DIVIDE_WINDOW / 2 * (DIVIDE_WINDOW * 2 - 1))
 		{
@@ -391,8 +342,8 @@ void ReDisplayTimer(int value)
 	bool cCol = colDetection(circle, Car);
 
 	if (cCol == true) {
-		// 어싸인 문서에 게임 종료시키라고 명시
 		// circle->setInitPos();
+		// 어싸인 문서에 게임 종료시키라고 명시
 		float width = (World_R - World_L) / 2.0;
 		float height = (World_T - World_B) / 2.0;
 
