@@ -51,30 +51,30 @@ void init(void) {
 
 	//init road position
 	roadPos[0] = 1 * (incX);
-	roadPos[1] = 3 * (incX);
-	roadPos[2] = 4 * (incX);
-	roadPos[3] = 6 * (incX);
-	roadPos[4] = 7 * (incX);
-	roadPos[5] = 8 * (incX);
-	roadPos[6] = 10 * (incX);
-	roadPos[7] = 11 * (incX);
-	roadPos[8] = 12 * (incX);
-	roadPos[9] = 13 * (incX);
-	roadPos[10] = 15 * (incX);
-	roadPos[11] = 16 * (incX);
-	roadPos[12] = 17 * (incX);
-	roadPos[13] = 18 * (incX);
+	riverPos[0] = 3 * (incX);
+	riverPos[1] = 4 * (incX);
+	roadPos[1] = 6 * (incX);
+	roadPos[2] = 7 * (incX);
+	roadPos[3] = 8 * (incX);
+	roadPos[4] = 10 * (incX);
+	roadPos[5] = 11 * (incX);
+	roadPos[6] = 12 * (incX);
+	roadPos[7] = 13 * (incX);
+	roadPos[8] = 15 * (incX);
+	roadPos[9] = 16 * (incX);
+	roadPos[10] = 17 * (incX);
+	roadPos[11] = 18 * (incX);
 	
 	//init line position
-	linePos[0] = 4 * (incX);
-	linePos[1] = 7 * (incX);
-	linePos[2] = 8 * (incX);
-	linePos[3] = 11 * (incX);
-	linePos[4] = 12 * (incX);
-	linePos[5] = 13 * (incX);
-	linePos[6] = 16 * (incX);
-	linePos[7] = 17 * (incX);
-	linePos[8] = 18 * (incX);
+	// linePos[0] = 4 * (incX);
+	linePos[0] = 7 * (incX);
+	linePos[1] = 8 * (incX);
+	linePos[2] = 11 * (incX);
+	linePos[3] = 12 * (incX);
+	linePos[4] = 13 * (incX);
+	linePos[5] = 16 * (incX);
+	linePos[6] = 17 * (incX);
+	linePos[7] = 18 * (incX);
 	//init line position end
 
 
@@ -145,6 +145,44 @@ void init(void) {
 	CarShader = new Shader("object.vs", "car.fs");
 	realnCar = count - 1;
 
+	//init log	
+	count = 0;
+	for (int i = 0; i < nRiver; i++)
+	{
+		std::string dir;
+		float yPos;
+		if (i % 2 == 0)
+		{
+			dir = "UP";
+			yPos = 0;
+		}
+		else
+		{
+			dir = "DOWN";
+			yPos = WORLD_SIZE;
+		}
+		for (int j = 0; j < (rand() % MAX_CARN) + 1; j++)
+		{
+			if (yPos)
+				yPos -= incY * (rand() % CAR_SPACE + 2) * j;
+			else
+				yPos += incY * (rand() % CAR_SPACE + 2) * j;
+			Log[count++] = new logt(riverPos[i], yPos, dir);
+		}
+
+	}
+	LogShader = new Shader("object.vs", "car.fs");
+	realnLog = count - 1;
+
+
+
+	//init River
+	for (int i = 0; i < nRiver; i++)
+	{
+		River[i] = new river(riverPos[i], 0);
+	}
+	RiverShader = new Shader("object.vs", "river.fs");
+
 }
 
 
@@ -166,6 +204,10 @@ void display(void) {
 	for (int i = 0; i < nGrass; i++)
 	{
 		Grass[i]->create(grassShader->getShader());
+	}
+	for (int i = 0; i < nRiver; i++)
+	{
+		River[i]->create(RiverShader->getShader());
 	}
 	for (int i = 0; i < nTree; i++)
 	{
@@ -193,6 +235,10 @@ void display(void) {
 		Car[i]->create(CarShader->getShader());
 	}
 
+	for (int i = 0; i < realnLog; i++)
+	{
+		Log[i]->create(LogShader->getShader());
+	}
 	// glDisable(GL_LINE_STIPPLE);
 	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
 	glutPostRedisplay();
@@ -302,7 +348,7 @@ void refreshAll(STATE s) {
 		bool tPor = colDetection(circle, Portal);
 		if(tCol == true)
 			circle->decY();		
-		if (tPor == true)
+		else if (tPor == true)
 			circle->goPortal(Portal);
 		else if (World_T < WORLD_SIZE && circle->getY() > - 1 * WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
@@ -319,7 +365,7 @@ void refreshAll(STATE s) {
 		bool tPor = colDetection(circle, Portal);
 		if (tCol == true)
 			circle->incY();		
-		if (tPor == true)
+		else if (tPor == true)
 			circle->goPortal(Portal);
 		else if (World_B >= incY && circle->getY() < WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
@@ -336,7 +382,7 @@ void refreshAll(STATE s) {
 		bool tPor = colDetection(circle, Portal);
 		if (tCol == true)
 			circle->decX();
-		if (tPor == true)
+		else if (tPor == true)
 			circle->goPortal(Portal);
 		//맵 전환 부분 코드
 		else if (World_R < WORLD_SIZE && circle->getX() > -1 * WORLD_SIZE / DIVIDE_WINDOW / 2)
@@ -354,7 +400,7 @@ void refreshAll(STATE s) {
 		bool tPor = colDetection(circle, Portal);
 		if (tCol == true)
 			circle->incX();
-		if (tPor == true)
+		else if (tPor == true)
 			circle->goPortal(Portal);
 		//맵 전환 부분 코드
 		else if (World_L >= incX && circle->getX() < WORLD_SIZE / DIVIDE_WINDOW / 2)
@@ -370,8 +416,6 @@ void refreshAll(STATE s) {
 }
 
 void specialkeyboard(int key, int x, int y) {
-	printf("Cpos : %f, %f\n", circle->getX(), circle->getY());
-	printf("Wpos : %f, %f, %f, %f\n", World_B, World_L, World_R, World_T);
 	switch (key) {
 	case GLUT_KEY_UP:
 		refreshAll(UP);
@@ -405,7 +449,10 @@ void ReDisplayTimer(int value)
 
 	for (int i = 0; i < realnCar; i++){
 		Car[i]->move();
-	} 
+	}
+	for (int i = 0; i < realnLog; i++) {
+		Log[i]->move();
+	}
 	bool cCol = colDetection(circle, Car);
 
 	if (cCol == true) {

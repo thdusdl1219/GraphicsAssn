@@ -149,9 +149,11 @@
     <ClCompile Include="circle.cpp" />
     <ClCompile Include="grass.cpp" />
     <ClCompile Include="line.cpp" />
+    <ClCompile Include="log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="portal.cpp" />
+    <ClCompile Include="river.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="tree.cpp" />
   </ItemGroup>
@@ -161,11 +163,13 @@
     <ClInclude Include="default.h" />
     <ClInclude Include="grass.h" />
     <ClInclude Include="line.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="circle.h" />
     <ClInclude Include="mat.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="portal.h" />
+    <ClInclude Include="river.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="vec.h" />
@@ -177,6 +181,7 @@
     <None Include="object.vs" />
     <None Include="line.fs" />
     <None Include="portal.fs" />
+    <None Include="river.fs" />
     <None Include="tree.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
