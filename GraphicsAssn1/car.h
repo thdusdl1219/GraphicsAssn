@@ -11,6 +11,7 @@ public:
 	void incY();
 	void decY();
 
+
 private:
 	//String value has 'Up or Down'
 	std::string direction;
