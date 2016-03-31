@@ -5,27 +5,26 @@
 void ReDisplayTimer(int value);
 
 int main(int argc, char** argv) {
+
+	GLenum err = glewInit();
+	if (GLEW_OK)
+		exit(0);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+
 	glutInitWindowPosition(300, 500);
 	glutCreateWindow(argv[0]);
 
-/*
-	glutInitContextVersion(3, 1);
-	glutInitContextProfile(GLUT_CORE_PROFILE);
-
-*/
-
 	init();
+
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);	 
 	glutSpecialFunc(specialkeyboard);
-	
-	glewInit();
 
 	//타이머 등록
 	glutTimerFunc(1000 / 60, ReDisplayTimer, 1);
+
 	glutMainLoop();
 
 	return 0;
@@ -76,12 +75,20 @@ void init(void) {
 
 	//init circle, player
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
+	circleShader = new Shader("circle.vs", "circle.fs");
+
+	//init portals
+	Portal[0] = new portal(gPos[1], incY * 19);
+	Portal[1] = new portal(gPos[4], incY * 19);
+	Portal[2] = new portal(gPos[4] + 3 * incX, incY * 19);
+	PortalShader = new Shader("portal.vs", "portal.fs");
 
 	//init Grass
 	for (int i = 0; i < nGrass; i++)
 	{
 		Grass[i] = new grass(gPos[i], 0);
-	}	
+	}
+	grassShader = new Shader("grass.vs", "grass.fs");
 		
 	//init Tree
 	for (int i = 0; i < nGrass - 2; i++)
@@ -91,11 +98,13 @@ void init(void) {
 			Tree[i * NTREE_IN_GRASS + j] = new tree(gPos[i + 1], incY * yPos * 2);
 		}
 	}
+	TreeShader = new Shader("tree.vs", "tree.fs");
 
 	for (int i = 0; i < nLine; i++)
 	{
 		Line[i] = new line(linePos[i], 0);
 	}
+	lineShader = new Shader("line.vs", "line.fs");
 	
 	//init Car	
 	int count = 0;
@@ -129,13 +138,13 @@ void init(void) {
 
 void renderBitmapCharacter(float x, float y, void *font, char *string)
 {
-	glColor3f(1.0, 0.0, 0.0);
+	/* glColor3f(1.0, 0.0, 0.0);
 	char *c;
 	glRasterPos2f(x, y);
 	for (c = string; *c != '\0'; c++)
 	{
 		glutBitmapCharacter(font, *c);		
-	}
+	} */
 }
 
 void display(void) {
@@ -149,22 +158,31 @@ void display(void) {
 	{
 		Tree[i]->create();
 	}
+
+	for (int i = 0; i < nPortal; i++)
+	{
+		Portal[i]->create();
+	}
+
 	for (int i = 0; i < realnCar; i++)
 	{
 		Car[i]->create();
 	}
 
+
 	circle->create();
+	
+	
 
 
 	//Draw line.
-	glEnable(GL_LINE_STIPPLE);
-	glLineStipple(2, 0x00FF);
+	// glEnable(GL_LINE_STIPPLE);
+	// glLineStipple(2, 0x00FF);
 	for (int i = 0; i < nLine; i++)
 	{
 		Line[i]->create();
 	}	
-	glDisable(GL_LINE_STIPPLE);
+	// glDisable(GL_LINE_STIPPLE);
 	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
 	glutPostRedisplay();
 	glutSwapBuffers();
@@ -173,12 +191,12 @@ void display(void) {
 
 
 void reshape(int w, int h) {	
-	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(World_L, World_R, World_B, World_T);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	// glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	// glMatrixMode(GL_PROJECTION);
+	// glLoadIdentity();
+	// gluOrtho2D(World_L, World_R, World_B, World_T);
+	// glMatrixMode(GL_MODELVIEW);
+	// glLoadIdentity();
 }
 
 
@@ -243,63 +261,98 @@ bool colDetection(cir* circle, tree** Tree)
 	
 }
 
+bool colDetection(cir* circle, portal** Portal)
+{
+	float cirX = circle->getX();
+	float cirY = circle->getY();
+
+	
+	float PortalX = Portal[0]->getX();
+	float PortalY = Portal[0]->getY();
+
+
+
+	if ((cirX >= PortalX && cirX <= PortalX + incX)
+		&&
+		(cirY >= PortalY && cirY <= PortalY + incY))
+	{
+
+
+			return true;
+	}
+	return false;
+
+}
+
 void refreshAll(STATE s) {
 	if (s == UP) {
 		circle->incY();		
 		bool tCol = colDetection(circle, Tree);
+		bool tPor = colDetection(circle, Portal);
 		if(tCol == true)
 			circle->decY();		
+		if (tPor == true)
+			circle->goPortal(Portal);
 		else if (World_T < WORLD_SIZE && circle->getY() > WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
 			World_T += incY;
 			World_B += incY;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(World_L, World_R, World_B, World_T);
+			// glMatrixMode(GL_PROJECTION);
+			// glLoadIdentity();
+			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	else if (s == DOWN) {
 		circle->decY();		
 		bool tCol = colDetection(circle, Tree);
+		bool tPor = colDetection(circle, Portal);
 		if (tCol == true)
 			circle->incY();		
+		if (tPor == true)
+			circle->goPortal(Portal);
 		else if (World_B >= incY && circle->getY() < WORLD_SIZE / DIVIDE_WINDOW / 2 * (DIVIDE_WINDOW * 2 - 1))
 		{
 			World_T -= incY;
 			World_B -= incY;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(World_L, World_R, World_B, World_T);
+			// glMatrixMode(GL_PROJECTION);
+			// glLoadIdentity();
+			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	else if (s == RIGHT) {
 		circle->incX();		
 		bool tCol = colDetection(circle, Tree);
+		bool tPor = colDetection(circle, Portal);
 		if (tCol == true)
 			circle->decX();
+		if (tPor == true)
+			circle->goPortal(Portal);
 		//맵 전환 부분 코드
 		else if (World_R < WORLD_SIZE && circle->getX() > WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
 			World_L += incX;
 			World_R += incX;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(World_L, World_R, World_B, World_T);
+			// glMatrixMode(GL_PROJECTION);
+			// glLoadIdentity();
+			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	else if (s == LEFT) {
 		circle->decX();		
 		bool tCol = colDetection(circle, Tree);
+		bool tPor = colDetection(circle, Portal);
 		if (tCol == true)
 			circle->incX();
+		if (tPor == true)
+			circle->goPortal(Portal);
 		//맵 전환 부분 코드
 		else if (World_L >= incX && circle->getX() < WORLD_SIZE / DIVIDE_WINDOW / 2 * (DIVIDE_WINDOW * 2 - 1))
 		{
 			World_L -= incX;
 			World_R -= incX;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(World_L, World_R, World_B, World_T);
+			// glMatrixMode(GL_PROJECTION);
+			// glLoadIdentity();
+			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	
@@ -342,20 +395,18 @@ void ReDisplayTimer(int value)
 	bool cCol = colDetection(circle, Car);
 
 	if (cCol == true) {
-		// circle->setInitPos();
 		// 어싸인 문서에 게임 종료시키라고 명시
+		// circle->setInitPos();
 		float width = (World_R - World_L) / 2.0;
 		float height = (World_T - World_B) / 2.0;
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();		
-		gluOrtho2D(gOverPosX-width+0.1, gOverPosX+width, gOverPosY-height, gOverPosY+height);
+		// glMatrixMode(GL_PROJECTION);
+		// glLoadIdentity();		
+		// gluOrtho2D(gOverPosX-width+0.1, gOverPosX+width, gOverPosY-height, gOverPosY+height);
 		value = 0;
 		//glutPostRedisplay();		
 		//exit(0);
 	}
-	
-	
 
 	glutPostRedisplay();
 	glutTimerFunc(1000 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
