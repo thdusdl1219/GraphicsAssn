@@ -1,6 +1,7 @@
 #pragma once
 #include "object.h"
 #include "portal.h"
+#include <vector>
 
 
 class cir : public myObject {
@@ -19,6 +20,8 @@ private:
 	float initX;
 	float initY;
 	float mapRadius;
+	std::vector<vec2> vertices;
+	GLuint vbo;
 };
 
 

@@ -177,6 +177,7 @@
     <None Include="grass.fs" />
     <None Include="grass.vs" />
     <None Include="line.fs" />
+    <None Include="portal.fs" />
     <None Include="tree.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

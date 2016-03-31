@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "circle.h"
 
 #include <string>
 #include <fstream>
@@ -78,5 +79,25 @@ Shader::Shader(const char *vertex_path, const char* fragment_path) {
 }
 
 GLuint Shader::getShader() {
+	glUseProgram(program);
+
+	mat4 sca = Scale(DIVIDE_WINDOW, DIVIDE_WINDOW, 0);
+
+	GLint loc = glGetUniformLocation(program, "scalef");
+	if (loc != -1)
+	{
+		glUniformMatrix4fv(loc, 1, GL_FALSE, sca);
+	}
+	vec2 mv = vec2(defaultX - World_L, defaultY - World_B);
+
+	GLint Mloc = glGetUniformLocation(program, "ModelView");
+	if (Mloc != -1)
+	{
+		glUniform2fv(Mloc, 1, mv);
+	}
+	else {
+		std::cout << "get uniform error" << std::endl;
+	}
+
 	return program;
 }
