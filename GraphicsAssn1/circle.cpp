@@ -12,6 +12,8 @@ float World_T = WORLD_SIZE / DIVIDE_WINDOW;
 cir::cir(float x, float y, float r) : myObject(x, y)
 {
 	this->r = r;
+	this->x = x - 1;
+	this->y = y - 1;
 	this->initX = x;
 	this->initY = y;
 	mapRadius = r * RATIO;
@@ -44,7 +46,7 @@ void cir::decX() {
 		x -= 1.0 / MAP_DIVIDE_X;
 }
 
-void cir::create()
+void cir::create(GLuint shader)
 {
 
 	int i;
@@ -54,7 +56,7 @@ void cir::create()
 	GLfloat twicePi = 2.0f * 3.141592;
 
 	//printf("x : %f", x);
-	//printf("y : %f\n", y);
+	//printf("y : %f\n", y);  
 	
 	/* glBegin(GL_TRIANGLE_FAN);
 	glColor3f(1.0, 0.0, 0.0);
