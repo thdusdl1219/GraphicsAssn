@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <gl/gl.h> 
+#include <cstdio>
 
 
 #include <cstdio>
@@ -15,7 +16,7 @@
 #define WINDOW_HEIGHT 300
 #define WINDOW_WIDTH 500
 #define RATIO WINDOW_HEIGHT / WINDOW_WIDTH
-#define WORLD_SIZE 1.0
+#define WORLD_SIZE 2.0
 #define DIVIDE_WINDOW 2
 
 

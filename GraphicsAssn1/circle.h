@@ -1,11 +1,11 @@
 #pragma once
 #include "object.h"
 #include "portal.h"
-#include "Shader.h"
+
 class cir : public myObject {
 public:
 	cir(float x, float y, float r);
-	void create();
+	void create(GLuint);
 	float getR();
 	void incY();
 	void decY();

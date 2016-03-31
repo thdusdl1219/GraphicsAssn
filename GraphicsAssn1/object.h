@@ -6,7 +6,7 @@ public :
 	void refresh();
 	float getX();
 	float getY();
-	virtual void create() = 0;
+	virtual void create(GLuint shader) = 0;
 protected :
 	float x;
 	float y;

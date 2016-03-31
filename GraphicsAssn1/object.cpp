@@ -1,8 +1,8 @@
 #include "object.h"
 
 myObject::myObject(float x, float y) {
-	this->x = x;
-	this->y = y;
+	this->x = x - 1;
+	this->y = y - 1;
 }
 
 void myObject::refresh() {

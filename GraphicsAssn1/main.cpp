@@ -6,15 +6,20 @@ void ReDisplayTimer(int value);
 
 int main(int argc, char** argv) {
 
-	GLenum err = glewInit();
-	if (GLEW_OK)
-		exit(0);
 	glutInit(&argc, argv);
+	
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	glutInitWindowPosition(300, 500);
 	glutCreateWindow(argv[0]);
+	
+	GLenum err = glewInit();
+
+	if (err != GLEW_OK) {
+		printf("some error in glewInit!\n");
+		exit(1);
+	}
 
 	glewExperimental = GL_TRUE;
 
@@ -31,7 +36,6 @@ int main(int argc, char** argv) {
 
 	glutMainLoop();
 
-	return 0;
 }
 
 
@@ -77,6 +81,12 @@ void init(void) {
 	linePos[8] = 18 * (incX);
 	//init line position end
 
+
+	// Create Vertex Array Object
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
 	//init circle, player
 	
 	
@@ -90,7 +100,7 @@ void init(void) {
 	Portal[0] = new portal(gPos[1], incY * 19);
 	Portal[1] = new portal(gPos[4], incY * 19);
 	Portal[2] = new portal(gPos[4] + 3 * incX, incY * 19);
-	PortalShader = new Shader("portal.vs", "portal.fs");
+	PortalShader = new Shader("grass.vs", "grass.fs");
 
 	//init Grass
 	for (int i = 0; i < nGrass; i++)
@@ -107,13 +117,13 @@ void init(void) {
 			Tree[i * NTREE_IN_GRASS + j] = new tree(gPos[i + 1], incY * yPos * 2);
 		}
 	}
-	TreeShader = new Shader("tree.vs", "tree.fs");
+	TreeShader = new Shader("grass.vs", "tree.fs");
 
 	for (int i = 0; i < nLine; i++)
 	{
 		Line[i] = new line(linePos[i], 0);
 	}
-	lineShader = new Shader("line.vs", "line.fs");
+	lineShader = new Shader("grass.vs", "line.fs");
 	
 	//init Car	
 	int count = 0;
@@ -141,6 +151,7 @@ void init(void) {
 		}
 
 	}
+	CarShader = new Shader("grass.vs", "car.fs");
 	realnCar = count - 1;
 }
 
@@ -161,25 +172,25 @@ void display(void) {
 	
 	for (int i = 0; i < nGrass; i++)
 	{
-		Grass[i]->create();
+		Grass[i]->create(grassShader->getShader());
 	}
 	for (int i = 0; i < nTree; i++)
 	{
-		Tree[i]->create();
+		Tree[i]->create(TreeShader->getShader());
 	}
 
 	for (int i = 0; i < nPortal; i++)
 	{
-		Portal[i]->create();
+		Portal[i]->create(PortalShader->getShader());
 	}
 
 	for (int i = 0; i < realnCar; i++)
 	{
-		Car[i]->create();
+		Car[i]->create(CarShader->getShader());
 	}
 
 
-	circle->create();
+	circle->create(circleShader->getShader());
 	
 	
 
@@ -189,7 +200,7 @@ void display(void) {
 	// glLineStipple(2, 0x00FF);
 	for (int i = 0; i < nLine; i++)
 	{
-		Line[i]->create();
+		Line[i]->create(lineShader->getShader());
 	}	
 	// glDisable(GL_LINE_STIPPLE);
 	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
@@ -201,12 +212,12 @@ void display(void) {
 
 
 void reshape(int w, int h) {	
-	// glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	 glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	// glMatrixMode(GL_PROJECTION);
-	// glLoadIdentity();
+	 //glLoadIdentity();
 	// gluOrtho2D(World_L, World_R, World_B, World_T);
 	// glMatrixMode(GL_MODELVIEW);
-	// glLoadIdentity();
+	 //glLoadIdentity();
 }
 
 
@@ -392,11 +403,14 @@ void ReDisplayTimer(int value)
 {
 	if (value == 0){
 		Sleep(1000);
+		printf("value is zero\n");
 		exit(0);
 	}
 
-	if (circle->getX() >= WORLD_SIZE - incX)
+	if (circle->getX() >= WORLD_SIZE - incX) {
+		printf("circle go end\n");
 		exit(0);
+	}
 
 	for (int i = 0; i < realnCar; i++){
 		Car[i]->move();

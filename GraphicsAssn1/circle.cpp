@@ -12,6 +12,8 @@ float World_T = WORLD_SIZE / DIVIDE_WINDOW;
 cir::cir(float x, float y, float r) : myObject(x, y)
 {
 	this->r = r;
+	this->x = x - 1;
+	this->y = y - 1;
 	this->initX = x;
 	this->initY = y;
 	mapRadius = r * RATIO;
@@ -44,46 +46,28 @@ void cir::decX() {
 		x -= 1.0 / MAP_DIVIDE_X;
 }
 
-void cir::create()
+void cir::create(GLuint shader)
 {
 
 	int i;
-	const int triangleAmount = 50; //# of triangles used to draw circle
+	int triangleAmount = 50; //# of triangles used to draw circle
 
 							 //GLfloat radius = 0.8f; //radius
 	GLfloat twicePi = 2.0f * 3.141592;
+
+	//printf("x : %f", x);
+	//printf("y : %f\n", y);  
 	
-	vec2 points[triangleAmount];
-
-	for (i = 0; i < triangleAmount; i++)
-	{
-		x = x + (r * cos(i *  twicePi / triangleAmount)) * RATIO;
-		y = y + (r * sin(i * twicePi / triangleAmount));
-
-		points[i] = vec2(x, y);
+	/* glBegin(GL_TRIANGLE_FAN);
+	glColor3f(1.0, 0.0, 0.0);
+	glVertex2f(x, y); // center of circle
+	for (i = 0; i <= triangleAmount; i++) {
+		glVertex2f(
+			x + (r * cos(i *  twicePi / triangleAmount)) * RATIO,
+			y + (r * sin(i * twicePi / triangleAmount))
+			);
 	}
-
-	GLuint vao;	
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-		
-	GLuint buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-
-	Shader* circleShader = new Shader("circle.vs", "circle.fs");
-	GLuint program = circleShader->getShader();
-	glUseProgram(program);
-
-	// Initialize the vertex position attribute from the vertex shader
-	GLuint loc = glGetAttribLocation(program, "vPosition");
-	glEnableVertexAttribArray(loc);
-	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0,
-		BUFFER_OFFSET(0));
-
-	glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount);
-
+	glEnd(); */
 }
 
 void cir::setInitPos()
