@@ -17,11 +17,12 @@ void car::create(GLuint shader) {
 		vec2(x + (WORLD_SIZE / MAP_DIVIDE_X), y + (WORLD_SIZE / MAP_DIVIDE_Y))
 	};
 
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec2), &vertices[0], GL_STATIC_DRAW);
 
-	glUseProgram(shader);
+	
 	GLint posAttrib = glGetAttribLocation(shader, "pos");
 	glEnableVertexAttribArray(posAttrib);
 	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);

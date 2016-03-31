@@ -46,3 +46,4 @@ void display(void);
 void reshape(int w, int h);
 void specialkeyboard(int key, int x, int y);
 void refreshAll(STATE s);
+

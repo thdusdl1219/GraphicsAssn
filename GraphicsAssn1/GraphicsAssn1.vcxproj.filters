@@ -109,5 +109,8 @@
     <None Include="line.fs">
       <Filter>리소스 파일\shaders</Filter>
     </None>
+    <None Include="portal.fs">
+      <Filter>리소스 파일\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

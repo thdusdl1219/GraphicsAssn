@@ -17,7 +17,7 @@
 #define WINDOW_WIDTH 500
 #define RATIO WINDOW_HEIGHT / WINDOW_WIDTH
 #define WORLD_SIZE 2.0
-#define DIVIDE_WINDOW 2
+#define DIVIDE_WINDOW 2.0f
 
 
 const float incX = WORLD_SIZE / MAP_DIVIDE_X;
@@ -31,3 +31,6 @@ enum STATE {
 	LEFT,
 	RIGHT,
 };
+
+#define defaultX 0.5f
+#define defaultY 0.5f

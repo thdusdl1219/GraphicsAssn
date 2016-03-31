@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	glutInitWindowPosition(300, 500);
+	glutInitWindowPosition(100, 100);
 	glutCreateWindow(argv[0]);
 	
 	GLenum err = glewInit();
@@ -85,13 +85,13 @@ void init(void) {
 
 	//init circle, player
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
-	circleShader = new Shader("circle.vs", "circle.fs");
+	circleShader = new Shader("grass.vs", "circle.fs");
 
 	//init portals
 	Portal[0] = new portal(gPos[1], incY * 19);
 	Portal[1] = new portal(gPos[4], incY * 19);
 	Portal[2] = new portal(gPos[4] + 3 * incX, incY * 19);
-	PortalShader = new Shader("grass.vs", "grass.fs");
+	PortalShader = new Shader("grass.vs", "portal.fs");
 
 	//init Grass
 	for (int i = 0; i < nGrass; i++)
@@ -144,6 +144,7 @@ void init(void) {
 	}
 	CarShader = new Shader("grass.vs", "car.fs");
 	realnCar = count - 1;
+
 }
 
 
@@ -160,6 +161,7 @@ void renderBitmapCharacter(float x, float y, void *font, char *string)
 
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
+
 	
 	for (int i = 0; i < nGrass; i++)
 	{
@@ -175,16 +177,6 @@ void display(void) {
 		Portal[i]->create(PortalShader->getShader());
 	}
 
-	for (int i = 0; i < realnCar; i++)
-	{
-		Car[i]->create(CarShader->getShader());
-	}
-
-
-	circle->create(circleShader->getShader());
-	
-	
-
 
 	//Draw line.
 	// glEnable(GL_LINE_STIPPLE);
@@ -193,6 +185,14 @@ void display(void) {
 	{
 		Line[i]->create(lineShader->getShader());
 	}	
+
+	circle->create(circleShader->getShader());
+
+	for (int i = 0; i < realnCar; i++)
+	{
+		Car[i]->create(CarShader->getShader());
+	}
+
 	// glDisable(GL_LINE_STIPPLE);
 	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
 	glutPostRedisplay();
@@ -205,7 +205,7 @@ void reshape(int w, int h) {
 	 glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	// glMatrixMode(GL_PROJECTION);
 	 //glLoadIdentity();
-	// gluOrtho2D(World_L, World_R, World_B, World_T);
+	 // gluOrtho2D(World_L, World_R, World_B, World_T);
 	// glMatrixMode(GL_MODELVIEW);
 	 //glLoadIdentity();
 }
@@ -304,7 +304,7 @@ void refreshAll(STATE s) {
 			circle->decY();		
 		if (tPor == true)
 			circle->goPortal(Portal);
-		else if (World_T < WORLD_SIZE && circle->getY() > WORLD_SIZE / DIVIDE_WINDOW / 2)
+		else if (World_T < WORLD_SIZE && circle->getY() > - 1 * WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
 			World_T += incY;
 			World_B += incY;
@@ -321,7 +321,7 @@ void refreshAll(STATE s) {
 			circle->incY();		
 		if (tPor == true)
 			circle->goPortal(Portal);
-		else if (World_B >= incY && circle->getY() < WORLD_SIZE / DIVIDE_WINDOW / 2 * (DIVIDE_WINDOW * 2 - 1))
+		else if (World_B >= incY && circle->getY() < WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
 			World_T -= incY;
 			World_B -= incY;
@@ -339,7 +339,7 @@ void refreshAll(STATE s) {
 		if (tPor == true)
 			circle->goPortal(Portal);
 		//맵 전환 부분 코드
-		else if (World_R < WORLD_SIZE && circle->getX() > WORLD_SIZE / DIVIDE_WINDOW / 2)
+		else if (World_R < WORLD_SIZE && circle->getX() > -1 * WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
 			World_L += incX;
 			World_R += incX;
@@ -357,7 +357,7 @@ void refreshAll(STATE s) {
 		if (tPor == true)
 			circle->goPortal(Portal);
 		//맵 전환 부분 코드
-		else if (World_L >= incX && circle->getX() < WORLD_SIZE / DIVIDE_WINDOW / 2 * (DIVIDE_WINDOW * 2 - 1))
+		else if (World_L >= incX && circle->getX() < WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
 			World_L -= incX;
 			World_R -= incX;
@@ -398,7 +398,7 @@ void ReDisplayTimer(int value)
 		exit(0);
 	}
 
-	if (circle->getX() >= WORLD_SIZE - incX) {
+	if (circle->getX() >= 1.0 - incX) {
 		printf("circle go end\n");
 		exit(0);
 	}

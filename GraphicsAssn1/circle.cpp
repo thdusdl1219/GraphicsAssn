@@ -14,8 +14,8 @@ cir::cir(float x, float y, float r) : myObject(x, y)
 	this->r = r;
 	this->x = x - 1;
 	this->y = y - 1;
-	this->initX = x;
-	this->initY = y;
+	this->initX = this->x;
+	this->initY = this->y;
 	mapRadius = r * RATIO;
 }
 
@@ -27,23 +27,23 @@ float cir::getR() {
 }
 
 void cir::incY() {
-	if (y < 1 - (1.0 / MAP_DIVIDE_Y))
-		y += 1.0 / MAP_DIVIDE_Y;
+	if (y < 1 - (WORLD_SIZE / MAP_DIVIDE_Y))
+		y += WORLD_SIZE / MAP_DIVIDE_Y;
 }
 
 void cir::decY() {
-	if (y > (1.0 / MAP_DIVIDE_Y))
-		y -= 1.0 / MAP_DIVIDE_Y;
+	if (y > -1 + (WORLD_SIZE / MAP_DIVIDE_Y))
+		y -= WORLD_SIZE / MAP_DIVIDE_Y;
 }
 
 void cir::incX() {
-	if (x < 1 - (1.0 / MAP_DIVIDE_X))
-		x += 1.0 / MAP_DIVIDE_X;
+	if (x < 1 - (WORLD_SIZE / MAP_DIVIDE_X))
+		x += WORLD_SIZE / MAP_DIVIDE_X;
 }
 
 void cir::decX() {
-	if (x > (1.0 / MAP_DIVIDE_X))
-		x -= 1.0 / MAP_DIVIDE_X;
+	if (x > -1 + (WORLD_SIZE / MAP_DIVIDE_X))
+		x -= WORLD_SIZE / MAP_DIVIDE_X;
 }
 
 void cir::create(GLuint shader)
@@ -54,6 +54,26 @@ void cir::create(GLuint shader)
 
 							 //GLfloat radius = 0.8f; //radius
 	GLfloat twicePi = 2.0f * 3.141592;
+
+	vertices = {
+		vec2(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y - WORLD_SIZE / MAP_DIVIDE_Y / 2),
+		vec2(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y + WORLD_SIZE / MAP_DIVIDE_Y / 2),
+		vec2(x + WORLD_SIZE / MAP_DIVIDE_X / 2, y - WORLD_SIZE / MAP_DIVIDE_Y / 2),
+		vec2(x + WORLD_SIZE / MAP_DIVIDE_X / 2, y + WORLD_SIZE / MAP_DIVIDE_Y / 2)
+
+	};
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec2), &vertices[0], GL_STATIC_DRAW);
+
+
+	GLint posAttrib = glGetAttribLocation(shader, "pos");
+	glEnableVertexAttribArray(posAttrib);
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
+	glDeleteBuffers(1, &vbo);
 
 	//printf("x : %f", x);
 	//printf("y : %f\n", y);  
@@ -87,12 +107,21 @@ void cir::goPortal(portal** Portal)
 {
 	srand(time(NULL));
 	int goP = rand() % 2 + 1;
-	x = Portal[goP]->getX() + 0.5 * (1.0 / MAP_DIVIDE_X);
-	y = Portal[goP]->getY() + 0.5 * (1.0 / MAP_DIVIDE_Y);
-	World_L = x - (0.5 - (1.0 - x));
-	World_R = 1.0;
-	World_B = y - (0.5 - (1.0 - y));
-	World_T = 1.0;
+	x = Portal[goP]->getX() + 0.5 * (WORLD_SIZE / MAP_DIVIDE_X);
+	y = Portal[goP]->getY() + 0.5 * (WORLD_SIZE / MAP_DIVIDE_Y);
+
+	vertices = {
+		vec2(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y - WORLD_SIZE / MAP_DIVIDE_Y / 2),
+		vec2(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y + WORLD_SIZE / MAP_DIVIDE_Y / 2),
+		vec2(x + WORLD_SIZE / MAP_DIVIDE_X / 2, y - WORLD_SIZE / MAP_DIVIDE_Y / 2),
+		vec2(x + WORLD_SIZE / MAP_DIVIDE_X / 2, y + WORLD_SIZE / MAP_DIVIDE_Y / 2)
+
+	};
+
+	World_L = x - (0.5 - (2.0 - x)) - 0.5;
+	World_R = 2.0;
+	World_B = y - (0.5 - (2.0 - y)) - 0.5;
+	World_T = 2.0;
 	// glMatrixMode(GL_PROJECTION);
 	// glLoadIdentity();
 	// gluOrtho2D(World_L, World_R, World_B, World_T);
