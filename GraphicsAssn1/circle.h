@@ -1,7 +1,7 @@
 #pragma once
 #include "object.h"
-
-
+#include "portal.h"
+#include "Shader.h"
 class cir : public myObject {
 public:
 	cir(float x, float y, float r);
@@ -12,6 +12,7 @@ public:
 	void incX();
 	void decX();
 	void setInitPos();
+	void goPortal(portal **);
 private:
 	float r;
 	float initX;

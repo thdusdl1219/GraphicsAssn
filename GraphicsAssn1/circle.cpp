@@ -48,24 +48,42 @@ void cir::create()
 {
 
 	int i;
-	int triangleAmount = 50; //# of triangles used to draw circle
+	const int triangleAmount = 50; //# of triangles used to draw circle
 
 							 //GLfloat radius = 0.8f; //radius
 	GLfloat twicePi = 2.0f * 3.141592;
-
-	//printf("x : %f", x);
-	//printf("y : %f\n", y);
 	
-	/* glBegin(GL_TRIANGLE_FAN);
-	glColor3f(1.0, 0.0, 0.0);
-	glVertex2f(x, y); // center of circle
-	for (i = 0; i <= triangleAmount; i++) {
-		glVertex2f(
-			x + (r * cos(i *  twicePi / triangleAmount)) * RATIO,
-			y + (r * sin(i * twicePi / triangleAmount))
-			);
+	vec2 points[triangleAmount];
+
+	for (i = 0; i < triangleAmount; i++)
+	{
+		x = x + (r * cos(i *  twicePi / triangleAmount)) * RATIO;
+		y = y + (r * sin(i * twicePi / triangleAmount));
+
+		points[i] = vec2(x, y);
 	}
-	glEnd(); */
+
+	GLuint vao;	
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+		
+	GLuint buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+	Shader* circleShader = new Shader("circle.vs", "circle.fs");
+	GLuint program = circleShader->getShader();
+	glUseProgram(program);
+
+	// Initialize the vertex position attribute from the vertex shader
+	GLuint loc = glGetAttribLocation(program, "vPosition");
+	glEnableVertexAttribArray(loc);
+	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0,
+		BUFFER_OFFSET(0));
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount);
+
 }
 
 void cir::setInitPos()

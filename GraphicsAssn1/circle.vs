@@ -1,5 +1,6 @@
 #version 430
-in vec4 vPosition
+
+in vec4 vPosition;
 
 void main()
 {

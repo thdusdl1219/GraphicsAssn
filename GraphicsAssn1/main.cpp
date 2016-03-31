@@ -16,6 +16,10 @@ int main(int argc, char** argv) {
 	glutInitWindowPosition(300, 500);
 	glutCreateWindow(argv[0]);
 
+	glewExperimental = GL_TRUE;
+
+	glewInit();
+
 	init();
 
 	glutDisplayFunc(display);
@@ -74,8 +78,13 @@ void init(void) {
 	//init line position end
 
 	//init circle, player
+	
+	
+	
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
-	circleShader = new Shader("circle.vs", "circle.fs");
+	
+
+
 
 	//init portals
 	Portal[0] = new portal(gPos[1], incY * 19);
@@ -184,6 +193,7 @@ void display(void) {
 	}	
 	// glDisable(GL_LINE_STIPPLE);
 	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
+	
 	glutPostRedisplay();
 	glutSwapBuffers();
 }
@@ -286,7 +296,7 @@ bool colDetection(cir* circle, portal** Portal)
 
 void refreshAll(STATE s) {
 	if (s == UP) {
-		circle->incY();		
+		circle->incY();
 		bool tCol = colDetection(circle, Tree);
 		bool tPor = colDetection(circle, Portal);
 		if(tCol == true)
@@ -355,7 +365,6 @@ void refreshAll(STATE s) {
 			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
-	
 }
 
 void specialkeyboard(int key, int x, int y) {
@@ -375,7 +384,7 @@ void specialkeyboard(int key, int x, int y) {
 		// refreshAll(LEFT);
 		break;
 	}
-	glutPostRedisplay();
+	//glutPostRedisplay();
 }
 
 
@@ -408,6 +417,6 @@ void ReDisplayTimer(int value)
 		//exit(0);
 	}
 
-	glutPostRedisplay();
+	//glutPostRedisplay();
 	glutTimerFunc(1000 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
 }
