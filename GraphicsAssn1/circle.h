@@ -2,6 +2,7 @@
 #include "object.h"
 #include "portal.h"
 
+
 class cir : public myObject {
 public:
 	cir(float x, float y, float r);

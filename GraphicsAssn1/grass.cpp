@@ -31,8 +31,5 @@ void grass::create(GLuint shader) {
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
 
 	glDeleteBuffers(1, &vbo);
-
-
-	/* glColor3f(0.0, 1.0, 0.0);
-	glRectf(x, y, x + (incX), y + 1); */
+	
 }

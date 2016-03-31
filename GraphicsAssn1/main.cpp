@@ -82,17 +82,10 @@ void init(void) {
 	//init line position end
 
 
-	// Create Vertex Array Object
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
 
 	//init circle, player
-	
-	
-	
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
-	
+	circleShader = new Shader("circle.vs", "circle.fs");
 
 
 

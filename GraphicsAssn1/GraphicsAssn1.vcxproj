@@ -172,7 +172,6 @@
     <ClInclude Include="vec.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="car.fs" />
     <None Include="circle.fs" />
     <None Include="circle.vs" />
     <None Include="grass.fs" />
