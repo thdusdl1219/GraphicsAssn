@@ -85,7 +85,7 @@ void init(void) {
 
 	//init circle, player
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
-	circleShader = new Shader("grass.vs", "circle.fs");
+	circleShader = new Shader("circle.vs", "circle.fs");
 
 
 

@@ -151,8 +151,10 @@
     <ClCompile Include="grass.cpp" />
     <ClCompile Include="line.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MvStack.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="portal.cpp" />
+    <ClCompile Include="scenenode.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="tree.cpp" />
   </ItemGroup>
@@ -165,8 +167,10 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="circle.h" />
     <ClInclude Include="mat.h" />
+    <ClInclude Include="MvStack.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="portal.h" />
+    <ClInclude Include="scenenode.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="vec.h" />
