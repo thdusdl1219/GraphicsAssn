@@ -3,6 +3,7 @@
 
 
 
+
 logt::logt(float x, float y, const std::string direction) : myObject(x, y) {
 	this->direction = direction;
 	this->x = x - 1;
@@ -32,13 +33,23 @@ void logt::create(GLuint shader) {
 	/* glColor3f(0.0, 1.0, 1.0);
 	glRectf(x, y, x + (WORLD_SIZE / MAP_DIVIDE_X), y + (WORLD_SIZE/MAP_DIVIDE_Y)); */
 }
-void logt::move()
+void logt::move(bool col, cir* circle)
 {
-	if (direction == "UP")
-	{
-		incY();
+	if (!col) {
+		if (direction == "UP")
+		{
+			incY();
+		}
+		else decY();
 	}
-	else decY();
+	else {
+		if (direction == "UP")
+		{
+			incY();
+		}
+		else decY();
+		circle->move(x, y, direction);
+	}
 }
 
 void logt::incY() {
@@ -54,3 +65,4 @@ void logt::decY() {
 		y -= WORLD_SIZE / MAP_DIVIDE_Y / SPEED;
 	else y = WORLD_SIZE;
 }
+

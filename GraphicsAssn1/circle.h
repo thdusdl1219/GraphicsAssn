@@ -14,6 +14,7 @@ public:
 	void decX();
 	void setInitPos();
 	void goPortal(portal **);
+	void move(float, float, std::string);
 private:
 	float r;
 	float initX;

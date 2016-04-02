@@ -35,3 +35,4 @@ void portal::create(GLuint shader) {
 	// glRectf(x + padding, y, x + incX - padding, y + incY);
 	//glRectf(x, y, x + TREE_SIZE * RATIO, y + TREE_SIZE);
 }
+

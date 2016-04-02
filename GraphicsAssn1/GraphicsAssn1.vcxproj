@@ -178,6 +178,7 @@
     <None Include="car.fs" />
     <None Include="circle.fs" />
     <None Include="grass.fs" />
+    <None Include="log.fs" />
     <None Include="object.vs" />
     <None Include="line.fs" />
     <None Include="portal.fs" />

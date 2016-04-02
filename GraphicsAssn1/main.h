@@ -12,7 +12,7 @@
 
 #define NTREE_IN_GRASS 10
 #define MAX_CARN 9
-#define MAX_LOGN 9
+#define MAX_LOGN 100
 #define CAR_SPACE 4
 
 const int nGrass = 6;

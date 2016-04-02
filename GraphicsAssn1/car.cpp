@@ -54,3 +54,4 @@ void car::decY() {
 		y -= WORLD_SIZE / MAP_DIVIDE_Y / SPEED;
 	else y = WORLD_SIZE;
 }
+

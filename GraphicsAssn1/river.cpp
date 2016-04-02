@@ -35,3 +35,4 @@ void river::create(GLuint shader) {
 	/* glColor3f(0.0, 1.0, 0.0);
 	glRectf(x, y, x + (incX), y + 1); */
 }
+

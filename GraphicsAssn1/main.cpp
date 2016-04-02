@@ -161,7 +161,7 @@ void init(void) {
 			dir = "DOWN";
 			yPos = WORLD_SIZE;
 		}
-		for (int j = 0; j < (rand() % MAX_CARN) + 1; j++)
+		for (int j = 0; j < (rand() % MAX_LOGN) + 1; j++)
 		{
 			if (yPos)
 				yPos -= incY * (rand() % CAR_SPACE + 2) * j;
@@ -171,7 +171,7 @@ void init(void) {
 		}
 
 	}
-	LogShader = new Shader("object.vs", "car.fs");
+	LogShader = new Shader("object.vs", "log.fs");
 	realnLog = count - 1;
 
 
@@ -221,12 +221,16 @@ void display(void) {
 
 
 	//Draw line.
-	// glEnable(GL_LINE_STIPPLE);
-	// glLineStipple(2, 0x00FF);
+
 	for (int i = 0; i < nLine; i++)
 	{
 		Line[i]->create(lineShader->getShader());
 	}	
+
+	for (int i = 0; i < realnLog; i++)
+	{
+		Log[i]->create(LogShader->getShader());
+	}
 
 	circle->create(circleShader->getShader());
 
@@ -235,11 +239,7 @@ void display(void) {
 		Car[i]->create(CarShader->getShader());
 	}
 
-	for (int i = 0; i < realnLog; i++)
-	{
-		Log[i]->create(LogShader->getShader());
-	}
-	// glDisable(GL_LINE_STIPPLE);
+
 	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
 	glutPostRedisplay();
 	glutSwapBuffers();
@@ -249,11 +249,6 @@ void display(void) {
 
 void reshape(int w, int h) {	
 	 glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	// glMatrixMode(GL_PROJECTION);
-	 //glLoadIdentity();
-	 // gluOrtho2D(World_L, World_R, World_B, World_T);
-	// glMatrixMode(GL_MODELVIEW);
-	 //glLoadIdentity();
 }
 
 
@@ -318,6 +313,31 @@ bool colDetection(cir* circle, tree** Tree)
 	
 }
 
+//Collision detection between player and Logt.
+int colDetection(cir* circle, logt** Log)
+{
+	float cirX = circle->getX();
+	float cirY = circle->getY();
+
+	for (int i = 0; i < realnLog; i++)
+	{
+		float logX = Log[i]->getX();
+		float logY = Log[i]->getY();
+
+
+
+		if ((cirX >= logX && cirX <= logX + incX)
+			&&
+			(cirY >= logY && cirY <= logY + incY))
+		{
+
+			return i;
+		}
+	}
+	return -1;
+
+}
+
 bool colDetection(cir* circle, portal** Portal)
 {
 	float cirX = circle->getX();
@@ -341,6 +361,31 @@ bool colDetection(cir* circle, portal** Portal)
 
 }
 
+bool colDetection(cir* circle, river** River)
+{
+	float cirX = circle->getX();
+	float cirY = circle->getY();
+
+	for (int i = 0; i < nRiver; i++)
+	{
+		float riverX = River[i]->getX();
+		float riverY = River[i]->getY();
+
+
+
+		if ((cirX >= riverX && cirX <= riverX + incX)
+			&&
+			(cirY >= riverY && cirY <= riverY + 2.0))
+		{
+
+			return true;
+		}
+	}
+	return false;
+
+}
+
+
 void refreshAll(STATE s) {
 	if (s == UP) {
 		circle->incY();		
@@ -352,11 +397,12 @@ void refreshAll(STATE s) {
 			circle->goPortal(Portal);
 		else if (World_T < WORLD_SIZE && circle->getY() > - 1 * WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
-			World_T += incY;
-			World_B += incY;
-			// glMatrixMode(GL_PROJECTION);
-			// glLoadIdentity();
-			// gluOrtho2D(World_L, World_R, World_B, World_T);
+			World_T = (ROUNDING(World_T / incY, 0) * incY) + incY;
+			World_B = (ROUNDING(World_B / incY, 0) * incY) + incY;
+		}
+		else if (World_T >= WORLD_SIZE) {
+			World_T = WORLD_SIZE;
+			World_B = WORLD_SIZE - WORLD_SIZE / DIVIDE_WINDOW;
 		}
 	}
 	else if (s == DOWN) {
@@ -369,11 +415,12 @@ void refreshAll(STATE s) {
 			circle->goPortal(Portal);
 		else if (World_B >= incY && circle->getY() < WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
-			World_T -= incY;
-			World_B -= incY;
-			// glMatrixMode(GL_PROJECTION);
-			// glLoadIdentity();
-			// gluOrtho2D(World_L, World_R, World_B, World_T);
+			World_T = (ROUNDING(World_T / incY, 0) * incY) - incY;
+			World_B = (ROUNDING(World_B / incY, 0) * incY) - incY;
+		}
+		else if (World_B < 0) {
+			World_T = WORLD_SIZE / DIVIDE_WINDOW;
+			World_B = 0;
 		}
 	}
 	else if (s == RIGHT) {
@@ -389,9 +436,6 @@ void refreshAll(STATE s) {
 		{
 			World_L += incX;
 			World_R += incX;
-			// glMatrixMode(GL_PROJECTION);
-			// glLoadIdentity();
-			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	else if (s == LEFT) {
@@ -407,15 +451,13 @@ void refreshAll(STATE s) {
 		{
 			World_L -= incX;
 			World_R -= incX;
-			// glMatrixMode(GL_PROJECTION);
-			// glLoadIdentity();
-			// gluOrtho2D(World_L, World_R, World_B, World_T);
 		}
 	}
 	
 }
 
 void specialkeyboard(int key, int x, int y) {
+	printf("CPos : %f %f %f\n", circle->getX(), circle->getY(), incX);
 	switch (key) {
 	case GLUT_KEY_UP:
 		refreshAll(UP);
@@ -450,9 +492,8 @@ void ReDisplayTimer(int value)
 	for (int i = 0; i < realnCar; i++){
 		Car[i]->move();
 	}
-	for (int i = 0; i < realnLog; i++) {
-		Log[i]->move();
-	}
+
+	
 	bool cCol = colDetection(circle, Car);
 
 	if (cCol == true) {
@@ -467,6 +508,23 @@ void ReDisplayTimer(int value)
 		value = 0;
 		//glutPostRedisplay();		
 		//exit(0);
+	}
+
+	int logNum = colDetection(circle, Log);
+
+	bool colRiver = colDetection(circle, River);
+
+	for (int i = 0; i < realnLog; i++) {
+		if (logNum == i)
+			Log[i]->move(true, circle);
+		else
+			Log[i]->move(false, circle);
+	}
+
+	if (colRiver && logNum == -1) {
+		printf("circle falls in river... forever...\n");
+		Sleep(1000);
+		exit(0);
 	}
 
 	glutPostRedisplay();

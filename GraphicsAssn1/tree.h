@@ -1,5 +1,6 @@
 #pragma once
 #include "object.h"
+#include "circle.h"
 #include <vector>
 class tree : public myObject {
 public:

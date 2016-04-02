@@ -124,5 +124,8 @@
     <None Include="river.fs">
       <Filter>리소스 파일\shaders</Filter>
     </None>
+    <None Include="log.fs">
+      <Filter>리소스 파일\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
