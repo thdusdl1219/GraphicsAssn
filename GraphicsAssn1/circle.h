@@ -4,37 +4,45 @@
 #include "MvStack.h"
 #include "scenenode.h"
 #include <vector>
-
+#include <string.h>
 
 class cir : public myObject {
 private:
 	struct Node {
 		mat4  transform;
-		void (cir::*render)(void);
+		int tag;
 		Node* sibling;
 		Node* child;
 
 		Node() :
-			render(NULL), sibling(NULL), child(NULL) {}
+			tag(NULL), sibling(NULL), child(NULL) {}
 
-		Node(mat4& m, void (cir::*render)(void), Node* sibling, Node* child) :
-			transform(m), render(render), sibling(sibling), child(child) {}
+		Node(mat4& m, int tag, Node* sibling, Node* child) :
+			transform(m), tag(tag), sibling(sibling), child(child) {}
 	};
 
+	Node nodes[10];
 	float r;
 	float initX;
 	float initY;
 	float mapRadius;
-	std::vector<vec4> vertices;
+	std::vector<vec4> bodyVertices;	
+	std::vector<vec4> LegVertices;
+
 	GLuint vbo;
 	GLuint ModelView;
 	GLuint Projection;
-	Node nodes[11];
+	
 	mat4 model_view;
 	mat4 projection;
 	MatrixStack mvstack;
 
+	GLuint shader;
+	bool isRotate;
+
 public:
+	//scenenode nodes[10];
+	
 	cir(float x, float y, float r);
 	void create(GLuint);
 	float getR();
@@ -47,8 +55,14 @@ public:
 	void initNode();
 	void initVertex();
 	void torso();
+	void head();
+	void left_uleg();
+	void left_lleg();
+	void right_uleg();
+	void right_lleg();
+	
 	void traverse(Node* node);
-
+		
 };
 
 
