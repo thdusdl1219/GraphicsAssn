@@ -177,6 +177,7 @@
   <ItemGroup>
     <None Include="car.fs" />
     <None Include="circle.fs" />
+    <None Include="circle.vs" />
     <None Include="grass.fs" />
     <None Include="log.fs" />
     <None Include="object.vs" />

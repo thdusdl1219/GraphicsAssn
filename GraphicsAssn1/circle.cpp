@@ -122,8 +122,12 @@ float cir::getR() {
 }
 
 void cir::incY() {
-	if (y < 1 - (WORLD_SIZE / MAP_DIVIDE_Y))
-		y += WORLD_SIZE / MAP_DIVIDE_Y;
+	if (y < 1 - cincY) {
+		float a = y - 0.5 * cincY;
+		printf("%f\n", ROUNDING((x - 0.5 * cincX) / cincX, 0));
+		x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
+		y = (ROUNDING(a / cincY, 0) * cincY) + cincY + cincY * 0.5;
+	}
 }
 
 void cir::decY() {
@@ -132,8 +136,12 @@ void cir::decY() {
 }
 
 void cir::incX() {
-	if (x < 1 - (WORLD_SIZE / MAP_DIVIDE_X))
-		x += WORLD_SIZE / MAP_DIVIDE_X;
+	if (x < 1 - cincX) {
+		float a = x - 0.5 * cincX;
+		printf("%f\n", ROUNDING((y - 0.5 * cincY) / cincY, 0));
+		x = (ROUNDING(a / cincX, 0) * cincX) + cincX + cincX * 0.5;
+		y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
+	}
 	
 	if (isRotate == false){
 		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(30.0);
@@ -147,8 +155,12 @@ void cir::incX() {
 }
 
 void cir::decX() {
-	if (x > -1 + (WORLD_SIZE / MAP_DIVIDE_X))
-		x -= WORLD_SIZE / MAP_DIVIDE_X;
+	if (x > -1 + cincX) {
+		float a = x - 0.5 * cincX;
+		printf("%f\n", ROUNDING((y - 0.5 * cincY) / cincY, 0));
+		x = (ROUNDING(a / cincX, 0) * cincX) - cincX + cincX * 0.5;
+		y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
+	}
 }
 
 void cir::torso()
@@ -342,16 +354,16 @@ void cir::goPortal(portal** Portal)
 {
 	srand(time(NULL));
 	int goP = rand() % 2 + 1;
-	x = Portal[goP]->getX() + 0.5 * (WORLD_SIZE / MAP_DIVIDE_X);
-	y = Portal[goP]->getY() + 0.5 * (WORLD_SIZE / MAP_DIVIDE_Y);
-/*
-	vertices = {
-		vec2(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y - WORLD_SIZE / MAP_DIVIDE_Y / 2),
-		vec2(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y + WORLD_SIZE / MAP_DIVIDE_Y / 2),
-		vec2(x + WORLD_SIZE / MAP_DIVIDE_X / 2, y - WORLD_SIZE / MAP_DIVIDE_Y / 2),
-		vec2(x + WORLD_SIZE / MAP_DIVIDE_X / 2, y + WORLD_SIZE / MAP_DIVIDE_Y / 2)
+	x = Portal[goP]->getX() + 0.5 * (cincX);
+	y = Portal[goP]->getY() + 0.5 * (cincY);
 
-	};*/
+	vertices = {
+		vec2(x - cincX / 2, y - cincY / 2),
+		vec2(x - cincX / 2, y + cincY / 2),
+		vec2(x + cincX / 2, y - cincY / 2),
+		vec2(x + cincX / 2, y + cincY / 2)
+
+	};
 
 	World_L = x - (0.5 - (2.0 - x)) - 0.5;
 	World_R = 2.0;
@@ -360,4 +372,30 @@ void cir::goPortal(portal** Portal)
 	// glMatrixMode(GL_PROJECTION);
 	// glLoadIdentity();
 	// gluOrtho2D(World_L, World_R, World_B, World_T);
+}
+
+void cir::move(float x, float y, std::string direction) {
+	float tmpY = y + cincY * 0.5 - this->y;
+
+	if (this->y < -1.0 || this->y > 1.0) {
+		printf("circle go outside... forever...");
+		exit(1);
+	}
+
+	this->x = x + cincX * 0.5;
+	this->y = y + cincY * 0.5;
+	printf("world_T : %f\n", this->y);
+	if (World_T <= WORLD_SIZE && World_B >= 0) {
+		World_T += tmpY;
+		World_B += tmpY;
+	}
+	if (World_T > WORLD_SIZE) {
+		World_T = WORLD_SIZE;
+		World_B = WORLD_SIZE - WORLD_SIZE / DIVIDE_WINDOW;
+	}
+	else if (World_B < 0) {
+		World_T = WORLD_SIZE / DIVIDE_WINDOW;
+		World_B = 0;
+	}
+
 }

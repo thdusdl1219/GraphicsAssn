@@ -28,6 +28,7 @@ private:
 	float mapRadius;
 	std::vector<vec4> bodyVertices;	
 	std::vector<vec4> LegVertices;
+	std::vector<vec2> vertices;
 
 	GLuint vbo;
 	GLuint ModelView;
@@ -60,8 +61,9 @@ public:
 	void left_lleg();
 	void right_uleg();
 	void right_lleg();
-	
 	void traverse(Node* node);
+
+	void move(float, float, std::string);
 		
 };
 

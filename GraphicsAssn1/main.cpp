@@ -85,7 +85,7 @@ void init(void) {
 
 	//init circle, player
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
-	circleShader = new Shader("object.vs", "circle.fs");
+	circleShader = new Shader("circle.vs", "circle.fs");
 
 	//init portals
 	Portal[0] = new portal(gPos[1], incY * 19);
