@@ -98,6 +98,12 @@
     <ClInclude Include="river.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="MvStack.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="scenenode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="circle.fs">
@@ -115,11 +121,19 @@
     <None Include="portal.fs">
       <Filter>리소스 파일\shaders</Filter>
     </None>
-    <None Include="car.fs" />
-    <None Include="log.fs" />
-    <None Include="object.vs" />
-    <None Include="river.fs" />
     <None Include="circle.vs">
+      <Filter>리소스 파일\shaders</Filter>
+    </None>
+    <None Include="river.fs">
+      <Filter>리소스 파일\shaders</Filter>
+    </None>
+    <None Include="car.fs">
+      <Filter>리소스 파일\shaders</Filter>
+    </None>
+    <None Include="log.fs">
+      <Filter>리소스 파일\shaders</Filter>
+    </None>
+    <None Include="object.vs">
       <Filter>리소스 파일\shaders</Filter>
     </None>
   </ItemGroup>

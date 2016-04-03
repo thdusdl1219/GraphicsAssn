@@ -26,7 +26,7 @@ void car::create(GLuint shader) {
 	GLint posAttrib = glGetAttribLocation(shader, "pos");
 	glEnableVertexAttribArray(posAttrib);
 	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glDisableVertexAttribArray(posAttrib);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
 	glDeleteBuffers(1, &vbo);
 	/* glColor3f(0.0, 1.0, 1.0);

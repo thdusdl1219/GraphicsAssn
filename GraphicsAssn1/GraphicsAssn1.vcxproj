@@ -167,9 +167,11 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="circle.h" />
     <ClInclude Include="mat.h" />
+    <ClInclude Include="MvStack.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="portal.h" />
     <ClInclude Include="river.h" />
+    <ClInclude Include="scenenode.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="vec.h" />
