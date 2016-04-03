@@ -177,7 +177,8 @@ void cir::left_uleg()
 {
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * Scale(0.3, -1.2, 1.0) *  Translate(-bodyVertices[0]);
+	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * Scale(0.3, -1.2, 1.0) *  Translate(-bodyVertices[0]);
+
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
@@ -188,7 +189,8 @@ void cir::left_lleg()
 {
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.3, -2.0, 1.0) *  Translate(-bodyVertices[0]);	
+	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.3, -2.0, 1.0) *  Translate(-bodyVertices[0]);
+	
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
@@ -200,9 +202,12 @@ void cir::right_uleg()
 /*
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, wY, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
-
-	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
+	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, wY, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
+
+
+
+	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
+
 
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 	model_view = mvstack.pop();*/
@@ -213,9 +218,12 @@ void cir::right_lleg()
 /*
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, wY, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
-
-	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
+	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, wY, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
+
+
+
+	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
+
 
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 	model_view = mvstack.pop();*/

@@ -1,15 +1,16 @@
-#include "car.h"
+#include "log.h"
 #include "default.h"
 
 
 
-car::car(float x, float y, const std::string direction) : myObject(x, y) {
+
+logt::logt(float x, float y, const std::string direction) : myObject(x, y) {
 	this->direction = direction;
 	this->x = x - 1;
 	this->y = y - 1;
 }
 
-void car::create(GLuint shader) {
+void logt::create(GLuint shader) {
 	vertices = {
 		vec2(x, y),
 		vec2(x, y + (WORLD_SIZE / MAP_DIVIDE_Y)),
@@ -22,26 +23,36 @@ void car::create(GLuint shader) {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec2), &vertices[0], GL_STATIC_DRAW);
 
-	
+
 	GLint posAttrib = glGetAttribLocation(shader, "pos");
 	glEnableVertexAttribArray(posAttrib);
 	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glDisableVertexAttribArray(posAttrib);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
 	glDeleteBuffers(1, &vbo);
 	/* glColor3f(0.0, 1.0, 1.0);
 	glRectf(x, y, x + (WORLD_SIZE / MAP_DIVIDE_X), y + (WORLD_SIZE/MAP_DIVIDE_Y)); */
 }
-void car::move()
+void logt::move(bool col, cir* circle)
 {
-	if (direction == "UP")
-	{
-		incY();
+	if (!col) {
+		if (direction == "UP")
+		{
+			incY();
+		}
+		else decY();
 	}
-	else decY();
+	else {
+		if (direction == "UP")
+		{
+			incY();
+		}
+		else decY();
+		circle->move(x, y, direction);
+	}
 }
 
-void car::incY() {
+void logt::incY() {
 	if (y < 1.0 - (WORLD_SIZE / MAP_DIVIDE_Y))
 		y += WORLD_SIZE / MAP_DIVIDE_Y / SPEED;
 	else {
@@ -49,7 +60,7 @@ void car::incY() {
 	}
 }
 
-void car::decY() {
+void logt::decY() {
 	if (y > -1.0)
 		y -= WORLD_SIZE / MAP_DIVIDE_Y / SPEED;
 	else y = WORLD_SIZE;

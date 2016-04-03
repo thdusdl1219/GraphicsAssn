@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <iostream>
 
+#define ROUNDING(x, dig)    ( floor((x) * pow(float(10), dig) + 0.5f) / pow(float(10), dig) )
 #define MAP_DIVIDE_X 20
 #define MAP_DIVIDE_Y 20
 #define WINDOW_HEIGHT 300
@@ -19,6 +20,8 @@
 #define WORLD_SIZE 2.0
 #define DIVIDE_WINDOW 2.0f
 
+#define cincY (float)(WORLD_SIZE / MAP_DIVIDE_Y)
+#define cincX (float)(WORLD_SIZE / MAP_DIVIDE_X)
 
 const float incX = WORLD_SIZE / MAP_DIVIDE_X;
 const float incY = WORLD_SIZE / MAP_DIVIDE_Y;

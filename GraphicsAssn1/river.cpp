@@ -1,22 +1,23 @@
-#include "portal.h"
+#include "river.h"
 #include "default.h"
 
-const float padding = WORLD_SIZE / 300.0;
 
-portal::portal(float x, float y) : myObject(x, y) {
+river::river(float x, float y) : myObject(x, y) {
+
 	this->x = x - 1;
 	this->y = y - 1;
 
 	vertices = {
-		vec2(this->x + padding, this->y),
-		vec2(this->x + padding, this->y + incY),
+		vec2(this->x, this->y),
+		vec2(this->x, this->y + 2),
 		vec2(this->x + incX, this->y),
-		vec2(this->x + incX, this->y + incY)
+		vec2(this->x + incX, this->y + 2)
 	};
 
 }
 
-void portal::create(GLuint shader) {
+void river::create(GLuint shader) {
+
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -30,9 +31,8 @@ void portal::create(GLuint shader) {
 
 	glDeleteBuffers(1, &vbo);
 
-	// glColor3f(1.0, 0.0, 1.0);
-	//printf("%f", ((1.0 / MAP_DIVIDE_X) - TREE_SIZE));
-	// glRectf(x + padding, y, x + incX - padding, y + incY);
-	//glRectf(x, y, x + TREE_SIZE * RATIO, y + TREE_SIZE);
+
+	/* glColor3f(0.0, 1.0, 0.0);
+	glRectf(x, y, x + (incX), y + 1); */
 }
 

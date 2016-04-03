@@ -2,11 +2,13 @@
 #include "object.h"
 #include "circle.h"
 #include <vector>
-class tree : public myObject {
+
+class river : public myObject {
 public:
-	tree(float x, float y);
+	river(float x, float y);
 	void create(GLuint);
 private:
 	std::vector<vec2> vertices;
 	GLuint vbo;
+	//
 };

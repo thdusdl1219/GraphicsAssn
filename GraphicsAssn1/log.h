@@ -3,15 +3,15 @@
 #include "circle.h"
 #include <string>
 #include <vector>
-#define SPEED 50
-class car : public myObject {
+#define SPEED 40
+class logt : public myObject {
 public:
-	car(float x, float y, const std::string direction);
+	logt(float x, float y, const std::string direction);
 	void create(GLuint);
-	void move();
+	void move(bool, cir*);
 	void incY();
 	void decY();
-
+	
 private:
 	//String value has 'Up or Down'
 	std::string direction;
