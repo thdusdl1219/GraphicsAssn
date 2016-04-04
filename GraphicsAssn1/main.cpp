@@ -232,7 +232,7 @@ void display(void) {
 		Log[i]->create(LogShader->getShader());
 	}
 
-	circle->create(circleShader->getShader());
+	circle->create(circleShader->getShader2());
 
 	for (int i = 0; i < realnCar; i++)
 	{
@@ -258,32 +258,23 @@ void reshape(int w, int h) {
 //Collision detection between player and Car
 bool colDetection(cir* circle, car** Car)
 {
+
 	float cirX = circle->getX();
 	float cirY = circle->getY();
-	float cirR = circle->getR();
 	
-	for (int i = 0; i < realnCar; i++){
+
+	for (int i = 0; i < realnCar; i++) {
 		float carX = Car[i]->getX();
 		float carY = Car[i]->getY();
-	
-		if (
-			(cirX >= carX && cirX <= carX + incX) ||
-			((cirX + cirR) >= carX && (cirX + cirR) <= (carX + incX)) )
-		{
-	
-			if (
-				
-				(cirY >= carY && cirY <= (carY + incY)) ||
-				((cirY + cirR) >= carY && (cirY + cirR) <= (carY + incY)) ||
-				((cirY - cirR) >= carY && (cirY - cirR) <= (carY + incY)))
 
-			{
-				
+
+		if ((cirX >= carX && cirX <= carX + incX)
+			&&
+			(cirY >= carY && cirY <= carY + incY))
+
 				return true;
-			}
-				
-		}
-		
+			
+			
 	}
 	return false;
 }
@@ -303,9 +294,7 @@ bool colDetection(cir* circle, tree** Tree)
 		if ((cirX >= treeX && cirX <= treeX + incX)
 			&&
 			(cirY >= treeY && cirY <= treeY + incY))
-		{
-
-			
+		{		
 			return true;
 		}
 	}
@@ -453,11 +442,12 @@ void refreshAll(STATE s) {
 			World_R -= incX;
 		}
 	}
-	
+	glutPostRedisplay();
+	glutSwapBuffers();
 }
 
 void specialkeyboard(int key, int x, int y) {
-	printf("CPos : %f %f %f\n", circle->getX(), circle->getY(), incX);
+	
 	switch (key) {
 	case GLUT_KEY_UP:
 		refreshAll(UP);
@@ -472,6 +462,8 @@ void specialkeyboard(int key, int x, int y) {
 		refreshAll(LEFT);
 		break;
 	}
+	printf("CPos : %f %f %f\n", circle->getX(), circle->getY(), incX);
+
 	glutPostRedisplay();
 }
 
@@ -507,7 +499,7 @@ void ReDisplayTimer(int value)
 		// gluOrtho2D(gOverPosX-width+0.1, gOverPosX+width, gOverPosY-height, gOverPosY+height);
 		value = 0;
 		//glutPostRedisplay();		
-		//exit(0);
+		exit(0);
 	}
 
 	int logNum = colDetection(circle, Log);

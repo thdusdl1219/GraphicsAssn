@@ -21,13 +21,11 @@ private:
 			transform(m), tag(tag), sibling(sibling), child(child) {}
 	};
 
-	Node nodes[10];
-	float r;
-	float initX;
-	float initY;
+	Node nodes[10];	
+
 	float mapRadius;
 	std::vector<vec4> bodyVertices;	
-	std::vector<vec4> LegVertices;
+	
 	std::vector<vec2> vertices;
 
 	GLuint vbo;
@@ -40,13 +38,14 @@ private:
 
 	GLuint shader;
 	bool isRotate;
+	
 
 public:
 	//scenenode nodes[10];
 	
 	cir(float x, float y, float r);
 	void create(GLuint);
-	float getR();
+	
 	void incY();
 	void decY();
 	void incX();

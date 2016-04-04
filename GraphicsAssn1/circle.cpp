@@ -25,11 +25,10 @@ float World_B = 0;
 float World_R = WORLD_SIZE / DIVIDE_WINDOW;
 float World_T = WORLD_SIZE / DIVIDE_WINDOW;
 
-const float torso_height = (WORLD_SIZE / MAP_DIVIDE_X);
-const float torso_width = (WORLD_SIZE / MAP_DIVIDE_Y);
 const int NumVertices = 6;
 const float divY = 2.0;
-const float wY = WORLD_SIZE / MAP_DIVIDE_Y / divY;
+const float wY = cincY / divY;
+
 enum {
 	Torso = 0,
 	Head = 1,
@@ -68,7 +67,7 @@ void cir::traverse(Node* node)
 	mvstack.push(model_view);
 		
 	model_view *= node->transform;
-	
+
 	
 	switch(node->tag)
 	{
@@ -102,73 +101,96 @@ void cir::traverse(Node* node)
 
 
 cir::cir(float x, float y, float r) : myObject(x, y)
-{
-	this->r = r;
+{	
 	this->x = x - 1;
 	this->y = y - 1;
-	this->initX = this->x;
-	this->initY = this->y;
-	mapRadius = r * RATIO;
+	
 	//identity
 	model_view = mat4(1.0);
 	projection = mat4(1.0);
 	initNode();
 	isRotate = false;
+
 }
 
-
-float cir::getR() {
-	return mapRadius;
-}
 
 void cir::incY() {
 	if (y < 1 - cincY) {
 		float a = y - 0.5 * cincY;
-		printf("%f\n", ROUNDING((x - 0.5 * cincX) / cincX, 0));
-		x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
+		//printf("%f\n", ROUNDING((x - 0.5 * cincX) / cincX, 0));
+		//x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
 		y = (ROUNDING(a / cincY, 0) * cincY) + cincY + cincY * 0.5;
 	}
+	
 }
 
 void cir::decY() {
-	if (y > -1 + (WORLD_SIZE / MAP_DIVIDE_Y))
-		y -= WORLD_SIZE / MAP_DIVIDE_Y;
+	if (y > -1 + cincY) {
+		float a = y - 0.5 * cincY;
+		//printf("%f\n", ROUNDING((x - 0.5 * cincX) / cincX, 0));
+		//x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
+		y = (ROUNDING(a / cincY, 0) * cincY) - cincY + cincY * 0.5;
+		
+	
+	}
+	
 }
 
 void cir::incX() {
 	if (x < 1 - cincX) {
-		float a = x - 0.5 * cincX;
-		printf("%f\n", ROUNDING((y - 0.5 * cincY) / cincY, 0));
-		x = (ROUNDING(a / cincX, 0) * cincX) + cincX + cincX * 0.5;
-		y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
+		//float a = x - 1.0 * cincX;
+		//printf("%f\n", ROUNDING((y - 0.5 * cincY) / cincY, 0));
+		//printf("before x : %f\n", x);
+		//x = (ROUNDING( a / cincX, 0) * cincX) + cincX + cincX * 1;
+		//printf("after x : %f\n", x);
+		//y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
+		//
+		x += cincX;
+		
 	}
 	
 	if (isRotate == false){
+		//nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(45.0);
 		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(30.0);
 		isRotate = true;
+		
 	}
 	else if (isRotate == true)
 	{
+		//nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(45.0);
 		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(-30.0);
 		isRotate = false;
 	}
+	
 }
 
 void cir::decX() {
 	if (x > -1 + cincX) {
-		float a = x - 0.5 * cincX;
-		printf("%f\n", ROUNDING((y - 0.5 * cincY) / cincY, 0));
-		x = (ROUNDING(a / cincX, 0) * cincX) - cincX + cincX * 0.5;
-		y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
+		//float a = x - 0.5 * cincX;
+		////printf("%f\n", ROUNDING((y - 0.5 * cincY) / cincY, 0));
+		//x = (ROUNDING(a / cincX, 0) * cincX) - cincX + cincX * 0.5;
+		//y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
+		x -= cincX;
+		
+	}
+	if (isRotate == true) {
+		//nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(45.0);
+		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(-30.0);
+		isRotate = false;		
+	}
+	else if (isRotate == false)
+	{
+		//nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(45.0);
+		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(30.0);
+		isRotate = true;
 	}
 }
 
 void cir::torso()
 {
 	mvstack.push(model_view);
-	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
-	
-	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
+	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);	
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
 
 	model_view = mvstack.pop();
 }
@@ -177,11 +199,11 @@ void cir::head()
 {
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, wY, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
+	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, cincY/8, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
 	
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 	
-	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
 	model_view = mvstack.pop();
 }
 
@@ -189,11 +211,11 @@ void cir::left_uleg()
 {
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * Scale(0.3, -1.2, 1.0) *  Translate(-bodyVertices[0]);
+	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * Scale(0.3, -1.0, 1.0) *  Translate(-bodyVertices[0]);
 
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 
-	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
 	model_view = mvstack.pop();
 }
 
@@ -205,7 +227,7 @@ void cir::left_lleg()
 	
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 
-	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
 	model_view = mvstack.pop();
 }
 
@@ -244,9 +266,9 @@ void cir::right_lleg()
 void cir::initNode()
 {	
 
-	mat4  m;
-	m = mat4(1.0);
-
+	mat4  m(1.0);
+	//m = Scale(DIVIDE_WINDOW, DIVIDE_WINDOW, 1);
+	
 	//torso ±âÁØ
 	nodes[Torso] = Node(m, Torso, NULL, &nodes[Head]);	
 	nodes[Head] = Node(m, Head, NULL, &nodes[LeftUpperLeg]);
@@ -263,49 +285,25 @@ void cir::initNode()
 
 void cir::initVertex()
 {
-	bodyVertices = {
-		//torso1
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X/2 , y - wY, 0,1),
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X/2 , y + wY, 0,1),
-		vec4(x + WORLD_SIZE / MAP_DIVIDE_X , y - wY, 0,1),
-		//torso2
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 2 , y + wY, 0,1),
-		vec4(x + WORLD_SIZE / MAP_DIVIDE_X , y + wY, 0,1),
-		vec4(x + WORLD_SIZE / MAP_DIVIDE_X , y - wY, 0,1),
-/*
-		//head1
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 4 , y + wY, 0,1),
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 4 , y + wY + wY / 2, 0,1),
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 4 + WORLD_SIZE / MAP_DIVIDE_X / divY, y + wY / 2, 0,1),
-		//head2
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 4 , y + wY + wY / 2, 0,1),
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 4 + WORLD_SIZE / MAP_DIVIDE_X / divY , y + wY + wY / 2, 0,1),
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 4 + WORLD_SIZE / MAP_DIVIDE_X / divY , y + wY / 2, 0,1),
-		//arm
-		vec4(x + WORLD_SIZE / MAP_DIVIDE_X / 4 , y, 0,1),
-		vec4(x + WORLD_SIZE / MAP_DIVIDE_X / 4 , y + wY, 0,1),
-		vec4(x + WORLD_SIZE / MAP_DIVIDE_X / 4 + WORLD_SIZE / MAP_DIVIDE_X, y , 0,1)*/
-	};
 
+	
+	bodyVertices = {		
+		//torso1
+		vec4(x - cincX / 2 , y - cincY / 8, 0,1),
+		vec4(x - cincX / 2 , y, 0,1),
+		vec4(x + cincX / 2, y - cincY / 8, 0,1),
+		//torso2
+		vec4(x - cincX / 2 , y + cincY / 8, 0,1),
+		vec4(x + cincX / 2, y + cincY / 8, 0,1),
+		vec4(x + cincX / 2, y, 0,1),	
+
+	};
 /*
-	LegVertices = {
-		//left leg top
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y - wY / 2, 0,1),
-		vec4(x, y - wY, 0,1),
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y - wY - wY / 2, 0,1),
-		//left leg bottom
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y - wY - wY / 2, 0,1),
-		vec4(x - WORLD_SIZE / MAP_DIVIDE_X / 2, y - wY - wY, 0,1),
-		vec4(x, y - 2 * wY, 0,1),
-		//right leg top
-		vec4(x + WORLD_SIZE / MAP_DIVIDE_X / 2 , y - wY, 0,1),
-		vec4(x, y - wY, 0,1),
-		vec4(x, y - wY - wY / 2, 0,1),
-		//right leg bottom
-		vec4(x, y - 2 * wY, 0,1),
-		vec4(x + WORLD_SIZE / MAP_DIVIDE_X / 2, y - 2 * wY, 0,1),
-		vec4(x, y - wY - wY / 2, 0,1),
-	};* /*/
+	colorVertices = {
+
+	};
+*/
+
 }
 
 void cir::create(GLuint shader)
@@ -326,7 +324,7 @@ void cir::create(GLuint shader)
 	this->shader = shader;
 	glUseProgram(shader);
 
-	GLint vPosition = glGetAttribLocation(shader, "vPosition");
+	GLint vPosition = glGetAttribLocation(shader, "vPosition");	
 	glEnableVertexAttribArray(vPosition);
 	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
 	
@@ -339,6 +337,7 @@ void cir::create(GLuint shader)
 
 void cir::setInitPos()
 {
+/*
 	x = initX;
 	y = initY;
 	World_L = 0;
@@ -347,7 +346,7 @@ void cir::setInitPos()
 	World_T = WORLD_SIZE / DIVIDE_WINDOW;
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(World_L, World_R, World_B, World_T);
+	gluOrtho2D(World_L, World_R, World_B, World_T);*/
 }
 
 void cir::goPortal(portal** Portal)
@@ -369,18 +368,16 @@ void cir::goPortal(portal** Portal)
 	World_R = 2.0;
 	World_B = y - (0.5 - (2.0 - y)) - 0.5;
 	World_T = 2.0;
-	// glMatrixMode(GL_PROJECTION);
-	// glLoadIdentity();
-	// gluOrtho2D(World_L, World_R, World_B, World_T);
+
 }
 
 void cir::move(float x, float y, std::string direction) {
 	float tmpY = y + cincY * 0.5 - this->y;
 
-	if (this->y < -1.0 || this->y > 1.0) {
-		printf("circle go outside... forever...");
-		exit(1);
-	}
+	//if (this->y < -1.0 || this->y > 1.0) {
+	//	printf("circle go outside... forever...");
+	//	exit(1);
+	//}
 
 	this->x = x + cincX * 0.5;
 	this->y = y + cincY * 0.5;
