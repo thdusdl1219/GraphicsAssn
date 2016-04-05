@@ -21,22 +21,23 @@ private:
 			transform(m), tag(tag), sibling(sibling), child(child) {}
 	};
 
-	Node nodes[10];	
+	Node nodes[11];	
 
 	float mapRadius;
-	std::vector<vec4> bodyVertices;	
-	
+	std::vector<vec4> bodyVertices;		
+	std::vector<vec4> colorVertices;
 	std::vector<vec2> vertices;
 
-	GLuint vbo;
+	GLuint vbo[2];
 	GLuint ModelView;
 	GLuint Projection;
-	
+	GLuint shader;
 	mat4 model_view;
 	mat4 projection;
 	MatrixStack mvstack;
 
-	GLuint shader;
+
+	
 	bool isRotate;
 	
 

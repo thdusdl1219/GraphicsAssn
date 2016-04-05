@@ -6,12 +6,12 @@ uniform mat4 Projection;
 uniform vec2 offset;
 uniform mat4 scalef;
 
-in vec4 color;
-out vec4 colorV;
+in vec4 vColor;
+out vec4 color;
 
 void main()
 {		
-	colorV = color;
+	color = vColor;
 
 	vec4 pos = ModelView * vPosition; 
 

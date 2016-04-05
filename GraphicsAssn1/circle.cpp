@@ -4,22 +4,6 @@
 #include <ctime>
 
 
-
-
-#define TORSO_HEIGHT 5.0
-#define TORSO_WIDTH 1.0
-#define UPPER_ARM_HEIGHT 3.0
-#define LOWER_ARM_HEIGHT 2.0
-#define UPPER_LEG_WIDTH  0.5
-#define LOWER_LEG_WIDTH  0.5
-#define LOWER_LEG_HEIGHT 2.0
-#define UPPER_LEG_HEIGHT 3.0
-#define UPPER_LEG_WIDTH  0.5
-#define UPPER_ARM_WIDTH  0.5
-#define LOWER_ARM_WIDTH  0.5
-#define HEAD_HEIGHT 1.5
-#define HEAD_WIDTH 1.0
-
 float World_L = 0;
 float World_B = 0;
 float World_R = WORLD_SIZE / DIVIDE_WINDOW;
@@ -32,8 +16,6 @@ const float wY = cincY / divY;
 enum {
 	Torso = 0,
 	Head = 1,
-	Head1 = 1,
-	Head2 = 2,
 	LeftUpperArm = 3,
 	LeftLowerArm = 4,
 	RightUpperArm = 5,
@@ -46,19 +28,6 @@ enum {
 	Quit
 };
 
-const GLfloat theta[NumNodes] = {
-	0.0,    // Torso
-	0.0,    // Head1
-	0.0,    // Head2
-	0.0,    // LeftUpperArm
-	0.0,    // LeftLowerArm
-	0.0,    // RightUpperArm
-	0.0,    // RightLowerArm
-	180.0,  // LeftUpperLeg
-	0.0,     // LeftLowerLeg
-	180.0,  // RightUpperLeg
-	0.0    // RightLowerLeg
-};
 
 void cir::traverse(Node* node)
 {
@@ -150,15 +119,19 @@ void cir::incX() {
 	}
 	
 	if (isRotate == false){
-		//nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(45.0);
-		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(30.0);
+		nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(30.0);
+		nodes[RightUpperLeg].transform = nodes[RightUpperLeg].transform * RotateZ(-30.0);		
+		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(-60.0);
+		nodes[RightLowerLeg].transform = nodes[RightLowerLeg].transform * RotateZ(60.0);
 		isRotate = true;
 		
 	}
 	else if (isRotate == true)
 	{
-		//nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(45.0);
-		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(-30.0);
+		nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(-30.0);
+		nodes[RightUpperLeg].transform = nodes[RightUpperLeg].transform * RotateZ(30.0);
+		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(60.0);
+		nodes[RightLowerLeg].transform = nodes[RightLowerLeg].transform * RotateZ(-60.0);
 		isRotate = false;
 	}
 	
@@ -166,37 +139,62 @@ void cir::incX() {
 
 void cir::decX() {
 	if (x > -1 + cincX) {
-		//float a = x - 0.5 * cincX;
-		////printf("%f\n", ROUNDING((y - 0.5 * cincY) / cincY, 0));
-		//x = (ROUNDING(a / cincX, 0) * cincX) - cincX + cincX * 0.5;
-		//y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
+
 		x -= cincX;
 		
 	}
-	if (isRotate == true) {
-		//nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(45.0);
-		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(-30.0);
-		isRotate = false;		
-	}
-	else if (isRotate == false)
-	{
-		//nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(45.0);
-		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(30.0);
+	if (isRotate == false) {
+		nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(30.0);
+		nodes[RightUpperLeg].transform = nodes[RightUpperLeg].transform * RotateZ(-30.0);
+		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(-60.0);
+		nodes[RightLowerLeg].transform = nodes[RightLowerLeg].transform * RotateZ(60.0);
 		isRotate = true;
+
 	}
+	else if (isRotate == true)
+	{
+		nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(-30.0);
+		nodes[RightUpperLeg].transform = nodes[RightUpperLeg].transform * RotateZ(30.0);
+		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(60.0);
+		nodes[RightLowerLeg].transform = nodes[RightLowerLeg].transform * RotateZ(-60.0);
+		isRotate = false;
+	}
+
+
 }
 
 void cir::torso()
 {
+	//color	
+	GLuint t;
+	glGenBuffers(1, &t);
+	glBindBuffer(GL_ARRAY_BUFFER, t);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vec4), &colorVertices[3], GL_STATIC_DRAW);
+
+	GLint vColor = glGetAttribLocation(shader, "vColor");
+	glEnableVertexAttribArray(vColor);
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
 	mvstack.push(model_view);
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
-
+	
 	model_view = mvstack.pop();
+
 }
 
 void cir::head()
 {
+	//color	
+	GLuint h;
+	glGenBuffers(1, &h);
+	glBindBuffer(GL_ARRAY_BUFFER, h);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vec4), &colorVertices[3], GL_STATIC_DRAW);
+
+	GLint vColor = glGetAttribLocation(shader, "vColor");
+	glEnableVertexAttribArray(vColor);
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
 	mvstack.push(model_view);
 
 	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, cincY/8, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
@@ -209,9 +207,19 @@ void cir::head()
 
 void cir::left_uleg()
 {
+	//color	
+	GLuint l;
+	glGenBuffers(1, &l);
+	glBindBuffer(GL_ARRAY_BUFFER, l);	
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vec4), &colorVertices[3], GL_STATIC_DRAW);
+
+	GLint vColor = glGetAttribLocation(shader, "vColor");
+	glEnableVertexAttribArray(vColor);
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * Scale(0.3, -1.0, 1.0) *  Translate(-bodyVertices[0]);
+	model_view = Translate(cincX / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.1, -1.0, 1.0) *  Translate(-bodyVertices[0]);
 
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 
@@ -223,7 +231,7 @@ void cir::left_lleg()
 {
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.3, -2.0, 1.0) *  Translate(-bodyVertices[0]);
+	model_view = Translate(cincX / 2, -cincY / 4, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.1, -1.5, 1.0) *  Translate(-bodyVertices[0]);
 	
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 
@@ -233,39 +241,31 @@ void cir::left_lleg()
 
 void cir::right_uleg()
 {
-/*
+
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, wY, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
-
-
+	model_view = Translate(cincX/8, 0.0, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.1, -1.0, 1.0) *  Translate(-bodyVertices[0]);
 
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 
-
-	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
-	model_view = mvstack.pop();*/
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
+	model_view = mvstack.pop();
 }
 
 void cir::right_lleg()
 {
-/*
 	mvstack.push(model_view);
 
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, wY, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
-
-
+	model_view = Translate(cincX/8, -cincY / 4, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.1, -1.5, 1.0) *  Translate(-bodyVertices[0]);
 
 	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 
-
-	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
-	model_view = mvstack.pop();*/
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
+	model_view = mvstack.pop();
 }
 
 void cir::initNode()
 {	
-
 	mat4  m(1.0);
 	//m = Scale(DIVIDE_WINDOW, DIVIDE_WINDOW, 1);
 	
@@ -276,11 +276,8 @@ void cir::initNode()
 	nodes[LeftUpperLeg] = Node(m, LeftUpperLeg, &nodes[RightUpperLeg], &nodes[LeftLowerLeg]);
 	nodes[LeftLowerLeg] = Node(m, LeftLowerLeg, NULL, NULL);
 	//right_leg ±âÁØ
-	/*nodes[RightUpperLeg] = Node(m, RightUpperLeg, NULL, &nodes[RightLowerLeg]);
-	nodes[RightLowerLeg] = Node(m, RightLowerLeg, NULL, NULL);* /
-*/
-
-
+	nodes[RightUpperLeg] = Node(m, RightUpperLeg, NULL, &nodes[RightLowerLeg]);
+	nodes[RightLowerLeg] = Node(m, RightLowerLeg, NULL, NULL);
 }
 
 void cir::initVertex()
@@ -298,11 +295,17 @@ void cir::initVertex()
 		vec4(x + cincX / 2, y, 0,1),	
 
 	};
-/*
 	colorVertices = {
-
+		vec4(0.0, 0.0, 0.0, 1.0),  // black
+		vec4(1.0, 0.0, 0.0, 1.0),  // red
+		vec4(1.0, 1.0, 0.0, 1.0),  // yellow
+		vec4(0.0, 1.0, 0.0, 1.0),  // green
+		vec4(0.0, 0.0, 1.0, 1.0),  // blue
+		vec4(1.0, 0.0, 1.0, 1.0),  // magenta
+		vec4(1.0, 1.0, 1.0, 1.0),  // white
+		vec4(0.0, 1.0, 1.0, 1.0)   // cyan
 	};
-*/
+
 
 }
 
@@ -316,17 +319,21 @@ void cir::create(GLuint shader)
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+	
+	
 
-	glGenBuffers(2, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glGenBuffers(2, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, bodyVertices.size() * sizeof(vec4), &bodyVertices[0], GL_STATIC_DRAW);
+
+
+	GLint vPosition = glGetAttribLocation(shader, "vPosition");
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	
 	
 	this->shader = shader;
 	glUseProgram(shader);
-
-	GLint vPosition = glGetAttribLocation(shader, "vPosition");	
-	glEnableVertexAttribArray(vPosition);
-	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
 	
 	ModelView = glGetUniformLocation(shader, "ModelView");
 	Projection = glGetUniformLocation(shader, "Projection");
