@@ -96,7 +96,7 @@ GLuint Shader::getShader() {
 		glUniform2fv(Mloc, 1, mv);
 	}
 	else {
-		//std::cout << "get uniform error" << std::endl;
+		std::cout << "get uniform error" << std::endl;
 	}
 
 	return program;
@@ -105,15 +105,24 @@ GLuint Shader::getShader() {
 GLuint Shader::getShader2() {
 	glUseProgram(program);
 
-	vec4 mv = vec4(defaultX - World_L, defaultY - World_B,0,1);
-	GLint Mloc = glGetUniformLocation(program, "wPos");
+	mat4 sca = Scale(DIVIDE_WINDOW, DIVIDE_WINDOW, 1);
+
+	GLint loc = glGetUniformLocation(program, "scalef");
+	if (loc != -1)
+	{
+		glUniformMatrix4fv(loc, 1, GL_FALSE, sca);
+	}
+
+	vec2 mv = vec2(defaultX - World_L, defaultY - World_B);
+
+	GLint Mloc = glGetUniformLocation(program, "offset");
 
 	if (Mloc != -1)
 	{
 		glUniform2fv(Mloc, 1, mv);
 	}
 	else {
-		//std::cout << "get uniform error" << std::endl;
+		std::cout << "get uniform error" << std::endl;
 	}
 	return program;
 }
