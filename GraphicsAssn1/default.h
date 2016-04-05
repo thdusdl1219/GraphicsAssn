@@ -35,5 +35,5 @@ enum STATE {
 	RIGHT,
 };
 
-#define defaultX 0.5f
-#define defaultY 0.5f
+#define defaultX -1.0f
+#define defaultY -1.0f
