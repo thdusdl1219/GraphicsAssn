@@ -1,7 +1,7 @@
 #include "log.h"
 #include "default.h"
 
-
+int logt::realnLog = 0;
 
 
 logt::logt(float x, float y, const std::string direction) : myObject(x, y) {
@@ -33,23 +33,16 @@ void logt::create(GLuint shader) {
 	/* glColor3f(0.0, 1.0, 1.0);
 	glRectf(x, y, x + (WORLD_SIZE / MAP_DIVIDE_X), y + (WORLD_SIZE/MAP_DIVIDE_Y)); */
 }
-void logt::move(bool col, cir* circle)
+
+void logt::move()
 {
-	if (!col) {
-		if (direction == "UP")
-		{
-			incY();
-		}
-		else decY();
+
+	if (direction == "UP")
+	{
+		incY();
 	}
-	else {
-		if (direction == "UP")
-		{
-			incY();
-		}
-		else decY();
-		circle->move(x, y, direction);
-	}
+	else decY();
+
 }
 
 void logt::incY() {
@@ -66,3 +59,6 @@ void logt::decY() {
 	else y = WORLD_SIZE;
 }
 
+std::string logt::getDirection() {
+	return direction;
+}

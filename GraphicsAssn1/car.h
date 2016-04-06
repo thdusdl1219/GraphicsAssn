@@ -1,6 +1,5 @@
 #pragma once
 #include "object.h"
-#include "circle.h"
 #include <string>
 #include <vector>
 #define SPEED 50
@@ -11,6 +10,7 @@ public:
 	void move();
 	void incY();
 	void decY();
+	static int realnCar;
 
 private:
 	//String value has 'Up or Down'

@@ -1,6 +1,5 @@
 #pragma once
 #include "object.h"
-#include "circle.h"
 #include <vector>
 
 class river : public myObject {

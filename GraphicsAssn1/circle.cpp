@@ -87,7 +87,7 @@ void cir::incY() {
 	if (y < 1 - cincY) {
 		float a = y - 0.5 * cincY;
 		//printf("%f\n", ROUNDING((x - 0.5 * cincX) / cincX, 0));
-		//x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
+		x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
 		y = (ROUNDING(a / cincY, 0) * cincY) + cincY + cincY * 0.5;
 	}
 	
@@ -97,7 +97,7 @@ void cir::decY() {
 	if (y > -1 + cincY) {
 		float a = y - 0.5 * cincY;
 		//printf("%f\n", ROUNDING((x - 0.5 * cincX) / cincX, 0));
-		//x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
+		x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
 		y = (ROUNDING(a / cincY, 0) * cincY) - cincY + cincY * 0.5;
 		
 	
@@ -105,16 +105,17 @@ void cir::decY() {
 	
 }
 
-void cir::incX() {
+void cir::incX(int logNum) {
 	if (x < 1 - cincX) {
-		//float a = x - 1.0 * cincX;
+		float a = x - 0.5 * cincX;
 		//printf("%f\n", ROUNDING((y - 0.5 * cincY) / cincY, 0));
 		//printf("before x : %f\n", x);
 		//x = (ROUNDING( a / cincX, 0) * cincX) + cincX + cincX * 1;
 		//printf("after x : %f\n", x);
-		//y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
-		//
+		if(logNum == -1)
+			y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
 		x += cincX;
+		//
 		
 	}
 	
@@ -137,11 +138,13 @@ void cir::incX() {
 	
 }
 
-void cir::decX() {
+void cir::decX(int logNum) {
 	if (x > -1 + cincX) {
-
+		float a = x - 0.5 * cincX;
+		if (logNum == -1) 
+			y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
 		x -= cincX;
-		
+
 	}
 	if (isRotate == false) {
 		nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(30.0);
@@ -381,14 +384,14 @@ void cir::goPortal(portal** Portal)
 void cir::move(float x, float y, std::string direction) {
 	float tmpY = y + cincY * 0.5 - this->y;
 
-	//if (this->y < -1.0 || this->y > 1.0) {
-	//	printf("circle go outside... forever...");
-	//	exit(1);
-	//}
+	if (this->y < -1.0 || this->y > 1.0) {
+		printf("circle go outside... forever...");
+		exit(1);
+	}
 
 	this->x = x + cincX * 0.5;
 	this->y = y + cincY * 0.5;
-	printf("world_T : %f\n", this->y);
+	// printf("world_T : %f\n", this->y);
 	if (World_T <= WORLD_SIZE && World_B >= 0) {
 		World_T += tmpY;
 		World_B += tmpY;
@@ -401,5 +404,122 @@ void cir::move(float x, float y, std::string direction) {
 		World_T = WORLD_SIZE / DIVIDE_WINDOW;
 		World_B = 0;
 	}
+
+}
+
+bool cir::colDetection(car** Car)
+{
+
+	float cirX = x;
+	float cirY = y;
+
+
+	for (int i = 0; i < car::realnCar; i++) {
+		float carX = Car[i]->getX();
+		float carY = Car[i]->getY();
+
+
+		if ((cirX >= carX && cirX <= carX + cincX)
+			&&
+			(cirY >= carY && cirY <= carY + cincY))
+
+			return true;
+
+
+	}
+	return false;
+}
+
+bool cir::colDetection(tree** Tree)
+{
+	float cirX = x;
+	float cirY = y;
+
+	for (int i = 0; i < nTree; i++)
+	{
+		float treeX = Tree[i]->getX();
+		float treeY = Tree[i]->getY();
+
+
+
+		if ((cirX >= treeX && cirX <= treeX + cincX)
+			&&
+			(cirY >= treeY && cirY <= treeY + cincY))
+		{
+			return true;
+		}
+	}
+	return false;
+
+}
+
+int cir::colDetection(logt** Log)
+{
+	float cirX = x;
+	float cirY = y;
+
+	for (int i = 0; i < logt::realnLog; i++)
+	{
+		float logX = Log[i]->getX();
+		float logY = Log[i]->getY();
+
+
+
+		if ((cirX >= logX && cirX <= logX + cincX)
+			&&
+			(cirY >= logY && cirY <= logY + cincY))
+		{
+
+			return i;
+		}
+	}
+	return -1;
+
+}
+
+bool cir::colDetection(portal** Portal)
+{
+	float cirX = x;
+	float cirY = y;
+
+
+	float PortalX = Portal[0]->getX();
+	float PortalY = Portal[0]->getY();
+
+
+
+	if ((cirX >= PortalX && cirX <= PortalX + cincX)
+		&&
+		(cirY >= PortalY && cirY <= PortalY + cincY))
+	{
+
+
+		return true;
+	}
+	return false;
+
+}
+
+bool cir::colDetection(river** River)
+{
+	float cirX = x;
+	float cirY = y;
+
+	for (int i = 0; i < nRiver; i++)
+	{
+		float riverX = River[i]->getX();
+		float riverY = River[i]->getY();
+
+
+
+		if ((cirX >= riverX && cirX <= riverX + cincX)
+			&&
+			(cirY >= riverY && cirY <= riverY + 2.0))
+		{
+
+			return true;
+		}
+	}
+	return false;
 
 }

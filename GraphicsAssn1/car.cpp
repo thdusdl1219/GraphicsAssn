@@ -1,7 +1,7 @@
 #include "car.h"
 #include "default.h"
 
-
+int car::realnCar = 0;
 
 car::car(float x, float y, const std::string direction) : myObject(x, y) {
 	this->direction = direction;

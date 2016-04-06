@@ -89,7 +89,7 @@ GLuint Shader::getShader() {
 		glUniformMatrix4fv(Mloc, 1, GL_FALSE, mv);
 	}
 	else {
-		std::cout << "get uniform error" << std::endl;
+		std::cout << "get uniform error1" << std::endl;
 	}
 
 	return program;
@@ -106,7 +106,7 @@ GLuint Shader::getShader2() {
 		glUniformMatrix4fv(Mloc, 1, GL_FALSE, mv);
 	}
 	else {
-		std::cout << "get uniform error" << std::endl;
+		std::cout << "get uniform error2" << std::endl;
 	}
 
 	return program;

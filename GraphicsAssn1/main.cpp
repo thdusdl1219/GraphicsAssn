@@ -143,7 +143,7 @@ void init(void) {
 
 	}
 	CarShader = new Shader("object.vs", "car.fs");
-	realnCar = count - 1;
+	car::realnCar = count - 1;
 
 	//init log	
 	count = 0;
@@ -172,7 +172,7 @@ void init(void) {
 
 	}
 	LogShader = new Shader("object.vs", "log.fs");
-	realnLog = count - 1;
+	logt::realnLog = count - 1;
 
 
 
@@ -227,14 +227,14 @@ void display(void) {
 		Line[i]->create(lineShader->getShader());
 	}	
 
-	for (int i = 0; i < realnLog; i++)
+	for (int i = 0; i < logt::realnLog; i++)
 	{
 		Log[i]->create(LogShader->getShader());
 	}
 
 	circle->create(circleShader->getShader2());
 
-	for (int i = 0; i < realnCar; i++)
+	for (int i = 0; i < car::realnCar; i++)
 	{
 		Car[i]->create(CarShader->getShader());
 	}
@@ -251,135 +251,13 @@ void reshape(int w, int h) {
 	 glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 }
 
-
-
-//코드 재활용면에서의 개선의 여지가 있음. car** Car 대신 myObject를 사용할 수 있지만..
-//오버로딩을 이용해서 대신 구현
-//Collision detection between player and Car
-bool colDetection(cir* circle, car** Car)
-{
-
-	float cirX = circle->getX();
-	float cirY = circle->getY();
-	
-
-	for (int i = 0; i < realnCar; i++) {
-		float carX = Car[i]->getX();
-		float carY = Car[i]->getY();
-
-
-		if ((cirX >= carX && cirX <= carX + incX)
-			&&
-			(cirY >= carY && cirY <= carY + incY))
-
-				return true;
-			
-			
-	}
-	return false;
-}
-//Collision detection between player and Tree.
-bool colDetection(cir* circle, tree** Tree)
-{
-	float cirX = circle->getX();
-	float cirY = circle->getY();
-
-	for (int i = 0; i < nTree; i++)
-	{
-		float treeX = Tree[i]->getX();
-		float treeY = Tree[i]->getY();
-
-		
-
-		if ((cirX >= treeX && cirX <= treeX + incX)
-			&&
-			(cirY >= treeY && cirY <= treeY + incY))
-		{		
-			return true;
-		}
-	}
-	return false;
-	
-}
-
-//Collision detection between player and Logt.
-int colDetection(cir* circle, logt** Log)
-{
-	float cirX = circle->getX();
-	float cirY = circle->getY();
-
-	for (int i = 0; i < realnLog; i++)
-	{
-		float logX = Log[i]->getX();
-		float logY = Log[i]->getY();
-
-
-
-		if ((cirX >= logX && cirX <= logX + incX)
-			&&
-			(cirY >= logY && cirY <= logY + incY))
-		{
-
-			return i;
-		}
-	}
-	return -1;
-
-}
-
-bool colDetection(cir* circle, portal** Portal)
-{
-	float cirX = circle->getX();
-	float cirY = circle->getY();
-
-	
-	float PortalX = Portal[0]->getX();
-	float PortalY = Portal[0]->getY();
-
-
-
-	if ((cirX >= PortalX && cirX <= PortalX + incX)
-		&&
-		(cirY >= PortalY && cirY <= PortalY + incY))
-	{
-
-
-			return true;
-	}
-	return false;
-
-}
-
-bool colDetection(cir* circle, river** River)
-{
-	float cirX = circle->getX();
-	float cirY = circle->getY();
-
-	for (int i = 0; i < nRiver; i++)
-	{
-		float riverX = River[i]->getX();
-		float riverY = River[i]->getY();
-
-
-
-		if ((cirX >= riverX && cirX <= riverX + incX)
-			&&
-			(cirY >= riverY && cirY <= riverY + 2.0))
-		{
-
-			return true;
-		}
-	}
-	return false;
-
-}
-
-
 void refreshAll(STATE s) {
+	int logNum = circle->colDetection(Log);
+
 	if (s == UP) {
 		circle->incY();		
-		bool tCol = colDetection(circle, Tree);
-		bool tPor = colDetection(circle, Portal);
+		bool tCol = circle->colDetection(Tree);
+		bool tPor = circle->colDetection(Portal);
 		if(tCol == true)
 			circle->decY();		
 		else if (tPor == true)
@@ -396,8 +274,8 @@ void refreshAll(STATE s) {
 	}
 	else if (s == DOWN) {
 		circle->decY();		
-		bool tCol = colDetection(circle, Tree);
-		bool tPor = colDetection(circle, Portal);
+		bool tCol = circle->colDetection(Tree);
+		bool tPor = circle->colDetection(Portal);
 		if (tCol == true)
 			circle->incY();		
 		else if (tPor == true)
@@ -413,11 +291,11 @@ void refreshAll(STATE s) {
 		}
 	}
 	else if (s == RIGHT) {
-		circle->incX();		
-		bool tCol = colDetection(circle, Tree);
-		bool tPor = colDetection(circle, Portal);
+		circle->incX(logNum);		
+		bool tCol = circle->colDetection(Tree);
+		bool tPor = circle->colDetection(Portal);
 		if (tCol == true)
-			circle->decX();
+			circle->decX(logNum);
 		else if (tPor == true)
 			circle->goPortal(Portal);
 		//맵 전환 부분 코드
@@ -428,11 +306,11 @@ void refreshAll(STATE s) {
 		}
 	}
 	else if (s == LEFT) {
-		circle->decX();		
-		bool tCol = colDetection(circle, Tree);
-		bool tPor = colDetection(circle, Portal);
+		circle->decX(logNum);		
+		bool tCol = circle->colDetection(Tree);
+		bool tPor = circle->colDetection(Portal);
 		if (tCol == true)
-			circle->incX();
+			circle->incX(logNum);
 		else if (tPor == true)
 			circle->goPortal(Portal);
 		//맵 전환 부분 코드
@@ -481,12 +359,12 @@ void ReDisplayTimer(int value)
 		exit(0);
 	}
 
-	for (int i = 0; i < realnCar; i++){
+	for (int i = 0; i < car::realnCar; i++){
 		Car[i]->move();
 	}
 
 	
-	bool cCol = colDetection(circle, Car);
+	bool cCol = circle->colDetection(Car);
 
 	if (cCol == true) {
 		// 어싸인 문서에 게임 종료시키라고 명시
@@ -502,15 +380,17 @@ void ReDisplayTimer(int value)
 		exit(0);
 	}
 
-	int logNum = colDetection(circle, Log);
+	int logNum = circle->colDetection(Log);
 
-	bool colRiver = colDetection(circle, River);
+	bool colRiver = circle->colDetection(River);
 
-	for (int i = 0; i < realnLog; i++) {
-		if (logNum == i)
-			Log[i]->move(true, circle);
+	for (int i = 0; i < logt::realnLog; i++) {
+		if (logNum == i) {
+			Log[i]->move();
+			circle->move(Log[i]->getX(),Log[i]->getY(), Log[i]->getDirection());
+		}
 		else
-			Log[i]->move(false, circle);
+			Log[i]->move();
 	}
 
 	if (colRiver && logNum == -1) {

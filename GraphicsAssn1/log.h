@@ -1,6 +1,5 @@
 #pragma once
 #include "object.h"
-#include "circle.h"
 #include <string>
 #include <vector>
 #define SPEED 40
@@ -8,9 +7,11 @@ class logt : public myObject {
 public:
 	logt(float x, float y, const std::string direction);
 	void create(GLuint);
-	void move(bool, cir*);
+	void move();
 	void incY();
 	void decY();
+	std::string getDirection();
+	static int realnLog;
 	
 private:
 	//String value has 'Up or Down'

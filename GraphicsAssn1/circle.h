@@ -3,6 +3,10 @@
 #include "portal.h"
 #include "MvStack.h"
 #include "scenenode.h"
+#include "car.h"
+#include "tree.h"
+#include "log.h"
+#include "river.h"
 #include <vector>
 #include <string.h>
 
@@ -49,8 +53,8 @@ public:
 	
 	void incY();
 	void decY();
-	void incX();
-	void decX();
+	void incX(int);
+	void decX(int);
 	void setInitPos();
 	void goPortal(portal **);
 	void initNode();
@@ -64,6 +68,12 @@ public:
 	void traverse(Node* node);
 
 	void move(float, float, std::string);
+	bool colDetection(car** Car);
+	bool colDetection(tree** Tree);
+	int colDetection(logt** Log);
+	bool colDetection(portal** Portal);
+	bool colDetection(river** River);
+
 		
 };
 
