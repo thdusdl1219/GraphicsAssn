@@ -3,9 +3,7 @@
 
 const float padding = WORLD_SIZE / 300.0;
 
-portal::portal(float x, float y) : myObject(x, y) {
-	this->x = x - 1;
-	this->y = y - 1;
+portal::portal(float x, float y, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader) {
 
 	vertices = {
 		vec2(this->x + padding, this->y),
@@ -16,7 +14,18 @@ portal::portal(float x, float y) : myObject(x, y) {
 
 }
 
-void portal::create(GLuint shader) {
+void portal::draw(mat4 m) {
+	glUseProgram(shader);
+
+
+	GLint Mloc = glGetUniformLocation(shader, "ModelView");
+	if (Mloc != -1)
+	{
+		glUniformMatrix4fv(Mloc, 1, GL_FALSE, m);
+	}
+	else {
+		std::cout << "get uniform error1" << std::endl;
+	}
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);

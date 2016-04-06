@@ -79,35 +79,9 @@ Shader::Shader(const char *vertex_path, const char* fragment_path) {
 }
 
 GLuint Shader::getShader() {
-	glUseProgram(program);
-
-	mat4 mv = transpose(Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T));
-
-	GLint Mloc = glGetUniformLocation(program, "ModelView");
-	if (Mloc != -1)
-	{
-		glUniformMatrix4fv(Mloc, 1, GL_FALSE, mv);
-	}
-	else {
-		std::cout << "get uniform error1" << std::endl;
-	}
-
 	return program;
 }
 
 GLuint Shader::getShader2() {
-	glUseProgram(program);
-
-	mat4 mv = transpose(Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T));
-
-	GLint Mloc = glGetUniformLocation(program, "View");
-	if (Mloc != -1)
-	{
-		glUniformMatrix4fv(Mloc, 1, GL_FALSE, mv);
-	}
-	else {
-		std::cout << "get uniform error2" << std::endl;
-	}
-
 	return program;
 }

@@ -1,12 +1,12 @@
 #pragma once
-#include "object.h"
+#include "node.h"
 #include "portal.h"
 #include "scenenode.h"
 #include "car.h"
 #include "tree.h"
 #include "log.h"
 #include "river.h"
-#include "node.h"
+#include "body.h"
 #include <vector>
 #include <string.h>
 
@@ -25,7 +25,7 @@ enum {
 	Quit
 };
 
-class cir : public myObject {
+class cir : public Node {
 private:
 	Node* nodes[11];	
 
@@ -36,8 +36,7 @@ private:
 
 	GLuint vbo[2];
 	GLuint ModelView;
-	GLuint Projection;
-	GLuint shader;
+
 	mat4 model_view;
 	mat4 projection;
 	MatrixStack mvstack;
@@ -50,8 +49,8 @@ private:
 public:
 	//scenenode nodes[10];
 	
-	cir(float x, float y, float r);
-	void create(GLuint);
+	cir(float x, float y, float r, mat4& m, list<Node*> *child, Shader* shader);
+	void draw(mat4);
 	
 	void incY();
 	void decY();

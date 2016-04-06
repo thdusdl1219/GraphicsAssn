@@ -2,10 +2,7 @@
 #include "default.h"
 
 
-river::river(float x, float y) : myObject(x, y) {
-
-	this->x = x - 1;
-	this->y = y - 1;
+river::river(float x, float y, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader) {
 
 	vertices = {
 		vec2(this->x, this->y),
@@ -16,8 +13,18 @@ river::river(float x, float y) : myObject(x, y) {
 
 }
 
-void river::create(GLuint shader) {
+void river::draw(mat4 m) {
+	glUseProgram(shader);
 
+
+	GLint Mloc = glGetUniformLocation(shader, "ModelView");
+	if (Mloc != -1)
+	{
+		glUniformMatrix4fv(Mloc, 1, GL_FALSE, m);
+	}
+	else {
+		std::cout << "get uniform error1" << std::endl;
+	}
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);

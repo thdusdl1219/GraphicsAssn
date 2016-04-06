@@ -1,11 +1,11 @@
 #pragma once
-#include "object.h"
+#include "node.h"
 #include <vector>
 
-class river : public myObject {
+class river : public Node {
 public:
-	river(float x, float y);
-	void create(GLuint);
+	river(float x, float y, mat4& m, list<Node*> *child, Shader* shader);
+	void draw(mat4);
 private:
 	std::vector<vec2> vertices;
 	GLuint vbo;

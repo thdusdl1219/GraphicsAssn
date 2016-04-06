@@ -1,12 +1,12 @@
 #pragma once
-#include "object.h"
+#include "node.h"
 #include <string>
 #include <vector>
-#define SPEED 50
-class car : public myObject {
+#define SPEED 10
+class car : public Node {
 public:
-	car(float x, float y, const std::string direction);
-	void create(GLuint);
+	car(float x, float y, const std::string direction, mat4& m, list<Node*> *child, Shader* shader);
+	void draw(mat4);
 	void move();
 	void incY();
 	void decY();

@@ -3,13 +3,11 @@
 
 int car::realnCar = 0;
 
-car::car(float x, float y, const std::string direction) : myObject(x, y) {
+car::car(float x, float y, const std::string direction, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader) {
 	this->direction = direction;
-	this->x = x - 1;
-	this->y = y - 1;
 }
 
-void car::create(GLuint shader) {
+void car::draw(mat4 m) {
 	vertices = {
 		vec2(x, y),
 		vec2(x, y + (WORLD_SIZE / MAP_DIVIDE_Y)),
@@ -17,6 +15,17 @@ void car::create(GLuint shader) {
 		vec2(x + (WORLD_SIZE / MAP_DIVIDE_X), y + (WORLD_SIZE / MAP_DIVIDE_Y))
 	};
 
+	glUseProgram(shader);
+
+
+	GLint Mloc = glGetUniformLocation(shader, "ModelView");
+	if (Mloc != -1)
+	{
+		glUniformMatrix4fv(Mloc, 1, GL_FALSE, m);
+	}
+	else {
+		std::cout << "get uniform error1" << std::endl;
+	}
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -30,6 +39,7 @@ void car::create(GLuint shader) {
 	glDeleteBuffers(1, &vbo);
 	/* glColor3f(0.0, 1.0, 1.0);
 	glRectf(x, y, x + (WORLD_SIZE / MAP_DIVIDE_X), y + (WORLD_SIZE/MAP_DIVIDE_Y)); */
+
 }
 void car::move()
 {

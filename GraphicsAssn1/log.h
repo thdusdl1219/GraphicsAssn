@@ -1,12 +1,12 @@
 #pragma once
-#include "object.h"
+#include "node.h"
 #include <string>
 #include <vector>
-#define SPEED 40
-class logt : public myObject {
+#define SPEED 10
+class logt : public Node {
 public:
-	logt(float x, float y, const std::string direction);
-	void create(GLuint);
+	logt(float x, float y, const std::string direction, mat4& m, list<Node*> *child, Shader* shader);
+	void draw(mat4);
 	void move();
 	void incY();
 	void decY();

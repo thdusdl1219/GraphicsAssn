@@ -2,15 +2,25 @@
 #include "default.h"
 #define SPACE 100
 
-line::line(float x, float y) : myObject(x, y) {
-	this->x = x - 1;
-	this->y = y - 1;
+line::line(float x, float y, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader) {
+
 	for (int i = 1; i <= SPACE; i++) {
 		vertices.push_back(vec2(this->x, this->y + (2.0 / SPACE) * i));
 	}
 }
 
-void line::create(GLuint shader) {
+void line::draw(mat4 m) {
+	glUseProgram(shader);
+
+
+	GLint Mloc = glGetUniformLocation(shader, "ModelView");
+	if (Mloc != -1)
+	{
+		glUniformMatrix4fv(Mloc, 1, GL_FALSE, m);
+	}
+	else {
+		std::cout << "get uniform error1" << std::endl;
+	}
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec2), &vertices[0], GL_STATIC_DRAW);
@@ -28,4 +38,5 @@ void line::create(GLuint shader) {
 	glVertex2f(x, WORLD_SIZE);
 	glVertex2f(x, 0);
 	glEnd(); */
+	
 }

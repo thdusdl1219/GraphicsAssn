@@ -24,28 +24,7 @@ void cir::traverse(Node* node)
 		
 	model_view *= node->transform;
 
-	
-	switch(node->tag)
-	{
-		case Torso:
-			torso();
-			break;
-		case Head:
-			head();
-			break;
-		case LeftUpperLeg:
-			left_uleg();
-			break;
-		case LeftLowerLeg:
-			left_lleg();
-			break;
-		case RightUpperLeg:
-			right_uleg();
-			break;
-		case RightLowerLeg:
-			right_lleg();
-			break;
-	}
+	// node->draw();
 
 	if (node->child) {
 		for (list<Node*>::iterator c = node->child->begin(); c != node->child->end(); c++) {
@@ -56,11 +35,9 @@ void cir::traverse(Node* node)
 }
 
 
-cir::cir(float x, float y, float r) : myObject(x, y)
+cir::cir(float x, float y, float r, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader)
 {	
-	this->x = x - 1;
-	this->y = y - 1;
-	
+
 	//identity
 	model_view = mat4(1.0);
 	projection = mat4(1.0);
@@ -259,18 +236,18 @@ void cir::initNode()
 	mat4  m(1.0);
 	//m = Scale(DIVIDE_WINDOW, DIVIDE_WINDOW, 1);
 	
-	nodes[LeftLowerLeg] = new Node(m, LeftLowerLeg, NULL);
-	nodes[RightLowerLeg] = new Node(m, RightLowerLeg, NULL);
+	nodes[LeftLowerLeg] = new body(x, y + 0.01, m, NULL, shaderP);
+	nodes[RightLowerLeg] = new body(x + 0.05, y + 0.01, m, NULL, shaderP);
 
 	list<Node*>* LULegChild = new list<Node *>;
 	LULegChild->push_back(nodes[LeftLowerLeg]);
-	nodes[LeftUpperLeg] = new Node(m, LeftUpperLeg, LULegChild);
+	nodes[LeftUpperLeg] = new body(x, y + 0.03, m, LULegChild, shaderP);
 
 	list<Node*>* RULegChild = new list<Node *>;
 	RULegChild->push_back(nodes[RightLowerLeg]);
-	nodes[RightUpperLeg] = new Node(m, RightUpperLeg, RULegChild);
+	nodes[RightUpperLeg] = new body(x + 0.05, y + 0.03, m, RULegChild, shaderP);
 
-	nodes[Head] = new Node(m, Head, NULL);
+	nodes[Head] = new body(x, y + 0.08, m, NULL, shaderP);
 
 	//torso ±‚¡ÿ
 	list<Node*>* torsoChild = new list<Node *>;
@@ -278,7 +255,7 @@ void cir::initNode()
 	torsoChild->push_back(nodes[RightUpperLeg]);
 	torsoChild->push_back(nodes[Head]);
 
-	nodes[Torso] = new Node(m, Torso, torsoChild);	
+	nodes[Torso] = new body(x, y + 0.05, m, torsoChild, shaderP);
 }
 
 void cir::initVertex()
@@ -310,34 +287,11 @@ void cir::initVertex()
 
 }
 
-void cir::create(GLuint shader)
+void cir::draw(mat4 m)
 {
 	
 
 	initVertex();
-	
-	// Create a vertex array object
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	
-	
-
-	glGenBuffers(2, vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, bodyVertices.size() * sizeof(vec4), &bodyVertices[0], GL_STATIC_DRAW);
-
-
-	GLint vPosition = glGetAttribLocation(shader, "vPosition");
-	glEnableVertexAttribArray(vPosition);
-	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
-	
-	
-	this->shader = shader;
-	glUseProgram(shader);
-	
-	ModelView = glGetUniformLocation(shader, "ModelView");
-	Projection = glGetUniformLocation(shader, "Projection");
 
 	traverse(nodes[Torso]);	
 	

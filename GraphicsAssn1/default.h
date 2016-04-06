@@ -12,6 +12,8 @@
 #include <iostream>
 #include <list>
 
+using namespace std;
+
 #define ROUNDING(x, dig)    ( floor((x) * pow(float(10), dig) + 0.5f) / pow(float(10), dig) )
 #define MAP_DIVIDE_X 20
 #define MAP_DIVIDE_Y 20

@@ -1,5 +1,5 @@
 #pragma once
-#include "object.h"
+#include "node.h"
 
 class scenenode
 {

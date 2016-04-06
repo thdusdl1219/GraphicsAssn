@@ -25,7 +25,8 @@ int main(int argc, char** argv) {
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);	 
-	glutSpecialFunc(specialkeyboard);
+	glutSpecialFunc(keyDown);
+	glutSpecialUpFunc(keyUp);
 
 	//타이머 등록
 	glutTimerFunc(1000 / 60, ReDisplayTimer, 1);
@@ -82,42 +83,64 @@ void init(void) {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-
+	list<Node*> *worldList = new list<Node*>;
+	mat4 iMat = mat4(1.0);
+	int Ocount = 0;
 	//init circle, player
-	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS);
 	circleShader = new Shader("circle.vs", "circle.fs");
-
+	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS, iMat, NULL, circleShader);
+	worldList->push_back(circle);
+	Ocount++;
+	list<Node*> *grassList = new list<Node*>;
 	//init portals
-	Portal[0] = new portal(gPos[1], incY * 19);
-	Portal[1] = new portal(gPos[4], incY * 19);
-	Portal[2] = new portal(gPos[4] + 3 * incX, incY * 19);
 	PortalShader = new Shader("object.vs", "portal.fs");
+	Portal[0] = new portal(gPos[1], incY * 19, iMat, NULL, PortalShader);
+	Portal[1] = new portal(gPos[4], incY * 19, iMat, NULL, PortalShader);
+	Portal[2] = new portal(gPos[4] + 3 * incX, incY * 19, iMat, NULL, PortalShader);
+	grassList->push_back(Portal[2]);
+	grassList->push_back(Portal[1]);
+	grassList->push_back(Portal[0]);
+	Ocount++;
+	Ocount++;
+	Ocount++;
 
-	//init Grass
-	for (int i = 0; i < nGrass; i++)
-	{
-		Grass[i] = new grass(gPos[i], 0);
-	}
-	grassShader = new Shader("object.vs", "grass.fs");
-		
 	//init Tree
+	TreeShader = new Shader("object.vs", "tree.fs");
 	for (int i = 0; i < nGrass - 2; i++)
 	{
 		for (int j = 0; j < NTREE_IN_GRASS; j++) {
 			int yPos = rand() % NTREE_IN_GRASS;
-			Tree[i * NTREE_IN_GRASS + j] = new tree(gPos[i + 1], incY * yPos * 2);
+			Tree[i * NTREE_IN_GRASS + j] = new tree(gPos[i + 1], incY * yPos * 2, iMat, NULL, TreeShader);
+			grassList->push_back(Tree[i * NTREE_IN_GRASS + j]);
+			Ocount++;
 		}
 	}
-	TreeShader = new Shader("object.vs", "tree.fs");
 
+	//init Grass
+	grassShader = new Shader("object.vs", "grass.fs");
+	for (int i = 0; i < nGrass; i++)
+	{
+		if(i == nGrass-1)
+			Grass[i] = new grass(gPos[i], 0, iMat, grassList, grassShader);
+		else
+			Grass[i] = new grass(gPos[i], 0, iMat, NULL, grassShader);
+		worldList->push_back(Grass[i]);
+		Ocount++;
+	}	
+	
+	
+	lineShader = new Shader("object.vs", "line.fs");
 	for (int i = 0; i < nLine; i++)
 	{
-		Line[i] = new line(linePos[i], 0);
+		Line[i] = new line(linePos[i], 0, iMat, NULL, lineShader);
+		worldList->push_back(Line[i]);
+		Ocount++;
 	}
-	lineShader = new Shader("object.vs", "line.fs");
+	
 	
 	//init Car	
 	int count = 0;
+	CarShader = new Shader("object.vs", "car.fs");
 	for (int i = 0; i < nRoad; i++)
 	{
 		std::string dir;
@@ -138,15 +161,19 @@ void init(void) {
 				yPos -= incY * (rand() % CAR_SPACE + 2) * j;
 			else
 				yPos += incY * (rand() % CAR_SPACE + 2) * j;
-			Car[count++] = new car(roadPos[i], yPos, dir);
+			Car[count] = new car(roadPos[i], yPos, dir, iMat, NULL, CarShader);
+			worldList->push_back(Car[count]);
+			count++;
+			Ocount++;
 		}
 
 	}
-	CarShader = new Shader("object.vs", "car.fs");
 	car::realnCar = count - 1;
-
+	
 	//init log	
+	list<Node*> *riverList = new list<Node*>;
 	count = 0;
+	LogShader = new Shader("object.vs", "log.fs");
 	for (int i = 0; i < nRiver; i++)
 	{
 		std::string dir;
@@ -167,21 +194,36 @@ void init(void) {
 				yPos -= incY * (rand() % CAR_SPACE + 2) * j;
 			else
 				yPos += incY * (rand() % CAR_SPACE + 2) * j;
-			Log[count++] = new logt(riverPos[i], yPos, dir);
+			Log[count] = new logt(riverPos[i], yPos, dir, iMat, NULL, LogShader);
+			riverList->push_back(Log[count]);
+			count++;
+			Ocount++;
 		}
 
 	}
-	LogShader = new Shader("object.vs", "log.fs");
 	logt::realnLog = count - 1;
-
+	
 
 
 	//init River
+	RiverShader = new Shader("object.vs", "river.fs");
 	for (int i = 0; i < nRiver; i++)
 	{
-		River[i] = new river(riverPos[i], 0);
+		if (i == nRiver - 1)
+			River[i] = new river(riverPos[i], 0, iMat, riverList, RiverShader);
+		else
+			River[i] = new river(riverPos[i], 0, iMat, NULL, RiverShader);
+		worldList->push_back(River[i]);
+		Ocount++;
 	}
-	RiverShader = new Shader("object.vs", "river.fs");
+
+	World = new world(iMat, worldList);
+
+	for (int i = 0; i < 256; i++) {
+		keyStates[i] = false;
+	}
+
+	Ocount++;
 
 }
 
@@ -198,25 +240,27 @@ void renderBitmapCharacter(float x, float y, void *font, char *string)
 }
 
 void display(void) {
+	keyOperation();
 	glClear(GL_COLOR_BUFFER_BIT);
-
+	
+	/*
 	
 	for (int i = 0; i < nGrass; i++)
 	{
-		Grass[i]->create(grassShader->getShader());
+		Grass[i]->draw();
 	}
 	for (int i = 0; i < nRiver; i++)
 	{
-		River[i]->create(RiverShader->getShader());
+		River[i]->draw();
 	}
 	for (int i = 0; i < nTree; i++)
 	{
-		Tree[i]->create(TreeShader->getShader());
+		Tree[i]->draw();
 	}
 
 	for (int i = 0; i < nPortal; i++)
 	{
-		Portal[i]->create(PortalShader->getShader());
+		Portal[i]->draw();
 	}
 
 
@@ -224,25 +268,26 @@ void display(void) {
 
 	for (int i = 0; i < nLine; i++)
 	{
-		Line[i]->create(lineShader->getShader());
+		Line[i]->draw();
 	}	
 
 	for (int i = 0; i < logt::realnLog; i++)
 	{
-		Log[i]->create(LogShader->getShader());
+		Log[i]->draw();
 	}
 
-	circle->create(circleShader->getShader2());
+	circle->draw();
 
 	for (int i = 0; i < car::realnCar; i++)
 	{
-		Car[i]->create(CarShader->getShader());
-	}
-
+		Car[i]->draw();
+	} */
+	mat4 wmv = transpose(Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T));
+	World->traverse(wmv);
 
 	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
-	glutPostRedisplay();
-	glutSwapBuffers();
+	//glutPostRedisplay();
+	//glutSwapBuffers();
 }
 
 
@@ -320,31 +365,37 @@ void refreshAll(STATE s) {
 			World_R -= incX;
 		}
 	}
-	glutPostRedisplay();
-	glutSwapBuffers();
-}
-
-void specialkeyboard(int key, int x, int y) {
+	//glutPostRedisplay();
 	
-	switch (key) {
-	case GLUT_KEY_UP:
-		refreshAll(UP);
-		break;
-	case GLUT_KEY_DOWN:
-		refreshAll(DOWN);
-		break;
-	case GLUT_KEY_RIGHT:
-		refreshAll(RIGHT);
-		break;
-	case GLUT_KEY_LEFT:
-		refreshAll(LEFT);
-		break;
-	}
-	printf("CPos : %f %f %f\n", circle->getX(), circle->getY(), incX);
-
-	glutPostRedisplay();
 }
 
+void keyDown(int key, int x, int y) {
+	keyStates[key] = true;
+}
+
+void keyUp(int key, int x, int y) {
+	
+	keyStates[key] = false;
+	//printf("CPos : %f %f %f\n", circle->getX(), circle->getY(), incX);
+
+	//glutPostRedisplay();
+	//glutSwapBuffers();
+}
+
+void keyOperation() {
+	if (keyStates[GLUT_KEY_UP]) {
+		refreshAll(UP);
+	}
+	if (keyStates[GLUT_KEY_DOWN]) {
+		refreshAll(DOWN);
+	}
+	if (keyStates[GLUT_KEY_RIGHT]) {
+		refreshAll(RIGHT);
+	}
+	if (keyStates[GLUT_KEY_LEFT]) {
+		refreshAll(LEFT);
+	}
+}
 
 void ReDisplayTimer(int value)
 {
@@ -400,5 +451,6 @@ void ReDisplayTimer(int value)
 	}
 
 	glutPostRedisplay();
+	glutSwapBuffers();
 	glutTimerFunc(1000 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
 }

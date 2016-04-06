@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="body.cpp" />
     <ClCompile Include="car.cpp" />
     <ClCompile Include="circle.cpp" />
     <ClCompile Include="grass.cpp" />
@@ -157,9 +158,11 @@
     <ClCompile Include="river.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="tree.cpp" />
+    <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
+    <ClInclude Include="body.h" />
     <ClInclude Include="car.h" />
     <ClInclude Include="default.h" />
     <ClInclude Include="grass.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="vec.h" />
+    <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="car.fs" />
