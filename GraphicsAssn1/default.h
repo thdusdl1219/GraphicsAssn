@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <list>
 
 #define ROUNDING(x, dig)    ( floor((x) * pow(float(10), dig) + 0.5f) / pow(float(10), dig) )
 #define MAP_DIVIDE_X 20

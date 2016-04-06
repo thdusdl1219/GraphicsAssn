@@ -1,31 +1,33 @@
 #pragma once
 #include "object.h"
 #include "portal.h"
-#include "MvStack.h"
 #include "scenenode.h"
 #include "car.h"
 #include "tree.h"
 #include "log.h"
 #include "river.h"
+#include "node.h"
 #include <vector>
 #include <string.h>
 
+enum {
+	Torso = 0,
+	Head = 1,
+	LeftUpperArm = 3,
+	LeftLowerArm = 4,
+	RightUpperArm = 5,
+	RightLowerArm = 6,
+	LeftUpperLeg = 7,
+	LeftLowerLeg = 8,
+	RightUpperLeg = 9,
+	RightLowerLeg = 10,
+	NumNodes,
+	Quit
+};
+
 class cir : public myObject {
 private:
-	struct Node {
-		mat4  transform;
-		int tag;
-		Node* sibling;
-		Node* child;
-
-		Node() :
-			tag(NULL), sibling(NULL), child(NULL) {}
-
-		Node(mat4& m, int tag, Node* sibling, Node* child) :
-			transform(m), tag(tag), sibling(sibling), child(child) {}
-	};
-
-	Node nodes[11];	
+	Node* nodes[11];	
 
 	float mapRadius;
 	std::vector<vec4> bodyVertices;		

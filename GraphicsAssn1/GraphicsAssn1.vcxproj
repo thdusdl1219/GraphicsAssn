@@ -151,6 +151,7 @@
     <ClCompile Include="line.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="node.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="portal.cpp" />
     <ClCompile Include="river.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="circle.h" />
     <ClInclude Include="mat.h" />
     <ClInclude Include="MvStack.h" />
+    <ClInclude Include="node.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="portal.h" />
     <ClInclude Include="river.h" />

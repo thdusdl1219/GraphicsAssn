@@ -4,6 +4,9 @@
 #include <ctime>
 
 
+using namespace std;
+
+
 float World_L = 0;
 float World_B = 0;
 float World_R = WORLD_SIZE / DIVIDE_WINDOW;
@@ -12,22 +15,6 @@ float World_T = WORLD_SIZE / DIVIDE_WINDOW;
 const int NumVertices = 6;
 const float divY = 2.0;
 const float wY = cincY / divY;
-
-enum {
-	Torso = 0,
-	Head = 1,
-	LeftUpperArm = 3,
-	LeftLowerArm = 4,
-	RightUpperArm = 5,
-	RightLowerArm = 6,
-	LeftUpperLeg = 7,
-	LeftLowerLeg = 8,
-	RightUpperLeg = 9,
-	RightLowerLeg = 10,
-	NumNodes,
-	Quit
-};
-
 
 void cir::traverse(Node* node)
 {
@@ -59,13 +46,13 @@ void cir::traverse(Node* node)
 			right_lleg();
 			break;
 	}
-	
-	
-	if (node->child) { traverse(node->child); }
 
+	if (node->child) {
+		for (list<Node*>::iterator c = node->child->begin(); c != node->child->end(); c++) {
+			traverse(*c);
+		}
+	}
 	model_view = mvstack.pop();
-
-	if (node->sibling) { traverse(node->sibling); }
 }
 
 
@@ -120,19 +107,19 @@ void cir::incX(int logNum) {
 	}
 	
 	if (isRotate == false){
-		nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(30.0);
-		nodes[RightUpperLeg].transform = nodes[RightUpperLeg].transform * RotateZ(-30.0);		
-		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(-60.0);
-		nodes[RightLowerLeg].transform = nodes[RightLowerLeg].transform * RotateZ(60.0);
+		nodes[LeftUpperLeg]->transform = nodes[LeftUpperLeg]->transform * RotateZ(30.0);
+		nodes[RightUpperLeg]->transform = nodes[RightUpperLeg]->transform * RotateZ(-30.0);		
+		nodes[LeftLowerLeg]->transform = nodes[LeftLowerLeg]->transform * RotateZ(-60.0);
+		nodes[RightLowerLeg]->transform = nodes[RightLowerLeg]->transform * RotateZ(60.0);
 		isRotate = true;
 		
 	}
 	else if (isRotate == true)
 	{
-		nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(-30.0);
-		nodes[RightUpperLeg].transform = nodes[RightUpperLeg].transform * RotateZ(30.0);
-		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(60.0);
-		nodes[RightLowerLeg].transform = nodes[RightLowerLeg].transform * RotateZ(-60.0);
+		nodes[LeftUpperLeg]->transform = nodes[LeftUpperLeg]->transform * RotateZ(-30.0);
+		nodes[RightUpperLeg]->transform = nodes[RightUpperLeg]->transform * RotateZ(30.0);
+		nodes[LeftLowerLeg]->transform = nodes[LeftLowerLeg]->transform * RotateZ(60.0);
+		nodes[RightLowerLeg]->transform = nodes[RightLowerLeg]->transform * RotateZ(-60.0);
 		isRotate = false;
 	}
 	
@@ -147,19 +134,19 @@ void cir::decX(int logNum) {
 
 	}
 	if (isRotate == false) {
-		nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(30.0);
-		nodes[RightUpperLeg].transform = nodes[RightUpperLeg].transform * RotateZ(-30.0);
-		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(-60.0);
-		nodes[RightLowerLeg].transform = nodes[RightLowerLeg].transform * RotateZ(60.0);
+		nodes[LeftUpperLeg]->transform = nodes[LeftUpperLeg]->transform * RotateZ(30.0);
+		nodes[RightUpperLeg]->transform = nodes[RightUpperLeg]->transform * RotateZ(-30.0);
+		nodes[LeftLowerLeg]->transform = nodes[LeftLowerLeg]->transform * RotateZ(-60.0);
+		nodes[RightLowerLeg]->transform = nodes[RightLowerLeg]->transform * RotateZ(60.0);
 		isRotate = true;
 
 	}
 	else if (isRotate == true)
 	{
-		nodes[LeftUpperLeg].transform = nodes[LeftUpperLeg].transform * RotateZ(-30.0);
-		nodes[RightUpperLeg].transform = nodes[RightUpperLeg].transform * RotateZ(30.0);
-		nodes[LeftLowerLeg].transform = nodes[LeftLowerLeg].transform * RotateZ(60.0);
-		nodes[RightLowerLeg].transform = nodes[RightLowerLeg].transform * RotateZ(-60.0);
+		nodes[LeftUpperLeg]->transform = nodes[LeftUpperLeg]->transform * RotateZ(-30.0);
+		nodes[RightUpperLeg]->transform = nodes[RightUpperLeg]->transform * RotateZ(30.0);
+		nodes[LeftLowerLeg]->transform = nodes[LeftLowerLeg]->transform * RotateZ(60.0);
+		nodes[RightLowerLeg]->transform = nodes[RightLowerLeg]->transform * RotateZ(-60.0);
 		isRotate = false;
 	}
 
@@ -272,15 +259,26 @@ void cir::initNode()
 	mat4  m(1.0);
 	//m = Scale(DIVIDE_WINDOW, DIVIDE_WINDOW, 1);
 	
+	nodes[LeftLowerLeg] = new Node(m, LeftLowerLeg, NULL);
+	nodes[RightLowerLeg] = new Node(m, RightLowerLeg, NULL);
+
+	list<Node*>* LULegChild = new list<Node *>;
+	LULegChild->push_back(nodes[LeftLowerLeg]);
+	nodes[LeftUpperLeg] = new Node(m, LeftUpperLeg, LULegChild);
+
+	list<Node*>* RULegChild = new list<Node *>;
+	RULegChild->push_back(nodes[RightLowerLeg]);
+	nodes[RightUpperLeg] = new Node(m, RightUpperLeg, RULegChild);
+
+	nodes[Head] = new Node(m, Head, NULL);
+
 	//torso 기준
-	nodes[Torso] = Node(m, Torso, NULL, &nodes[Head]);	
-	nodes[Head] = Node(m, Head, NULL, &nodes[LeftUpperLeg]);
-	//left_leg 기준
-	nodes[LeftUpperLeg] = Node(m, LeftUpperLeg, &nodes[RightUpperLeg], &nodes[LeftLowerLeg]);
-	nodes[LeftLowerLeg] = Node(m, LeftLowerLeg, NULL, NULL);
-	//right_leg 기준
-	nodes[RightUpperLeg] = Node(m, RightUpperLeg, NULL, &nodes[RightLowerLeg]);
-	nodes[RightLowerLeg] = Node(m, RightLowerLeg, NULL, NULL);
+	list<Node*>* torsoChild = new list<Node *>;
+	torsoChild->push_back(nodes[LeftUpperLeg]);
+	torsoChild->push_back(nodes[RightUpperLeg]);
+	torsoChild->push_back(nodes[Head]);
+
+	nodes[Torso] = new Node(m, Torso, torsoChild);	
 }
 
 void cir::initVertex()
@@ -341,7 +339,7 @@ void cir::create(GLuint shader)
 	ModelView = glGetUniformLocation(shader, "ModelView");
 	Projection = glGetUniformLocation(shader, "Projection");
 
-	traverse(&nodes[Torso]);	
+	traverse(nodes[Torso]);	
 	
 }
 
