@@ -41,7 +41,6 @@ private:
 	mat4 projection;
 	MatrixStack mvstack;
 
-
 	
 	bool isRotate;
 	

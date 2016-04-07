@@ -27,7 +27,8 @@ void Node::traverse(mat4 modelM) {
 	mat4 curM;
 	//printf("this->y : %f\n", this->y);
 	curM = modelM * transform;
-	draw(curM);
+	mat4 tcurM = transpose(curM);
+	draw(tcurM);
 	if (child) {
 		for (list<Node*>::iterator c = child->begin(); c != child->end(); c++) {
 

@@ -2,7 +2,7 @@
 #include "node.h"
 #include <string>
 #include <vector>
-#define SPEED 10
+#define SPEED 30
 class car : public Node {
 public:
 	car(float x, float y, const std::string direction, mat4& m, list<Node*> *child, Shader* shader);

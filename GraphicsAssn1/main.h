@@ -40,13 +40,9 @@ logt* Log[nLog];
 Shader* LogShader;
 world* World;
 
-bool* keyStates = new bool[256];
-
-
 void init(void);
 void display(void);
 void reshape(int w, int h);
-void keyDown(int key, int x, int y);
-void keyUp(int key, int x, int y);
+void specialkeyboard(int key, int x, int y);
 void refreshAll(STATE s);
-void keyOperation();
+

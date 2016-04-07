@@ -21,6 +21,7 @@ public :
 	Shader* shaderP;
 	GLuint shader;
 	static int count;
+protected :
 	float x;
 	float y;
 

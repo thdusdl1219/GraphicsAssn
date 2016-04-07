@@ -25,8 +25,7 @@ int main(int argc, char** argv) {
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);	 
-	glutSpecialFunc(keyDown);
-	glutSpecialUpFunc(keyUp);
+	glutSpecialUpFunc(specialkeyboard);
 
 	//타이머 등록
 	glutTimerFunc(1000 / 60, ReDisplayTimer, 1);
@@ -86,10 +85,6 @@ void init(void) {
 	list<Node*> *worldList = new list<Node*>;
 	mat4 iMat = mat4(1.0);
 	int Ocount = 0;
-	//init circle, player
-	circleShader = new Shader("circle.vs", "circle.fs");
-	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS, iMat, NULL, circleShader);
-	worldList->push_back(circle);
 	Ocount++;
 	list<Node*> *grassList = new list<Node*>;
 	//init portals
@@ -168,7 +163,7 @@ void init(void) {
 		}
 
 	}
-	car::realnCar = count - 1;
+	car::realnCar = count;
 	
 	//init log	
 	list<Node*> *riverList = new list<Node*>;
@@ -201,7 +196,7 @@ void init(void) {
 		}
 
 	}
-	logt::realnLog = count - 1;
+	logt::realnLog = count;
 	
 
 
@@ -209,7 +204,7 @@ void init(void) {
 	RiverShader = new Shader("object.vs", "river.fs");
 	for (int i = 0; i < nRiver; i++)
 	{
-		if (i == nRiver - 1)
+		if(i == nRiver - 1)
 			River[i] = new river(riverPos[i], 0, iMat, riverList, RiverShader);
 		else
 			River[i] = new river(riverPos[i], 0, iMat, NULL, RiverShader);
@@ -217,12 +212,13 @@ void init(void) {
 		Ocount++;
 	}
 
+	//init circle, player
+	circleShader = new Shader("circle.vs", "circle.fs");
+	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS, iMat, NULL, circleShader);
+	worldList->push_back(circle);
+
+
 	World = new world(iMat, worldList);
-
-	for (int i = 0; i < 256; i++) {
-		keyStates[i] = false;
-	}
-
 	Ocount++;
 
 }
@@ -240,7 +236,7 @@ void renderBitmapCharacter(float x, float y, void *font, char *string)
 }
 
 void display(void) {
-	keyOperation();
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	/*
@@ -282,12 +278,12 @@ void display(void) {
 	{
 		Car[i]->draw();
 	} */
-	mat4 wmv = transpose(Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T));
+	mat4 wmv = Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T);
 	World->traverse(wmv);
 
 	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
 	//glutPostRedisplay();
-	//glutSwapBuffers();
+	glutSwapBuffers();
 }
 
 
@@ -369,33 +365,28 @@ void refreshAll(STATE s) {
 	
 }
 
-void keyDown(int key, int x, int y) {
-	keyStates[key] = true;
-}
-
-void keyUp(int key, int x, int y) {
+void specialkeyboard(int key, int x, int y) {
 	
-	keyStates[key] = false;
+	switch (key) {
+	case GLUT_KEY_UP:
+		refreshAll(UP);
+		break;
+	case GLUT_KEY_DOWN:
+		refreshAll(DOWN);
+		break;
+	case GLUT_KEY_RIGHT:
+		refreshAll(RIGHT);
+		break;
+	case GLUT_KEY_LEFT:
+		refreshAll(LEFT);
+		break;
+	}
 	//printf("CPos : %f %f %f\n", circle->getX(), circle->getY(), incX);
 
 	//glutPostRedisplay();
 	//glutSwapBuffers();
 }
 
-void keyOperation() {
-	if (keyStates[GLUT_KEY_UP]) {
-		refreshAll(UP);
-	}
-	if (keyStates[GLUT_KEY_DOWN]) {
-		refreshAll(DOWN);
-	}
-	if (keyStates[GLUT_KEY_RIGHT]) {
-		refreshAll(RIGHT);
-	}
-	if (keyStates[GLUT_KEY_LEFT]) {
-		refreshAll(LEFT);
-	}
-}
 
 void ReDisplayTimer(int value)
 {
@@ -451,6 +442,5 @@ void ReDisplayTimer(int value)
 	}
 
 	glutPostRedisplay();
-	glutSwapBuffers();
 	glutTimerFunc(1000 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
 }
