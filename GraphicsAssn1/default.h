@@ -36,6 +36,7 @@ const float gOverPosY = 500.0;
 #define MAX_CARN 9
 #define MAX_LOGN 100
 #define CAR_SPACE 4
+#define FRAME (float)10
 
 const int nGrass = 6;
 const int nTree = (nGrass - 2) * NTREE_IN_GRASS;

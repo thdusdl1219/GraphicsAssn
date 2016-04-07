@@ -239,49 +239,9 @@ void display(void) {
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	
-	/*
-	
-	for (int i = 0; i < nGrass; i++)
-	{
-		Grass[i]->draw();
-	}
-	for (int i = 0; i < nRiver; i++)
-	{
-		River[i]->draw();
-	}
-	for (int i = 0; i < nTree; i++)
-	{
-		Tree[i]->draw();
-	}
-
-	for (int i = 0; i < nPortal; i++)
-	{
-		Portal[i]->draw();
-	}
-
-
-	//Draw line.
-
-	for (int i = 0; i < nLine; i++)
-	{
-		Line[i]->draw();
-	}	
-
-	for (int i = 0; i < logt::realnLog; i++)
-	{
-		Log[i]->draw();
-	}
-
-	circle->draw();
-
-	for (int i = 0; i < car::realnCar; i++)
-	{
-		Car[i]->draw();
-	} */
 	mat4 wmv = Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T);
 	World->traverse(wmv);
 
-	renderBitmapCharacter(gOverPosX, gOverPosY, GLUT_BITMAP_TIMES_ROMAN_24, "GAME OVER!");
 	//glutPostRedisplay();
 	glutSwapBuffers();
 }
@@ -307,8 +267,12 @@ void refreshAll(STATE s) {
 			circle->goPortal(Portal);
 		else if (World_T < WORLD_SIZE && circle->getY() > - 1 * WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
-			World_T = (ROUNDING(World_T / incY, 0) * incY) + incY;
-			World_B = (ROUNDING(World_B / incY, 0) * incY) + incY;
+			float tmpT = World_T;
+			float tmpB = World_B;
+			float T = (ROUNDING(World_T / incY, 0) * incY) + incY;
+			float B = (ROUNDING(World_B / incY, 0) * incY) + incY;
+			circle->world_Tdelta += (int)ROUNDING((FRAME / (cincY / abs(tmpT - T))), 0);
+			circle->world_Bdelta += (int)ROUNDING((FRAME / (cincY / abs(tmpB - B))), 0);
 		}
 		else if (World_T >= WORLD_SIZE) {
 			World_T = WORLD_SIZE;
@@ -325,8 +289,12 @@ void refreshAll(STATE s) {
 			circle->goPortal(Portal);
 		else if (World_B >= incY && circle->getY() < WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
-			World_T = (ROUNDING(World_T / incY, 0) * incY) - incY;
-			World_B = (ROUNDING(World_B / incY, 0) * incY) - incY;
+			float tmpT = World_T;
+			float tmpB = World_B;
+			float T = (ROUNDING(World_T / incY, 0) * incY) - incY;
+			float B = (ROUNDING(World_B / incY, 0) * incY) - incY;
+			circle->Mworld_Tdelta += (int)ROUNDING((FRAME / (cincY / abs(tmpT - T))), 0);
+			circle->Mworld_Bdelta += (int)ROUNDING((FRAME / (cincY / abs(tmpB - B))), 0);
 		}
 		else if (World_B < 0) {
 			World_T = WORLD_SIZE / DIVIDE_WINDOW;
@@ -344,8 +312,10 @@ void refreshAll(STATE s) {
 		//맵 전환 부분 코드
 		else if (World_R < WORLD_SIZE && circle->getX() > -1 * WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
-			World_L += incX;
-			World_R += incX;
+			//World_L += incX;
+			//World_R += incX;
+			circle->world_Ldelta += FRAME;
+			circle->world_Rdelta += FRAME;
 		}
 	}
 	else if (s == LEFT) {
@@ -359,8 +329,10 @@ void refreshAll(STATE s) {
 		//맵 전환 부분 코드
 		else if (World_L >= incX && circle->getX() < WORLD_SIZE / DIVIDE_WINDOW / 2)
 		{
-			World_L -= incX;
-			World_R -= incX;
+			//World_L -= incX;
+			//World_R -= incX;
+			circle->Mworld_Ldelta += FRAME;
+			circle->Mworld_Rdelta += FRAME;
 		}
 	}
 	//glutPostRedisplay();
@@ -416,12 +388,7 @@ void ReDisplayTimer(int value)
 		// circle->setInitPos();
 		float width = (World_R - World_L) / 2.0;
 		float height = (World_T - World_B) / 2.0;
-
-		// glMatrixMode(GL_PROJECTION);
-		// glLoadIdentity();		
-		// gluOrtho2D(gOverPosX-width+0.1, gOverPosX+width, gOverPosY-height, gOverPosY+height);
-		value = 0;
-		//glutPostRedisplay();		
+		value = 0;	
 		exit(0);
 	}
 

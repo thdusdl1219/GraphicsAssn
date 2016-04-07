@@ -45,6 +45,9 @@ private:
 	int Ydelta;
 	int MXdelta;
 	int MYdelta;
+
+	
+
 	bool isRotate;
 	
 
@@ -60,15 +63,6 @@ public:
 	void decX(int, bool);
 	void goPortal(portal **);
 	void initNode();
-	/* void initVertex();
-	void torso();
-	void head();
-	void left_uleg();
-	void left_lleg();
-	void right_uleg();
-	void right_lleg();
-	void traverse(Node* node);
-	*/
 	void drawbody(float);
 	void move(float x, float y, mat4);
 	bool colDetection(car** Car);
@@ -77,7 +71,15 @@ public:
 	bool colDetection(portal** Portal);
 	bool colDetection(river** River);
 
-		
+	int world_Tdelta;
+	int world_Bdelta;
+	int world_Ldelta;
+	int world_Rdelta;
+
+	int Mworld_Tdelta;
+	int Mworld_Bdelta;
+	int Mworld_Ldelta;
+	int Mworld_Rdelta;
 };
 
 

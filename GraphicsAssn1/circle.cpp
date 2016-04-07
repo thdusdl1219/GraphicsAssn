@@ -34,7 +34,7 @@ const float wY = cincY / divY;
 	model_view = mvstack.pop();
 }*/
 
-#define FRAME (float)30
+
 
 void cir::drawbody(float timedelta) {
 	if (Xdelta > 0) {
@@ -53,6 +53,38 @@ void cir::drawbody(float timedelta) {
 		nodes[Torso]->transform *= Translate(0, -(cincY / FRAME), 0);
 		MYdelta--;
 	}
+	if (world_Ldelta > 0) {
+		World_L += cincX / FRAME;
+		world_Ldelta--;
+	}
+	if (world_Rdelta > 0) {
+		World_R += cincX / FRAME;
+		world_Rdelta--;
+	}
+	if (world_Tdelta > 0) {
+		World_T += cincY / FRAME;
+		world_Tdelta--;
+	}
+	if (world_Bdelta > 0) {
+		World_B += cincY / FRAME;
+		world_Bdelta--;
+	}
+	if (Mworld_Ldelta > 0) {
+		World_L -= cincX / FRAME;
+		Mworld_Ldelta--;
+	}
+	if (Mworld_Rdelta > 0) {
+		World_R -= cincX / FRAME;
+		Mworld_Rdelta--;
+	}
+	if (Mworld_Tdelta > 0) {
+		World_T -= cincY / FRAME;
+		Mworld_Tdelta--;
+	}
+	if (Mworld_Bdelta > 0) {
+		World_B -= cincY / FRAME;
+		Mworld_Bdelta--;
+	}
 }
 
 cir::cir(float x, float y, float r, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader)
@@ -66,6 +98,14 @@ cir::cir(float x, float y, float r, mat4& m, list<Node*> *child, Shader* shader)
 	Ydelta = 0;
 	MYdelta = 0;
 	MXdelta = 0;
+	world_Ldelta = 0;
+	world_Tdelta = 0;
+	world_Bdelta = 0;
+	world_Rdelta = 0;
+	Mworld_Tdelta = 0;
+	Mworld_Bdelta = 0;
+	Mworld_Ldelta = 0;
+	Mworld_Rdelta = 0;
 
 }
 
