@@ -5,15 +5,16 @@ int car::realnCar = 0;
 
 car::car(float x, float y, const std::string direction, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader) {
 	this->direction = direction;
+	vertices = {
+		vec2(this->x, this->y),
+		vec2(this->x, this->y + (WORLD_SIZE / MAP_DIVIDE_Y)),
+		vec2(this->x + (WORLD_SIZE / MAP_DIVIDE_X), this->y),
+		vec2(this->x + (WORLD_SIZE / MAP_DIVIDE_X), this->y + (WORLD_SIZE / MAP_DIVIDE_Y))
+	};
 }
 
 void car::draw(mat4 m) {
-	vertices = {
-		vec2(x, y),
-		vec2(x, y + (WORLD_SIZE / MAP_DIVIDE_Y)),
-		vec2(x + (WORLD_SIZE / MAP_DIVIDE_X), y),
-		vec2(x + (WORLD_SIZE / MAP_DIVIDE_X), y + (WORLD_SIZE / MAP_DIVIDE_Y))
-	};
+	
 
 	glUseProgram(shader);
 
@@ -43,24 +44,41 @@ void car::draw(mat4 m) {
 }
 void car::move()
 {
+	mat4 m;
 	if (direction == "UP")
 	{
-		incY();
+		m = incY();
 	}
-	else decY();
+	else m = decY();
+	this->transform *= m;
+
 }
 
-void car::incY() {
-	if (y < 1.0 - (WORLD_SIZE / MAP_DIVIDE_Y))
+mat4 car::incY() {
+	mat4 m;
+	if (y < 1.0) {
 		y += WORLD_SIZE / MAP_DIVIDE_Y / SPEED;
-	else {
-		y = -1.0 - WORLD_SIZE / MAP_DIVIDE_Y;
+		m = Translate(0.0, WORLD_SIZE / MAP_DIVIDE_Y / SPEED, 0.0);
 	}
+	else {
+		float tmpY = this->y;
+		y = -1.0 - WORLD_SIZE / MAP_DIVIDE_Y;
+		m = Translate(0.0, y - tmpY, 0.0);
+	}
+	return m;
 }
 
-void car::decY() {
-	if (y > -1.0)
+mat4 car::decY() {
+	mat4 m;
+	if (y > -1.0) {
 		y -= WORLD_SIZE / MAP_DIVIDE_Y / SPEED;
-	else y = WORLD_SIZE;
+		m = Translate(0.0, -WORLD_SIZE / MAP_DIVIDE_Y / SPEED, 0.0);
+	}
+	else {
+		float tmpY = this->y;
+		y = WORLD_SIZE;
+		m = Translate(0.0, y - tmpY, 0.0);
+	}
+	return m;
 }
 

@@ -317,6 +317,10 @@ void refreshAll(STATE s) {
 			circle->world_Ldelta += FRAME;
 			circle->world_Rdelta += FRAME;
 		}
+		else if (World_R >= WORLD_SIZE) {
+			World_R = WORLD_SIZE;
+			World_L = WORLD_SIZE - WORLD_SIZE / DIVIDE_WINDOW;
+		}
 	}
 	else if (s == LEFT) {
 		circle->decX(logNum, false);		
@@ -333,6 +337,10 @@ void refreshAll(STATE s) {
 			//World_R -= incX;
 			circle->Mworld_Ldelta += FRAME;
 			circle->Mworld_Rdelta += FRAME;
+		}
+		else if (World_L < 0) {
+			World_R = WORLD_SIZE / DIVIDE_WINDOW;
+			World_L = 0;
 		}
 	}
 	//glutPostRedisplay();
