@@ -7,9 +7,9 @@ class logt : public Node {
 public:
 	logt(float x, float y, const std::string direction, mat4& m, list<Node*> *child, Shader* shader);
 	void draw(mat4);
-	void move();
-	void incY();
-	void decY();
+	mat4 move();
+	mat4 incY();
+	mat4 decY();
 	std::string getDirection();
 	static int realnLog;
 	

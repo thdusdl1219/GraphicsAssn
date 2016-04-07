@@ -183,12 +183,12 @@ void init(void) {
 			dir = "DOWN";
 			yPos = WORLD_SIZE;
 		}
-		for (int j = 0; j < (rand() % MAX_LOGN) + 1; j++)
+		for (int j = 0; j < (rand() % MAX_LOGN) + 30; j++)
 		{
 			if (yPos)
-				yPos -= incY * (rand() % CAR_SPACE + 2) * j;
+				yPos -= incY * (rand() % CAR_SPACE + 4);
 			else
-				yPos += incY * (rand() % CAR_SPACE + 2) * j;
+				yPos += incY * (rand() % CAR_SPACE + 4);
 			Log[count] = new logt(riverPos[i], yPos, dir, iMat, NULL, LogShader);
 			riverList->push_back(Log[count]);
 			count++;
@@ -296,11 +296,13 @@ void refreshAll(STATE s) {
 	int logNum = circle->colDetection(Log);
 
 	if (s == UP) {
-		circle->incY();		
+		circle->incY(false);		
 		bool tCol = circle->colDetection(Tree);
 		bool tPor = circle->colDetection(Portal);
+
+
 		if(tCol == true)
-			circle->decY();		
+			circle->decY(true);
 		else if (tPor == true)
 			circle->goPortal(Portal);
 		else if (World_T < WORLD_SIZE && circle->getY() > - 1 * WORLD_SIZE / DIVIDE_WINDOW / 2)
@@ -314,11 +316,11 @@ void refreshAll(STATE s) {
 		}
 	}
 	else if (s == DOWN) {
-		circle->decY();		
+		circle->decY(false);		
 		bool tCol = circle->colDetection(Tree);
 		bool tPor = circle->colDetection(Portal);
 		if (tCol == true)
-			circle->incY();		
+			circle->incY(true);		
 		else if (tPor == true)
 			circle->goPortal(Portal);
 		else if (World_B >= incY && circle->getY() < WORLD_SIZE / DIVIDE_WINDOW / 2)
@@ -332,11 +334,11 @@ void refreshAll(STATE s) {
 		}
 	}
 	else if (s == RIGHT) {
-		circle->incX(logNum);		
+		circle->incX(logNum, false);		
 		bool tCol = circle->colDetection(Tree);
 		bool tPor = circle->colDetection(Portal);
 		if (tCol == true)
-			circle->decX(logNum);
+			circle->decX(logNum, true);
 		else if (tPor == true)
 			circle->goPortal(Portal);
 		//맵 전환 부분 코드
@@ -347,11 +349,11 @@ void refreshAll(STATE s) {
 		}
 	}
 	else if (s == LEFT) {
-		circle->decX(logNum);		
+		circle->decX(logNum, false);		
 		bool tCol = circle->colDetection(Tree);
 		bool tPor = circle->colDetection(Portal);
 		if (tCol == true)
-			circle->incX(logNum);
+			circle->incX(logNum, true);
 		else if (tPor == true)
 			circle->goPortal(Portal);
 		//맵 전환 부분 코드
@@ -390,6 +392,7 @@ void specialkeyboard(int key, int x, int y) {
 
 void ReDisplayTimer(int value)
 {
+	
 	if (value == 0){
 		Sleep(1000);
 		printf("value is zero\n");
@@ -428,19 +431,21 @@ void ReDisplayTimer(int value)
 
 	for (int i = 0; i < logt::realnLog; i++) {
 		if (logNum == i) {
-			Log[i]->move();
-			circle->move(Log[i]->getX(),Log[i]->getY(), Log[i]->getDirection());
+			//mat4 m = Translate(Log[i]->getX());
+			mat4 m = Log[i]->move();
+			m = Translate(0, Log[i] -> getY() - (circle->getY() - 0.5 * cincY), 0);
+			circle->move(Log[i]->getX(), Log[i]->getY(), m);
 		}
 		else
 			Log[i]->move();
 	}
 
-	if (colRiver && logNum == -1) {
+	/* if (colRiver && logNum == -1) {
 		printf("circle falls in river... forever...\n");
 		Sleep(1000);
 		exit(0);
-	}
-
+	}*/
+	circle->drawbody(500 / 60);
 	glutPostRedisplay();
-	glutTimerFunc(1000 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
+	glutTimerFunc(300 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
 }

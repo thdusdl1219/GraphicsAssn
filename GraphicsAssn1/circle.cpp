@@ -16,7 +16,7 @@ const int NumVertices = 6;
 const float divY = 2.0;
 const float wY = cincY / divY;
 
-void cir::traverse(Node* node)
+/*void cir::traverse(Node* node)
 {
 	if (node == NULL) { return; }
 
@@ -32,59 +32,87 @@ void cir::traverse(Node* node)
 		}
 	}
 	model_view = mvstack.pop();
-}
+}*/
 
+#define FRAME (float)30
+
+void cir::drawbody(float timedelta) {
+	if (Xdelta > 0) {
+		nodes[Torso]->transform *= Translate(cincX / FRAME, 0, 0);
+		Xdelta--;
+	}
+	if (Ydelta > 0) {
+		nodes[Torso]->transform *= Translate(0, cincY / FRAME, 0);
+		Ydelta--;
+	}
+	if (MXdelta > 0) {
+		nodes[Torso]->transform *= Translate(-(cincX / FRAME), 0, 0);
+		MXdelta--;
+	}
+	if (MYdelta > 0) {
+		nodes[Torso]->transform *= Translate(0, -(cincY / FRAME), 0);
+		MYdelta--;
+	}
+}
 
 cir::cir(float x, float y, float r, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader)
 {	
-
 	//identity
 	model_view = mat4(1.0);
 	projection = mat4(1.0);
 	initNode();
 	isRotate = false;
+	Xdelta = 0;
+	Ydelta = 0;
+	MYdelta = 0;
+	MXdelta = 0;
 
 }
 
 
-void cir::incY() {
+void cir::incY(bool tcol) {
 	if (y < 1 - cincY) {
 		float a = y - 0.5 * cincY;
-		float tmpX = this->x;
-		float tmpY = this->y;
-
+		float tmpY = y;
 		//printf("%f\n", ROUNDING((x - 0.5 * cincX) / cincX, 0));
 		x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
 		y = (ROUNDING(a / cincY, 0) * cincY) + cincY + cincY * 0.5;
-
+		//if (!tcol) {
+			int delta = ROUNDING((FRAME / (cincY / abs(tmpY- y))), 0);
+			Ydelta += delta;
+		//}
 		
-		nodes[Torso]->transform *= Translate(x - tmpX, y - tmpY, 0);
+	
 
 	}
 	
 }
 
-void cir::decY() {
+void cir::decY(bool tcol) {
 	if (y > -1 + cincY) {
 		float a = y - 0.5 * cincY;
-		float tmpX = this->x;
-		float tmpY = this->y;
-
+		//if (!tcol) {
+		float tmpY = y;
+		//	MYdelta += FRAME;
+		//}
 		//printf("%f\n", ROUNDING((x - 0.5 * cincX) / cincX, 0));
 		x = (ROUNDING((x - 0.5 * cincX) / cincX, 0) * cincX) + cincX * 0.5;
 		y = (ROUNDING(a / cincY, 0) * cincY) - cincY + cincY * 0.5;
-
-		nodes[Torso]->transform *= Translate(x - tmpX, y - tmpY, 0);
+		int delta = ROUNDING((FRAME / (cincY / abs(tmpY - y))), 0);
+		MYdelta += delta;
+	//	nodes[Torso]->transform *= Translate(x - tmpX, y - tmpY, 0);
 	
 	}
 	
 }
 
-void cir::incX(int logNum) {
+void cir::incX(int logNum, bool tcol) {
 	if (x < 1 - cincX) {
 		float a = x - 0.5 * cincX;
-		float tmpX = this->x;
-		float tmpY = this->y;
+		float tmpY = y;
+		//if (!tcol) {
+			Xdelta += FRAME;
+		//}
 		//printf("%f\n", ROUNDING((y - 0.5 * cincY) / cincY, 0));
 		//printf("before x : %f\n", x);
 		//x = (ROUNDING( a / cincX, 0) * cincX) + cincX + cincX * 1;
@@ -92,7 +120,16 @@ void cir::incX(int logNum) {
 		if(logNum == -1)
 			y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
 		x += cincX;
-		nodes[Torso]->transform *= Translate(x - tmpX, y - tmpY, 0);
+		int delta;
+		if (y - tmpY > 0) {
+			delta = ROUNDING((FRAME / (cincY / abs(tmpY - y))), 0);
+			Ydelta += delta;
+		}
+		else {
+			delta = ROUNDING((FRAME / (cincY / abs(tmpY - y))), 0);
+			MYdelta += delta;
+		}
+		//nodes[Torso]->transform *= Translate(x - tmpX, y - tmpY, 0);
 		//
 		
 	}
@@ -122,16 +159,26 @@ void cir::incX(int logNum) {
 	
 }
 
-void cir::decX(int logNum) {
+void cir::decX(int logNum, bool tcol) {
 	if (x > -1 + cincX) {
 		float a = x - 0.5 * cincX;
-		float tmpX = this->x;
-		float tmpY = this->y;
+		float tmpY = y;
+		//if (!tcol) {
+			MXdelta += FRAME;
+		//}
+
 		if (logNum == -1) 
 			y = (ROUNDING((y - 0.5 * cincY) / cincY, 0) * cincY) + cincY * 0.5;
 		x -= cincX;
-		nodes[Torso]->transform *= Translate(x - tmpX, y - tmpY, 0);
-
+		int delta;
+		if (y - tmpY > 0) {
+			delta = ROUNDING((FRAME / (cincY / abs(tmpY - y))), 0);
+			Ydelta += delta;
+		}
+		else {
+			delta = ROUNDING((FRAME / (cincY / abs(tmpY - y))), 0);
+			MYdelta += delta;
+		}
 	}
 	if (isRotate == false) {
 		body* b = dynamic_cast<body *>(nodes[LeftUpperLeg]);
@@ -159,7 +206,7 @@ void cir::decX(int logNum) {
 
 }
 
-void cir::torso()
+/* void cir::torso()
 {
 	//color	
 	GLuint t;
@@ -179,86 +226,7 @@ void cir::torso()
 
 }
 
-void cir::head()
-{
-	//color	
-	GLuint h;
-	glGenBuffers(1, &h);
-	glBindBuffer(GL_ARRAY_BUFFER, h);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vec4), &colorVertices[3], GL_STATIC_DRAW);
-
-	GLint vColor = glGetAttribLocation(shader, "vColor");
-	glEnableVertexAttribArray(vColor);
-	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-	mvstack.push(model_view);
-
-	model_view = Translate(WORLD_SIZE / MAP_DIVIDE_X / 4, cincY/8, 0.0) * Translate(bodyVertices[0]) * Scale(0.5, 1.0, 1.0) *  Translate(-bodyVertices[0]);
-	
-	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
-	
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
-	model_view = mvstack.pop();
-}
-
-void cir::left_uleg()
-{
-	//color	
-	GLuint l;
-	glGenBuffers(1, &l);
-	glBindBuffer(GL_ARRAY_BUFFER, l);	
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vec4), &colorVertices[3], GL_STATIC_DRAW);
-
-	GLint vColor = glGetAttribLocation(shader, "vColor");
-	glEnableVertexAttribArray(vColor);
-	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-	mvstack.push(model_view);
-
-	model_view = Translate(cincX / 2, 0.0, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.1, -1.0, 1.0) *  Translate(-bodyVertices[0]);
-
-	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
-	model_view = mvstack.pop();
-}
-
-void cir::left_lleg()
-{
-	mvstack.push(model_view);
-
-	model_view = Translate(cincX / 2, -cincY / 4, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.1, -1.5, 1.0) *  Translate(-bodyVertices[0]);
-	
-	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
-	model_view = mvstack.pop();
-}
-
-void cir::right_uleg()
-{
-
-	mvstack.push(model_view);
-
-	model_view = Translate(cincX/8, 0.0, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.1, -1.0, 1.0) *  Translate(-bodyVertices[0]);
-
-	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
-	model_view = mvstack.pop();
-}
-
-void cir::right_lleg()
-{
-	mvstack.push(model_view);
-
-	model_view = Translate(cincX/8, -cincY / 4, 0.0) * Translate(bodyVertices[0]) * model_view * Scale(0.1, -1.5, 1.0) *  Translate(-bodyVertices[0]);
-
-	glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, NumVertices);
-	model_view = mvstack.pop();
-}
+*/
 
 void cir::initNode()
 {	
@@ -289,7 +257,7 @@ void cir::initNode()
 	nodes[Torso] = new body(newX + 1 + cincX * 1 / 4, newY + 1 + cincY * 1 / 2, newX + cincX * 3 / 4, newY + cincY * 7 / 8, m, torsoChild, shaderP);
 }
 
-void cir::initVertex()
+/*void cir::initVertex()
 {
 
 	
@@ -316,7 +284,7 @@ void cir::initVertex()
 	};
 
 
-}
+}*/
 
 void cir::draw(mat4 m)
 {
@@ -328,25 +296,12 @@ void cir::draw(mat4 m)
 	
 }
 
-void cir::setInitPos()
-{
-/*
-	x = initX;
-	y = initY;
-	World_L = 0;
-	World_R = WORLD_SIZE / DIVIDE_WINDOW;
-	World_B = 0;
-	World_T = WORLD_SIZE / DIVIDE_WINDOW;
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(World_L, World_R, World_B, World_T);*/
-}
 
 void cir::goPortal(portal** Portal)
 {
 	srand(time(NULL));
-	float tmpX = this->x;
-	float tmpY = this->y;
+	float tmpX = x;
+	float tmpY = y;
 	int goP = rand() % 2 + 1;
 	x = Portal[goP]->getX() + 0.5 * (cincX);
 	y = Portal[goP]->getY() + 0.5 * (cincY);
@@ -359,7 +314,8 @@ void cir::goPortal(portal** Portal)
 
 }
 
-void cir::move(float x, float y, std::string direction) {
+void cir::move(float x, float y, mat4 m) {
+	
 	float tmppY = y + cincY * 0.5 - this->y;
 
 	if (this->y < -1.0 || this->y > 1.0) {
@@ -367,12 +323,16 @@ void cir::move(float x, float y, std::string direction) {
 		exit(1);
 	}
 	
-	float tmpX = this->x;
-	float tmpY = this->y;
+	//preX = this->x;
+	//preY = this->y;
+	//curX = this->x;
+	//curY = this->y;
+
+	nodes[Torso]->transform *= m;
 
 	this->x = x + cincX * 0.5;
 	this->y = y + cincY * 0.5;
-	nodes[Torso]->transform *= Translate(this->x - tmpX, this->y - tmpY, 0);
+	// nodes[Torso]->transform *= Translate(this->x - tmpX, this->y - tmpY, 0);
 	// printf("world_T : %f\n", this->y);
 	if (World_T <= WORLD_SIZE && World_B >= 0) {
 		World_T += tmppY;

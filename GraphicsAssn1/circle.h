@@ -41,7 +41,10 @@ private:
 	mat4 projection;
 	MatrixStack mvstack;
 
-	
+	int Xdelta;
+	int Ydelta;
+	int MXdelta;
+	int MYdelta;
 	bool isRotate;
 	
 
@@ -51,14 +54,13 @@ public:
 	cir(float x, float y, float r, mat4& m, list<Node*> *child, Shader* shader);
 	void draw(mat4);
 	
-	void incY();
-	void decY();
-	void incX(int);
-	void decX(int);
-	void setInitPos();
+	void incY(bool);
+	void decY(bool);
+	void incX(int, bool);
+	void decX(int, bool);
 	void goPortal(portal **);
 	void initNode();
-	void initVertex();
+	/* void initVertex();
 	void torso();
 	void head();
 	void left_uleg();
@@ -66,8 +68,9 @@ public:
 	void right_uleg();
 	void right_lleg();
 	void traverse(Node* node);
-
-	void move(float, float, std::string);
+	*/
+	void drawbody(float);
+	void move(float x, float y, mat4);
 	bool colDetection(car** Car);
 	bool colDetection(tree** Tree);
 	int colDetection(logt** Log);
