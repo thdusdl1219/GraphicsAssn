@@ -48,7 +48,8 @@ private:
 
 	
 
-	bool isRotate;
+	bool isIRotate;
+	bool isDRotate;
 	
 
 public:

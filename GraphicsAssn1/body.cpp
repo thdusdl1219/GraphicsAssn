@@ -13,6 +13,7 @@ body::body(float x, float y, float x2, float y2, mat4& m, list<Node*> *child, Sh
 		vec2(x2, y2)
 	};
 
+	
 	printf("%f %f\n", this->x, this->y);
 
 }

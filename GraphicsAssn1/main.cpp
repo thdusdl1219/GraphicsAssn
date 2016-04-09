@@ -415,11 +415,11 @@ void ReDisplayTimer(int value)
 			Log[i]->move();
 	}
 
-	/* if (colRiver && logNum == -1) {
+	 if (colRiver && logNum == -1) {
 		printf("circle falls in river... forever...\n");
 		Sleep(1000);
 		exit(0);
-	}*/
+	}
 	circle->drawbody(500 / 60);
 	glutPostRedisplay();
 	glutTimerFunc(300 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
