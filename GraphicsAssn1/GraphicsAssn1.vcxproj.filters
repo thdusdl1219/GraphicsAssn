@@ -27,9 +27,6 @@
     <ClCompile Include="grass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="object.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="tree.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -57,6 +54,9 @@
     <ClCompile Include="world.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ObjLoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -69,9 +69,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="default.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="object.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="tree.h">
@@ -111,6 +108,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="world.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjLoader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

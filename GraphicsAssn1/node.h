@@ -2,6 +2,7 @@
 #include "default.h"
 #include "Shader.h"
 #include "MvStack.h"
+#include "ObjLoader.h"
 
 using namespace std;
 

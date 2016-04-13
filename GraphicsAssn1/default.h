@@ -31,7 +31,7 @@ using namespace std;
 #define CIRCLE_RADIUS (float)(incX / 2)
 
 #define NTREE_IN_GRASS 10
-#define MAX_CARN 9
+#define MAX_CARN 4
 #define MAX_LOGN 30
 #define CAR_SPACE 4
 #define FRAME (float)10

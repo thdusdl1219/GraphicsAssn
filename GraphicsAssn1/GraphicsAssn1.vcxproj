@@ -152,7 +152,7 @@
     <ClCompile Include="line.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="node.cpp" />
-    <ClCompile Include="object.cpp" />
+    <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="portal.cpp" />
     <ClCompile Include="river.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -171,7 +171,7 @@
     <ClInclude Include="mat.h" />
     <ClInclude Include="MvStack.h" />
     <ClInclude Include="node.h" />
-    <ClInclude Include="object.h" />
+    <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="portal.h" />
     <ClInclude Include="river.h" />
     <ClInclude Include="Shader.h" />

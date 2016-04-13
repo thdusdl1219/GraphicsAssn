@@ -43,7 +43,6 @@ void init(void) {
 	srand(time(NULL));
 
 	nGrass = rand() % 4 + 6;
-	nGrass = 9;
 	nRoad = ((nGrass - 1) / 4) * 10;
 	switch ((nGrass - 1) % 4) {
 	case 0: 
@@ -150,12 +149,13 @@ void init(void) {
 	grassList->push_back(Portal[0]);
 	
 	//init Tree
-	
+	CObjLoader* treeobjP = new CObjLoader();
+	treeobjP->Load("object\\christmastree\\christmas_tree.obj", NULL);
 	for (int i = 0; i < gPos.size() - 2; i++)
 	{
 		for (int j = 0; j < NTREE_IN_GRASS; j++) {
 			int yPos = rand() % NTREE_IN_GRASS;
-			Tree.push_back(new tree(gPos[i + 1], incY * yPos * 2, vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), iMat, NULL, shader));
+			Tree.push_back(new tree(gPos[i + 1], incY * yPos * 2, treeobjP, vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), iMat, NULL, shader));
 			grassList->push_back(Tree[i * NTREE_IN_GRASS + j]);
 		}
 	}
@@ -186,7 +186,8 @@ void init(void) {
 	
 	//init Car	
 	int count = 0;
-	
+	CObjLoader* carobjP = new CObjLoader();
+	carobjP->Load("object\\taxi\\Taxi.obj", NULL);
 	for (int i = 0; i < roadPos.size(); i++)
 	{
 		std::string dir;
@@ -207,7 +208,7 @@ void init(void) {
 				yPos -= incY * (rand() % CAR_SPACE + 2) * j;
 			else
 				yPos += incY * (rand() % CAR_SPACE + 2) * j;
-			car* c = new car(roadPos[i], yPos, vec3(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0), dir, iMat, NULL, shader);
+			car* c = new car(roadPos[i], yPos, carobjP, vec3(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0), dir, iMat, NULL, shader);
 			Car.push_back(c);
 			roadList->push_back(c);
 			count++;
@@ -444,9 +445,9 @@ void ReDisplayTimer(int value)
 {
 	
 	if (value == 0){
-		Sleep(1000);
-		printf("value is zero\n");
-		exit(0);
+	//	Sleep(1000);
+	//	printf("value is zero\n");
+	//	exit(0);
 	}
 
 	if (circle->getX() >= 1.0 - incX) {
