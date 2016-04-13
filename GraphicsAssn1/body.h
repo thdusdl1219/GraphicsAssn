@@ -4,7 +4,7 @@
 
 class body : public Node {
 public:
-	body(float x, float y, float x2, float y2, mat4& m, list<Node*> *child, Shader* shader);
+	body(vec3, vec3 color, float, float, float, mat4& m, list<Node*> *child, Shader* shader);
 	void draw(mat4);
 	void setX(float);
 	void setY(float);
@@ -12,7 +12,7 @@ public:
 	float x2;
 	float y2;
 private:
-	std::vector<vec2> vertices;
+	std::vector<vec3> vertices;
 	GLuint vbo;
 	//
 };

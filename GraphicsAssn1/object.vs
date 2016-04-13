@@ -1,10 +1,13 @@
 #version 430 core
-in vec2 pos;
-// uniform mat4 scalef;
+
+in vec3 pos;
 uniform mat4 ModelView;
 
+uniform vec3 uColor;
+out vec4 color;
+
 void main()
-{	
-	gl_Position = ModelView * vec4(pos, 0.0, 1.0);
-	//gl_Position = vec4(result, 0.0, 1.0);
+{		
+	color = vec4(uColor, 1.0);	
+	gl_Position = ModelView * vec4(pos, 1.0);
 }

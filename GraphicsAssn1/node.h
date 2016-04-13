@@ -20,6 +20,7 @@ public :
 	list<Node*> *child;
 	Shader* shaderP;
 	GLuint shader;
+	vec3 color;
 	static int count;
 protected :
 	float x;

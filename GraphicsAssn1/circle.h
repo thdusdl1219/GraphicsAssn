@@ -58,19 +58,19 @@ public:
 	cir(float x, float y, float r, mat4& m, list<Node*> *child, Shader* shader);
 	void draw(mat4);
 	
-	void incY(bool);
+	void incrY(bool);
 	void decY(bool);
-	void incX(int, bool);
+	void incrX(int, bool);
 	void decX(int, bool);
-	void goPortal(portal **);
+	void goPortal(vector<portal *>);
 	void initNode();
 	void drawbody(float);
 	void move(float x, float y, mat4);
-	bool colDetection(car** Car);
-	bool colDetection(tree** Tree);
-	int colDetection(logt** Log);
-	bool colDetection(portal** Portal);
-	bool colDetection(river** River);
+	bool colDetection(vector<car*>);
+	bool colDetection(vector<tree*>);
+	int colDetection(vector<logt*>);
+	bool colDetection(vector<portal*>);
+	bool colDetection(vector<river*>);
 
 	int world_Tdelta;
 	int world_Bdelta;

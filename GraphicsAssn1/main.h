@@ -10,34 +10,27 @@
 #include "river.h"
 #include "world.h"
 #include "log.h"
+#include <vector>
 
 
 
-
-float gPos[nGrass];
-float tPos[nTree];
-float roadPos[nRoad];
-float linePos[nLine];
-float riverPos[nRiver];
+vector<float> gPos;
+vector<float> tPos;
+vector<float> roadPos;
+vector<float> linePos;
+vector<float> riverPos;
 
 
 cir* circle;
 Shader* circleShader;
 
-grass* Grass[nGrass];
-Shader* grassShader;
-line* Line[nLine];
-Shader* lineShader;
-tree* Tree[nTree];
-Shader* TreeShader;
-car* Car[nCar];
-Shader* CarShader;
-portal* Portal[nPortal];
-Shader* PortalShader;
-river* River[nRiver];
-Shader* RiverShader;
-logt* Log[nLog];
-Shader* LogShader;
+vector<grass*> Grass;
+vector<line*> Line;
+vector<tree*> Tree;
+vector<car*> Car;
+vector<portal*> Portal;
+vector<river*> Road;
+vector<logt*> Log;
 world* World;
 
 void init(void);

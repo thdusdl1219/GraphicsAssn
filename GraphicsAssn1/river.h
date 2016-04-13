@@ -4,10 +4,10 @@
 
 class river : public Node {
 public:
-	river(float x, float y, mat4& m, list<Node*> *child, Shader* shader);
+	river(float x, float y, vec3, mat4& m, list<Node*> *child, Shader* shader);
 	void draw(mat4);
 private:
-	std::vector<vec2> vertices;
+	std::vector<vec3> vertices;
 	GLuint vbo;
 	//
 };

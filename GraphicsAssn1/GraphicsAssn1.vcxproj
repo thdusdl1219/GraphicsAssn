@@ -150,7 +150,6 @@
     <ClCompile Include="circle.cpp" />
     <ClCompile Include="grass.cpp" />
     <ClCompile Include="line.cpp" />
-    <ClCompile Include="log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="node.cpp" />
     <ClCompile Include="object.cpp" />
@@ -167,7 +166,6 @@
     <ClInclude Include="default.h" />
     <ClInclude Include="grass.h" />
     <ClInclude Include="line.h" />
-    <ClInclude Include="log.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="circle.h" />
     <ClInclude Include="mat.h" />
@@ -182,16 +180,8 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="car.fs" />
-    <None Include="circle.fs" />
-    <None Include="circle.vs" />
-    <None Include="grass.fs" />
-    <None Include="log.fs" />
+    <None Include="object.fs" />
     <None Include="object.vs" />
-    <None Include="line.fs" />
-    <None Include="portal.fs" />
-    <None Include="river.fs" />
-    <None Include="tree.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
