@@ -41,8 +41,8 @@ void init(void) {
 
 	glShadeModel(GL_FLAT);
 	srand(time(NULL));
-
 	nGrass = rand() % 4 + 6;
+	nGrass = 10;
 	nRoad = ((nGrass - 1) / 4) * 10;
 	switch ((nGrass - 1) % 4) {
 	case 0: 
@@ -150,7 +150,7 @@ void init(void) {
 	
 	//init Tree
 	CObjLoader* treeobjP = new CObjLoader();
-	treeobjP->Load("object\\christmastree\\christmas_tree.obj", NULL);
+	treeobjP->Load("object\\christmastree\\christmas_tree.obj", "object\\christmastree\\christmas_tree.mtl");
 	for (int i = 0; i < gPos.size() - 2; i++)
 	{
 		for (int j = 0; j < NTREE_IN_GRASS; j++) {
@@ -187,7 +187,7 @@ void init(void) {
 	//init Car	
 	int count = 0;
 	CObjLoader* carobjP = new CObjLoader();
-	carobjP->Load("object\\taxi\\Taxi.obj", NULL);
+	carobjP->Load("object\\taxi\\Taxi.obj", "object\\taxi\\Taxi.mtl");
 	for (int i = 0; i < roadPos.size(); i++)
 	{
 		std::string dir;
@@ -282,7 +282,6 @@ void init(void) {
 	
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS, iMat, NULL, shader);
 	worldList->push_back(circle);
-
 
 	World = new world(iMat, worldList);
 	World_R = WORLD_SIZE / DIVIDE_WINDOW;
@@ -419,22 +418,26 @@ void refreshAll(STATE s) {
 }
 
 void specialkeyboard(int key, int x, int y) {
-	
+	STATE s = circle->circleState;
 	switch (key) {
 	case GLUT_KEY_UP:
-		refreshAll(UP);
+		printf("%d\n", s);
+		refreshAll(circle->circleState);
 		break;
 	case GLUT_KEY_DOWN:
-		refreshAll(DOWN);
+		//refreshAll(DOWN);
 		break;
 	case GLUT_KEY_RIGHT:
-		refreshAll(RIGHT);
+		circle->circleState = (STATE)(((4 + s - 1) % 4));
+		circle->thetaZ += FRAME;
 		break;
 	case GLUT_KEY_LEFT:
-		refreshAll(LEFT);
+		circle->circleState = (STATE)((s + 1) % 4);
+		circle->MthetaZ += FRAME;
+		// refreshAll(LEFT);
 		break;
 	}
-	// printf("CPos : %f %f %f %f\n", circle->getX(), circle->getY(), incX, cincX);
+	printf("CPos : %f %f %f %f\n", circle->getX(), circle->getY(), incX, cincX);
 
 	//glutPostRedisplay();
 	//glutSwapBuffers();
@@ -491,7 +494,7 @@ void ReDisplayTimer(int value)
 		Sleep(1000);
 		exit(0);
 	} */
-	circle->drawbody(500 / 60);
+	circle->drawbody(circle->circleState);
 	glutPostRedisplay();
 	glutTimerFunc(300 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
 }

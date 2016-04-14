@@ -2,8 +2,11 @@
 #include "default.h"
 
 
-body::body(vec3 point, vec3 color, float w, float h, float d, mat4& m, list<Node*> *child, Shader* shader) : Node(point.x, point.y, m, child, shader) {
-
+body::body(vec3 point, vec3 color, float w, float h, float d, mat4& m, list<Node*> *child, Shader* shader) : Node(point.x, point.y, mat4(1.0), child, shader) {
+	this->model = m;
+	this->w = w;
+	this->h = h;
+	this->d = d;
 	vec3 v1 = vec3(this->x, this->y, point.z);
 	vec3 v2 = vec3(this->x, this->y + h, point.z);
 	vec3 v3 = vec3(this->x + w, this->y, point.z);
@@ -50,7 +53,8 @@ body::body(vec3 point, vec3 color, float w, float h, float d, mat4& m, list<Node
 void body::draw(mat4 m) {
 	
 	glUseProgram(shader);
-	
+	m = transpose(model) * m;
+
 	GLint loc = glGetUniformLocation(shader, "ModelView");
 	if (loc != -1)
 	{

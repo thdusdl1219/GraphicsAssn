@@ -39,25 +39,12 @@ using namespace std;
 extern int nGrass;
 extern int nRoad;
 
-/*
-const int nGrass = 6;
-const int nTree = (nGrass - 2) * NTREE_IN_GRASS;
-const int nLine = 8;
-const int nRoad = 12;
-const int nPortal = 3;
-const int nCar = nRoad * MAX_CARN;
-*/
-
-
-//const int nRiver = 2;
-//const int nLog = nRiver * MAX_LOGN;
-
 
 enum STATE {
 	UP,
+	RIGHT,
 	DOWN,
 	LEFT,
-	RIGHT,
 };
 
 #define defaultX -1.0f

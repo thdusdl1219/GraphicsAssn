@@ -4,6 +4,7 @@ Node::Node(float x, float y, mat4 m, list<Node*> *child, Shader* shader) {
 	this->x = x - 1;
 	this->y = y - 1;
 	transform = m;
+	rotate = mat4(1.0);
 	this->child = child;
 	this->shaderP = shader;
 	if (shaderP)
@@ -26,8 +27,10 @@ void Node::traverse(mat4 modelM) {
 
 	mat4 curM;
 	//printf("this->y : %f\n", this->y);
-	curM = modelM * transform;
+	curM = modelM * transform * rotate;
+
 	mat4 tcurM = transpose(curM);
+
 	draw(tcurM);
 	if (child) {
 		for (list<Node*>::iterator c = child->begin(); c != child->end(); c++) {

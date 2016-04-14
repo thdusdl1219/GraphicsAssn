@@ -18,11 +18,15 @@ public :
 
 
 	mat4 transform;
+	mat4 rotate;
 	list<Node*> *child;
 	Shader* shaderP;
 	GLuint shader;
 	vec3 color;
 	static int count;
+	float d;
+	float h;
+	float w;
 protected :
 	float x;
 	float y;

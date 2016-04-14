@@ -13,6 +13,7 @@
 enum {
 	Torso = 0,
 	Head = 1,
+	Mouth = 2,
 	LeftUpperArm = 3,
 	LeftLowerArm = 4,
 	RightUpperArm = 5,
@@ -45,12 +46,12 @@ private:
 	int Ydelta;
 	int MXdelta;
 	int MYdelta;
-
 	
-
+	float Zangle;
 	bool isIRotate;
 	bool isDRotate;
-	
+	float initX;
+	float initY;
 
 public:
 	//scenenode nodes[10];
@@ -64,7 +65,7 @@ public:
 	void decX(int, bool);
 	void goPortal(vector<portal *>);
 	void initNode();
-	void drawbody(float);
+	void drawbody(STATE);
 	void move(float x, float y, mat4);
 	bool colDetection(vector<car*>);
 	bool colDetection(vector<tree*>);
@@ -81,6 +82,11 @@ public:
 	int Mworld_Bdelta;
 	int Mworld_Ldelta;
 	int Mworld_Rdelta;
+
+	int MthetaZ;
+	int thetaZ;
+	float distance;
+	STATE circleState;
 };
 
 

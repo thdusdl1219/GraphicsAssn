@@ -16,6 +16,7 @@ car::car(float x, float y, CObjLoader* obj, vec3 color, const std::string direct
 	
 	this->transform *= Translate(vec3(transX, transY, 0.2));
 	this->transform *= Scale(1.0 / carScale);
+	rotate = RotateX(90);
 	// this->transform *= RotateX(90);
 }
 
@@ -24,7 +25,6 @@ void car::draw(mat4 m) {
 
 	glUseProgram(shader);
 
-	m = RotateX(90) * m;
 
 	GLint Mloc = glGetUniformLocation(shader, "ModelView");
 	if (Mloc != -1)

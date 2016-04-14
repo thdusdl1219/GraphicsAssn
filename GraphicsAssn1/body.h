@@ -9,8 +9,7 @@ public:
 	void setX(float);
 	void setY(float);
 	mat4 model;
-	float x2;
-	float y2;
+
 private:
 	std::vector<vec3> vertices;
 	GLuint vbo;
