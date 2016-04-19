@@ -6,7 +6,7 @@ line::line(float x, float y, vec3 color, mat4& m, list<Node*> *child, Shader* sh
 	this->color = color;
 
 	for (int i = 1; i <= SPACE; i++) {
-		vertices.push_back(vec3(this->x, this->y + (2.0 / SPACE) * i, 0.1));
+		vertices.push_back(vec3(this->x, this->y + (2.0 / SPACE) * i, GRASS_ROAD_D+0.00001));
 	}
 }
 

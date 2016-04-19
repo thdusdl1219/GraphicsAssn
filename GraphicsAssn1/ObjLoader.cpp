@@ -310,7 +310,7 @@ void CObjLoader::Draw (GLuint shader)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		for (int i = 0; i < parts.size(); i++) {
 			if(parts[i].vIndices.size() != 0)
-				glDrawElements(GL_TRIANGLES, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
+				glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
 		}
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	

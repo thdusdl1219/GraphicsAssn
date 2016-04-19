@@ -7,14 +7,14 @@ portal::portal(float x, float y, vec3 color, mat4& m, list<Node*> *child, Shader
 	this->color = color;
 	float h = incY;
 	float w = incX - padding;
-	vec3 v1 = vec3(this->x + padding, this->y, 0.0);
-	vec3 v2 = vec3(this->x + padding, this->y + h, 0.0);
-	vec3 v3 = vec3(this->x + w, this->y, 0.0);
-	vec3 v4 = vec3(this->x + w, this->y + h, 0.0);
-	vec3 v5 = vec3(this->x + padding, this->y, 0.15);
-	vec3 v6 = vec3(this->x + padding, this->y + h, 0.15);
-	vec3 v7 = vec3(this->x + w, this->y, 0.15);
-	vec3 v8 = vec3(this->x + w, this->y + h, 0.15);
+	vec3 v1 = vec3(this->x + padding, this->y, GRASS_ROAD_D);
+	vec3 v2 = vec3(this->x + padding, this->y + h, GRASS_ROAD_D);
+	vec3 v3 = vec3(this->x + w, this->y, GRASS_ROAD_D);
+	vec3 v4 = vec3(this->x + w, this->y + h, GRASS_ROAD_D);
+	vec3 v5 = vec3(this->x + padding, this->y, 0.0075);
+	vec3 v6 = vec3(this->x + padding, this->y + h, 0.0075);
+	vec3 v7 = vec3(this->x + w, this->y, 0.0075);
+	vec3 v8 = vec3(this->x + w, this->y + h, 0.0075);
 
 	vertices = {
 		v1,

@@ -34,7 +34,8 @@ using namespace std;
 #define MAX_CARN 4
 #define MAX_LOGN 30
 #define CAR_SPACE 4
-#define FRAME (float)10
+#define FRAME (float)30
+#define GRASS_ROAD_D 0.005
 
 extern int nGrass;
 extern int nRoad;

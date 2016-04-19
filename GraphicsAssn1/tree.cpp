@@ -12,7 +12,7 @@ tree::tree(float x, float y, CObjLoader* obj, vec3 color, mat4& m, list<Node*> *
 	float transY = (this->y + incY * 0.5);
 	float scale = MAP_DIVIDE_X * 12 / 20;
 
-	this->transform *= Translate(vec3(transX, transY, 0.2));
+	this->transform *= Translate(vec3(transX, transY, GRASS_ROAD_D + 0.00001));
 	this->transform *= Scale(1.0 / scale);
 	this->transform *= RotateX(90);
 }

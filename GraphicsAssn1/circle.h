@@ -42,7 +42,7 @@ private:
 	mat4 projection;
 	MatrixStack mvstack;
 
-	int Xdelta;
+	
 	int Ydelta;
 	int MXdelta;
 	int MYdelta;
@@ -87,6 +87,7 @@ public:
 	int thetaZ;
 	float distance;
 	STATE circleState;
+	int Xdelta;
 };
 
 

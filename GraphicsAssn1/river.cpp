@@ -4,12 +4,49 @@
 
 river::river(float x, float y, vec3 color, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader) {
 	this->color = color;
+	float h = 2;
+	float w = incX;
+
+
+	vec3 v1 = vec3(this->x, this->y, 0.0);
+	vec3 v2 = vec3(this->x, this->y + h, 0.0);
+	vec3 v3 = vec3(this->x + w, this->y, 0.0);
+	vec3 v4 = vec3(this->x + w, this->y + h, 0.0);
+	vec3 v5 = vec3(this->x, this->y, GRASS_ROAD_D);
+	vec3 v6 = vec3(this->x, this->y + h, GRASS_ROAD_D);
+	vec3 v7 = vec3(this->x + w, this->y, GRASS_ROAD_D);
+	vec3 v8 = vec3(this->x + w, this->y + h, GRASS_ROAD_D);
 
 	vertices = {
-		vec3(this->x, this->y, 0.0),
-		vec3(this->x, this->y + 2, 0.0),
-		vec3(this->x + incX, this->y, 0.0),
-		vec3(this->x + incX, this->y + 2, 0.0)
+		v1,
+		v2,
+		v3,
+		v4,
+
+		v3,
+		v7,
+		v4,
+		v8,
+
+		v1,
+		v5,
+		v3,
+		v7,
+
+		v2,
+		v6,
+		v1,
+		v5,
+
+		v4,
+		v8,
+		v2,
+		v6,
+
+		v5,
+		v6,
+		v7,
+		v8,
 	};
 
 }

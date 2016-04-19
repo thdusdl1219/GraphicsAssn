@@ -38,6 +38,7 @@ int nRoad = 0;
 
 void init(void) {
 	
+	glClearColor(13.05 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 0.0);
 
 	glShadeModel(GL_FLAT);
 	srand(time(NULL));
@@ -306,7 +307,15 @@ void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-	mat4 wmv = Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T);
+
+	mat4 wmv =
+
+		//Perspective(120.0f, 1, 0.001, 20) *
+		//LookAt(vec4(1, 0, 0, 0.0), vec4(0, 0, -1, 0.0), vec4(0, 1, 0, 0.0)) *
+		Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T );
+
+		//LookAt(vec4(circle->getX() - 0.1, circle->getY() - 0.1, 0.1, 0.0), vec4(0, 150, -10, 0.0), vec4(0, 0, 1, 0.0));
+		//Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T) * LookAt(vec4(-1.0, -1.0, 0.5, 0.0), vec4(150, 0, 0.5, 0.0), vec4(0, 1, 0, 0.0));
 	World->traverse(wmv);
 
 	glDisable(GL_DEPTH_TEST);
@@ -318,13 +327,12 @@ void display(void) {
 
 
 void reshape(int w, int h) {	
-	 glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 }
 
 void refreshAll(STATE s) {
 	// int logNum = circle->colDetection(Log);
 	int logNum = -1;
-
 	if (s == UP) {
 		circle->incrY(false);		
 		bool tCol = circle->colDetection(Tree);
@@ -419,23 +427,25 @@ void refreshAll(STATE s) {
 
 void specialkeyboard(int key, int x, int y) {
 	STATE s = circle->circleState;
-	switch (key) {
-	case GLUT_KEY_UP:
-		printf("%d\n", s);
-		refreshAll(circle->circleState);
-		break;
-	case GLUT_KEY_DOWN:
-		//refreshAll(DOWN);
-		break;
-	case GLUT_KEY_RIGHT:
-		circle->circleState = (STATE)(((4 + s - 1) % 4));
-		circle->thetaZ += FRAME;
-		break;
-	case GLUT_KEY_LEFT:
-		circle->circleState = (STATE)((s + 1) % 4);
-		circle->MthetaZ += FRAME;
-		// refreshAll(LEFT);
-		break;
+	if (circle->Xdelta == 0 && circle->thetaZ == 0 && circle->MthetaZ == 0) {
+		switch (key) {
+		case GLUT_KEY_UP:
+			printf("%d\n", s);
+			refreshAll(circle->circleState);
+			break;
+		case GLUT_KEY_DOWN:
+			//refreshAll(DOWN);
+			break;
+		case GLUT_KEY_RIGHT:
+			circle->circleState = (STATE)(((4 + s - 1) % 4));
+			circle->thetaZ += FRAME;
+			break;
+		case GLUT_KEY_LEFT:
+			circle->circleState = (STATE)((s + 1) % 4);
+			circle->MthetaZ += FRAME;
+			// refreshAll(LEFT);
+			break;
+		}
 	}
 	printf("CPos : %f %f %f %f\n", circle->getX(), circle->getY(), incX, cincX);
 

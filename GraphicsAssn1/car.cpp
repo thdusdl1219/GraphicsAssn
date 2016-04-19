@@ -14,7 +14,7 @@ car::car(float x, float y, CObjLoader* obj, vec3 color, const std::string direct
 	float transX = (this->x + incX *0.5);
 	float transY = (this->y + incY * 0.5);
 	
-	this->transform *= Translate(vec3(transX, transY, 0.2));
+	this->transform *= Translate(vec3(transX, transY, GRASS_ROAD_D + 0.00001));
 	this->transform *= Scale(1.0 / carScale);
 	rotate = RotateX(90);
 	// this->transform *= RotateX(90);

@@ -18,9 +18,76 @@ const float wY = cincY / divY;
 
 
 void cir::drawbody(STATE circlestate) {
+	static int count = 0;
+	static int lowerleg = 0;
+	if (!lowerleg) {
+		body* b = dynamic_cast<body *>(nodes[LeftUpperLeg]);
+		b->rotate *= RotateY(15.0 / FRAME);
+		b = dynamic_cast<body *>(nodes[RightUpperLeg]);
+		b->rotate *= Translate(0, h, 0) * RotateY(-15.0 / FRAME) * Translate(0, -h, 0);
+		b = dynamic_cast<body *>(nodes[LeftLowerLeg]);
+		b->rotate *= RotateY(5.0 / FRAME);
+		b = dynamic_cast<body *>(nodes[RightLowerLeg]);
+		b->rotate *= RotateY(-5.0 / FRAME);
+
+		
+
+		count++;
+	}
+	else {
+		body* b = dynamic_cast<body *>(nodes[LeftUpperLeg]);
+		b->rotate *= RotateY(-15.0 / FRAME);
+		b = dynamic_cast<body *>(nodes[LeftLowerLeg]);
+		b->rotate *= RotateY(-5.0 / FRAME);
+		b = dynamic_cast<body *>(nodes[RightLowerLeg]);
+		b->rotate *= RotateY(5.0 / FRAME);
+		b = dynamic_cast<body *>(nodes[RightUpperLeg]);
+		b->rotate *= Translate(0, h, 0) * RotateY(15.0 / FRAME) * Translate(0, -h, 0);
+
+
+		count++;
+	}
+	if (count == FRAME)
+	{
+		lowerleg ^= 1;
+		count = 0;
+	}
+	static int isRotate = 0;
 	if (Xdelta > 0) {
 		nodes[Torso]->transform *= Translate(cincX / FRAME, 0, 0);
+		if (Xdelta % (int)FRAME < (int)FRAME / 2) {
+			nodes[Torso]->transform *= Translate(0, 0, -0.05 / FRAME);
+		}
+		else {
+			nodes[Torso]->transform *= Translate(0, 0, 0.05 / FRAME);
+			
+		}
+		if (!isRotate) {
+			body * b = dynamic_cast<body *>(nodes[RightUpperArm]);
+			b->rotate *= RotateY(-15.0 / FRAME);
+			b = dynamic_cast<body *>(nodes[LeftUpperArm]);
+			b->rotate *= RotateY(-15.0 / FRAME);
+			b = dynamic_cast<body *>(nodes[RightLowerArm]);
+			b->transform *= RotateZ(45.0 / FRAME);
+			b = dynamic_cast<body *>(nodes[LeftLowerArm]);
+			b->transform *= RotateZ(-45.0 / FRAME);
+
+		}
+		else {
+			body *b = dynamic_cast<body *>(nodes[RightUpperArm]);
+			b->rotate *= RotateY(15.0 / FRAME);
+			b = dynamic_cast<body *>(nodes[LeftUpperArm]);
+			b->rotate *= RotateY(15.0 / FRAME);
+			b = dynamic_cast<body *>(nodes[RightLowerArm]);
+			b->transform *= RotateZ(-45.0 / FRAME);
+			b = dynamic_cast<body *>(nodes[LeftLowerArm]);
+			b->transform *= RotateZ(45.0 / FRAME);
+
+		}
 		Xdelta--;
+		if (Xdelta == 0) {
+			isRotate ^= 1;
+		}
 	}
 	if (Ydelta > 0) {
 		 nodes[Torso]->transform *= Translate(cincX / FRAME, 0, 0);
@@ -85,14 +152,7 @@ void cir::drawbody(STATE circlestate) {
 		rotate *= RotateZ(-90 / FRAME);
 		rotate *= Translate(-distance, 0, 0);
 		//printf("Pos : %f, %f %f %f\n", x, y, initX, initY);
-		//rotate *= RotateZ(90 / FRAME);
-		/*body * b = dynamic_cast<body*>(nodes[Torso]);
-		//b->rotate *= RotateZ(90 / FRAME);
-		switch (circlestate) {
-		case RIGHT :
-			rotate *= Translate(x - initX, y - initY, 0) * RotateZ(-90 / FRAME) * Translate(-(x - initX), -(y - initY), 0);
-			break;
-		} */
+		
 		Zangle = fmod(360 + Zangle - 90 / FRAME, 360);
 		MthetaZ--;
 	}
@@ -217,43 +277,7 @@ void cir::decX(int logNum, bool tcol) {
 		x -= cincX;
 		int delta;
 	
-	}/*
-	if (isIRotate) {
-		body* b = dynamic_cast<body *>(nodes[LeftUpperLeg]);
-		nodes[LeftUpperLeg]->transform *= Translate(nodes[LeftUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5, b->y2, 0.0) * RotateZ(20.0) * Translate(-(nodes[LeftUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5), -b->y2, 0.0);
-		b = dynamic_cast<body *>(nodes[RightUpperLeg]);
-		nodes[RightUpperLeg]->transform *= Translate(nodes[RightUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5, b->y2, 0.0) * RotateZ(-30.0) * Translate(-(nodes[RightUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5), -b->y2, 0.0);
-		b = dynamic_cast<body *>(nodes[LeftLowerLeg]);
-		//nodes[LeftLowerLeg]->transform *= Translate(b->getX(), b->getY(), 0.0) * RotateZ(40.0) * Translate(-b->getX(), -b->getY(), 0.0);
-		b = dynamic_cast<body *>(nodes[RightLowerLeg]);
-		nodes[RightLowerLeg]->transform *= Translate(b->getX() + (b->x2 - b->getX()) * 0.5, b->y2 - cincY * 1 / 16, 0.0) * RotateZ(40.0) * Translate(-(b->getX() + (b->x2 - b->getX()) * 0.5), -(b->y2 - cincY * 1 / 16), 0.0);
-		isIRotate = false;
 	}
-	if (isDRotate == false) {
-		body* b = dynamic_cast<body *>(nodes[LeftUpperLeg]);
-		nodes[LeftUpperLeg]->transform *= Translate(nodes[LeftUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5, b->y2, 0.0) * RotateZ(-30.0) * Translate(-(nodes[LeftUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5), -b->y2, 0.0);
-		b = dynamic_cast<body *>(nodes[RightUpperLeg]);
-		nodes[RightUpperLeg]->transform *= Translate(nodes[RightUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5, b->y2, 0.0) * RotateZ(20.0) * Translate(-(nodes[RightUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5), -b->y2, 0.0);
-		b = dynamic_cast<body *>(nodes[LeftLowerLeg]);
-		nodes[LeftLowerLeg]->transform *= Translate(b->getX() + (b->x2 - b->getX()) * 0.5, b->y2 - cincY * 1 / 16, 0.0) * RotateZ(40.0) * Translate(-(b->getX() + (b->x2 - b->getX()) * 0.5), -(b->y2 - cincY * 1 / 16), 0.0);
-		b = dynamic_cast<body *>(nodes[RightLowerLeg]);
-		//nodes[RightLowerLeg]->transform *= Translate(b->getX() + (b->x2 - b->getX()) * 0.5, b->y2 - cincY * 1 / 16, 0.0) * RotateZ(-40.0) * Translate(-(b->getX() + (b->x2 - b->getX()) * 0.5), -(b->y2 - cincY * 1 / 16), 0.0);
-		isDRotate = true;
-
-	}
-	else if (isDRotate == true)
-	{
-		body* b = dynamic_cast<body *>(nodes[LeftUpperLeg]);
-		nodes[LeftUpperLeg]->transform *= Translate(nodes[LeftUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5, b->y2, 0.0) * RotateZ(30.0) * Translate(-(nodes[LeftUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5), -b->y2, 0.0);
-		b = dynamic_cast<body *>(nodes[RightUpperLeg]);
-		nodes[RightUpperLeg]->transform *= Translate(nodes[RightUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5, b->y2, 0.0) * RotateZ(-20.0) * Translate(-(nodes[RightUpperLeg]->getX() + (b->x2 - b->getX()) * 0.5), -b->y2, 0.0);
-		b = dynamic_cast<body *>(nodes[LeftLowerLeg]);
-		nodes[LeftLowerLeg]->transform *= Translate(b->getX() + (b->x2 - b->getX()) * 0.5, b->y2 - cincY * 1 / 16, 0.0) * RotateZ(-40.0) * Translate(-(b->getX() + (b->x2 - b->getX()) * 0.5), -(b->y2 - cincY * 1 / 16), 0.0);
-		b = dynamic_cast<body *>(nodes[RightLowerLeg]);
-		//nodes[RightLowerLeg]->transform *= Translate(b->getX() + (b->x2 - b->getX()) * 0.5, b->y2 - cincY * 1 / 16, 0.0) * RotateZ(40.0) * Translate(-(b->getX() + (b->x2 - b->getX()) * 0.5), -(b->y2 - cincY * 1 / 16), 0.0);
-		isDRotate = false;
-	}
-	*/
 
 }
 
@@ -267,10 +291,10 @@ void cir::initNode()
 
 	//TODO : z 값 수정되어야함
 	mat4  m = mat4(1.0);
-	m = mat4(1.0) * Translate(cincX * 7 / 16, cincY * 5 / 16, 0.1 - 1) * Translate(-incX / 2, -incY / 2, 0);
-	nodes[RightLowerLeg] = new body(vec3(1.0), vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), cincX * 5 / 16, cincY * 1 / 8, 0.1, m, NULL, shaderP);
-	m = mat4(1.0) * Translate(cincX * 7 / 16, cincY * 9 / 16, 0.1 - 1) * Translate(-incX / 2, -incY / 2, 0);
-	nodes[LeftLowerLeg] = new body(vec3(1.0), vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), cincX * 5 / 16, cincY * 1 / 8, 0.1, m, NULL, shaderP);
+	m = mat4(1.0) * Translate(cincX * 6 / 16, cincY * 5 / 16, 0.1 /10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[RightLowerLeg] = new body(vec3(1.0), vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), cincX * 5 / 16, cincY * 1 / 8, 0.1 / 10, m, NULL, shaderP);
+	m = mat4(1.0) * Translate(cincX * 6 / 16, cincY * 9 / 16, 0.1 /10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[LeftLowerLeg] = new body(vec3(1.0), vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), cincX * 5 / 16, cincY * 1 / 8, 0.1 / 10, m, NULL, shaderP);
 
 	list<Node*>* LULegChild = new list<Node *>;
 	LULegChild->push_back(nodes[LeftLowerLeg]);
@@ -278,25 +302,44 @@ void cir::initNode()
 	list<Node*>* RULegChild = new list<Node *>;
 	RULegChild->push_back(nodes[RightLowerLeg]);
 
-	m = mat4(1.0) * Translate(cincX * 7 / 16, cincY * 9 / 16, 0.1 - 1) * Translate(-incX / 2, -incY / 2, 0);
-	nodes[LeftUpperLeg] = new body(vec3(1.0), vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), cincX * 1 / 8, cincY * 1 / 8, 0.3, m, LULegChild, shaderP);
-	m = mat4(1.0) * Translate(cincX * 7 / 16, cincY * 5 / 16, 0.1 - 1) * Translate(-incX / 2, -incY / 2, 0);
-	nodes[RightUpperLeg] = new body(vec3(1.0), vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), cincX * 1 / 8, cincY * 1 / 8, 0.3, m, RULegChild, shaderP);
+	m = mat4(1.0) * Translate(cincX * 6 / 16, cincY * 9 / 16, 0.1 / 10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[LeftUpperLeg] = new body(vec3(1.0), vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), cincX * 1 / 8, cincY * 1 / 8, 0.3 / 10, m, LULegChild, shaderP);
+	m = mat4(1.0) * Translate(cincX * 6 / 16, cincY * 5 / 16, 0.1 / 10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[RightUpperLeg] = new body(vec3(1.0), vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), cincX * 1 / 8, cincY * 1 / 8, 0.3 / 10, m, RULegChild, shaderP);
 
-	m = mat4(1.0) * Translate(cincX * 5 / 6, cincY * 3 / 8, 0.8 - 1) * Translate(-incX / 2, -incY / 2, 0);
-	nodes[Mouth] = new body(vec3(1.0), vec3(1.0, 0, 0), cincX * 1 / 12, cincY * 1 / 4, 0.05, m, NULL, shaderP);
+
+	m = mat4(1.0) * Translate(cincX * 1 / 3, cincY * 3 / 4, 0.3 / 10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[RightLowerArm] = new body(vec3(1.0), vec3(0.9, 0.9, 0.9), cincX * 1 / 3, cincY * 1 / 4, 0.1 / 10, m, NULL, shaderP);
+	m = mat4(1.0) * Translate(cincX * 1 / 3, cincY * 0, 0.3 / 10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[LeftLowerArm] = new body(vec3(1.0), vec3(0.9, 0.9, 0.9), cincX * 1 / 3, cincY * 1 / 4, 0.1 / 10, m, NULL, shaderP);
+
+	list<Node*>* LUArmChild = new list<Node *>;
+	LUArmChild->push_back(nodes[LeftLowerArm]);
+
+	list<Node*>* RUArmChild = new list<Node *>;
+	RUArmChild->push_back(nodes[RightLowerArm]);
+
+	m = mat4(1.0) * Translate(cincX * 1 / 3, cincY * 3 / 4, 0.3 / 10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[LeftUpperArm] = new body(vec3(1.0), vec3(0.9 , 0.9, 0.9), cincX * 1 / 3, cincY * 1 / 8, 0.4 / 10, m, LUArmChild, shaderP);
+	m = mat4(1.0) * Translate(cincX * 1 / 3, cincY * 1 / 8, 0.3 / 10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[RightUpperArm] = new body(vec3(1.0), vec3(0.9, 0.9, 0.9), cincX * 1 / 3, cincY * 1 / 8, 0.4 / 10, m, RUArmChild, shaderP);
+
+	m = mat4(1.0) * Translate(cincX * 5 / 6, cincY * 3 / 8, 0.8 / 10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[Mouth] = new body(vec3(1.0), vec3(1.0, 0, 0), cincX * 1 / 12, cincY * 1 / 4, 0.05 / 10, m, NULL, shaderP);
 	list<Node*>* headChild = new list<Node *>;
 	headChild->push_back(nodes[Mouth]);
 
-	m = mat4(1.0) * Translate(cincX * 1 / 2, cincY / 8, 0.7 - 1) * Translate(-incX / 2, -incY / 2, 0);
-	nodes[Head] = new body(vec3(1.0), vec3(0.9, 0.9, 0.9), cincX * 1 / 3, cincY * 3 / 4, 0.2, m, headChild, shaderP);
+	m = mat4(1.0) * Translate(cincX * 1 / 2, cincY / 4, 0.7 / 10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[Head] = new body(vec3(1.0), vec3(0.9, 0.9, 0.9), cincX * 1 / 3, cincY * 1 / 2, 0.2 / 10, m, headChild, shaderP);
 
 	list<Node*>* torsoChild = new list<Node *>;
 	torsoChild->push_back(nodes[RightUpperLeg]);
 	torsoChild->push_back(nodes[LeftUpperLeg]);
 	torsoChild->push_back(nodes[Head]);
-	m = mat4(1.0) * Translate(cincX / 6, cincY / 8, 0.3 - 1) * Translate(-incX / 2, -incY / 2, 0);
-	nodes[Torso] = new body(vec3(1.0), vec3(1.0, 1.0, 1.0), cincX * 2 / 3, cincY * 3 / 4, 0.5, m, torsoChild, shaderP);
+	torsoChild->push_back(nodes[RightUpperArm]);
+	torsoChild->push_back(nodes[LeftUpperArm]);
+	m = mat4(1.0) * Translate(cincX / 6, cincY / 4, 0.3 / 10 - 1) * Translate(-incX / 2, -incY / 2, 0);
+	nodes[Torso] = new body(vec3(1.0), vec3(1.0, 1.0, 1.0), cincX * 2 / 3, cincY * 1 / 2, 0.4 / 10, m, torsoChild, shaderP);
 }
 
 
