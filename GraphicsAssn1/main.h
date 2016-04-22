@@ -37,14 +37,17 @@ mat4 wmv;
 mat4 rotateAt;
 mat4 cTranslate;
 vec4 cameraAt;
-
+vec4 cameraPos;
+vec3 diffVector;
 
 string viewMode;
 
 
 
 
+
 int thetaZ;
+int mTrans;
 
 
 void init(void);

@@ -286,8 +286,9 @@ void init(void) {
 	//init circle, player
 	
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS, iMat, NULL, shader);
+	//camera external parameter 설정
 	cameraAt = vec4(circle->getX() + 10, circle->getY(), 0.0, 1);
-
+	cameraPos = vec4(circle->getX(), circle->getY(), 0.0, 1);
 	worldList->push_back(circle);
 
 	World = new world(iMat, worldList);
@@ -316,8 +317,8 @@ void display(void) {
 	{
 		
 		wmv =
-			Perspective(90.0f, 1, 0.03, 1) *
-			LookAt(vec4(circle->getX(), circle->getY(),0.13, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
+			Perspective(100.0f, 1, 0.03, 1) *
+			LookAt(vec4(cameraPos.x, cameraPos.y, 0.10, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
 
 	}
 	//3인칭 시점, 
@@ -444,15 +445,18 @@ void refreshAll(STATE s) {
 
 void specialkeyboard(int key, int x, int y) {
 	STATE s = circle->circleState;
+	vec3 prevCirPos;
+	vec3 currCirPos;
 	if (circle->Xdelta == 0 && circle->thetaZ == 0 && circle->MthetaZ == 0) {
 		switch (key) {
 		case GLUT_KEY_UP:
 			printf("%d\n", s);
+			prevCirPos = vec3(circle->getX(),circle->getY(),0.0);
 			refreshAll(circle->circleState);
+			currCirPos = vec3(circle->getX(), circle->getY(), 0.0);
+			diffVector = currCirPos - prevCirPos;
+			mTrans = FRAME;
 
-
-
-			//printf("cameraAt.x = %f\n", cameraAt.x);
 			break;
 		case GLUT_KEY_DOWN:
 			//refreshAll(DOWN);
@@ -559,6 +563,11 @@ void ReDisplayTimer(int value)
 		
 	}
 	
+	if (mTrans > 0 ){
+		mTrans--;
+		cameraPos = Translate(diffVector/FRAME) * cameraPos;
+
+	}
 	circle->drawbody(circle->circleState);
 	glutPostRedisplay();
 	glutTimerFunc(300 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.
