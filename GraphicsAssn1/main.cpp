@@ -313,7 +313,7 @@ void display(void) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-
+	//1인칭 시점, 3인칭 시점과 다르게 캐릭터가 회전하면 카메라도 같이 회전해야 한다.
 	if (viewMode == "view1")
 	{
 		
@@ -322,14 +322,17 @@ void display(void) {
 			LookAt(vec4(circle->getX(), circle->getY(), 0, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
 
 	}
+	//3인칭 시점, 
 	else if (viewMode == "view2")
 		wmv =
 		Perspective(90.0f, 1, 0.1, 1) *
 		LookAt(vec4(circle->getX() - 0.3, circle->getY(), 0, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
+	//맵을 위에서 아래로 바라보는 모드
 	else if(viewMode == "view3")
 		wmv = Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T);
 		//LookAt(vec4(circle->getX() - 0.1, circle->getY() - 0.1, 0.1, 0.0), vec4(0, 150, -10, 0.0), vec4(0, 0, 1, 0.0));
 		//Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T) * LookAt(vec4(-1.0, -1.0, 0.5, 0.0), vec4(150, 0, 0.5, 0.0), vec4(0, 1, 0, 0.0));
+	
 	World->traverse(wmv);
 	glDisable(GL_DEPTH_TEST);
 
@@ -448,8 +451,6 @@ void specialkeyboard(int key, int x, int y) {
 		case GLUT_KEY_UP:
 			printf("%d\n", s);
 			refreshAll(circle->circleState);
-			
-			
 			//printf("cameraAt.x = %f\n", cameraAt.x);
 			break;
 		case GLUT_KEY_DOWN:
@@ -542,17 +543,18 @@ void ReDisplayTimer(int value)
 		exit(0);
 	} */
 	
+	//1인칭 시점에서 카메라를 부드럽게 움직이게 하기 위한 코드
 	if (thetaZ > 0) {
 		thetaZ--;
-		cameraAt = rotateAt * vec4(cameraAt.x, cameraAt.y, 0.0, 1.0);
+		cameraAt = rotateAt * vec4(cameraAt.x, cameraAt.y, 0.0, 1.0); //카메라 At 벡터를 90 / Frame 속도로 회전 후 갱신 
 		if (thetaZ == 0)
-			rotateAt = mat4();		
+			rotateAt = mat4();		//회전을 다 하고 다시 초기화 해야함.
 	}
 	else if (thetaZ < 0) {
 		thetaZ++;
-		cameraAt = rotateAt * vec4(cameraAt.x, cameraAt.y, 0.0, 1.0);
+		cameraAt = rotateAt * vec4(cameraAt.x, cameraAt.y, 0.0, 1.0); ////카메라 At 벡터를 90 / Frame 속도로 회전 후 갱신
 		if (thetaZ == 0)
-			rotateAt = mat4();
+			rotateAt = mat4(); //회전을 다 하고 다시 초기화 해야함.
 		
 	}
 	
