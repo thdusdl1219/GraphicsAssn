@@ -286,15 +286,13 @@ void init(void) {
 	//init circle, player
 	
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS, iMat, NULL, shader);
-	cameraAt = vec4(circle->getX() + 10, circle->getY(), 0, 1);
+	cameraAt = vec4(circle->getX() + 10, circle->getY(), 0.0, 1);
 
 	worldList->push_back(circle);
 
 	World = new world(iMat, worldList);
 	World_R = WORLD_SIZE / DIVIDE_WINDOW;
 	World_T = WORLD_SIZE / DIVIDE_WINDOW;
-
-	
 }
 
 
@@ -319,14 +317,14 @@ void display(void) {
 		
 		wmv =
 			Perspective(90.0f, 1, 0.1, 1) *
-			LookAt(vec4(circle->getX(), circle->getY(), 0, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
+			LookAt(vec4(circle->getX(), circle->getY(),0.0, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
 
 	}
 	//3인칭 시점, 
 	else if (viewMode == "view2")
 		wmv =
 		Perspective(90.0f, 1, 0.1, 1) *
-		LookAt(vec4(circle->getX() - 0.3, circle->getY(), 0, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
+		LookAt(vec4(circle->getX() - 0.3, circle->getY(), 0.1, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
 	//맵을 위에서 아래로 바라보는 모드
 	else if(viewMode == "view3")
 		wmv = Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T);
