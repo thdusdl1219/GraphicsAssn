@@ -38,6 +38,10 @@ int nRoad = 0;
 
 void init(void) {
 	viewMode = "view3";
+	rotateAt = mat4();
+	thetaZ = 0;
+	
+
 	glClearColor(13.05 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 0.0);
 
 	glShadeModel(GL_FLAT);
@@ -282,6 +286,8 @@ void init(void) {
 	//init circle, player
 	
 	circle = new cir(CIRCLE_RADIUS, incY * (MAP_DIVIDE_Y / DIVIDE_WINDOW / 2 + 0.5), CIRCLE_RADIUS, iMat, NULL, shader);
+	cameraAt = vec4(circle->getX() + 10, circle->getY(), 0, 1);
+
 	worldList->push_back(circle);
 
 	World = new world(iMat, worldList);
@@ -310,9 +316,11 @@ void display(void) {
 
 	if (viewMode == "view1")
 	{
+		
 		wmv =
 			Perspective(90.0f, 1, 0.1, 1) *
-			LookAt(vec4(circle->getX(), circle->getY(), 0, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
+			LookAt(vec4(circle->getX(), circle->getY(), 0, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
+
 	}
 	else if (viewMode == "view2")
 		wmv =
@@ -323,7 +331,6 @@ void display(void) {
 		//LookAt(vec4(circle->getX() - 0.1, circle->getY() - 0.1, 0.1, 0.0), vec4(0, 150, -10, 0.0), vec4(0, 0, 1, 0.0));
 		//Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T) * LookAt(vec4(-1.0, -1.0, 0.5, 0.0), vec4(150, 0, 0.5, 0.0), vec4(0, 1, 0, 0.0));
 	World->traverse(wmv);
-
 	glDisable(GL_DEPTH_TEST);
 
 	//glutPostRedisplay();
@@ -344,6 +351,7 @@ void refreshAll(STATE s) {
 		bool tCol = circle->colDetection(Tree);
 		bool tPor = circle->colDetection(Portal);
 
+		
 
 		if(tCol == true)
 			circle->decY(true);
@@ -405,6 +413,8 @@ void refreshAll(STATE s) {
 			World_R = WORLD_SIZE;
 			World_L = WORLD_SIZE - WORLD_SIZE / DIVIDE_WINDOW;
 		}
+
+
 	}
 	else if (s == LEFT) {
 		circle->decX(logNum, false);		
@@ -438,6 +448,9 @@ void specialkeyboard(int key, int x, int y) {
 		case GLUT_KEY_UP:
 			printf("%d\n", s);
 			refreshAll(circle->circleState);
+			
+			
+			//printf("cameraAt.x = %f\n", cameraAt.x);
 			break;
 		case GLUT_KEY_DOWN:
 			//refreshAll(DOWN);
@@ -445,10 +458,20 @@ void specialkeyboard(int key, int x, int y) {
 		case GLUT_KEY_RIGHT:
 			circle->circleState = (STATE)(((4 + s - 1) % 4));
 			circle->thetaZ += FRAME;
+			thetaZ += FRAME;
+
+			rotateAt *= Translate(circle->getX(), circle->getY(), 0);
+			rotateAt *= RotateZ(90 / FRAME);
+			rotateAt *= Translate(-circle->getX(), -circle->getY(), 0);
+
 			break;
 		case GLUT_KEY_LEFT:
 			circle->circleState = (STATE)((s + 1) % 4);
 			circle->MthetaZ += FRAME;
+			thetaZ -= FRAME;
+			rotateAt *= Translate(circle->getX(), circle->getY(), 0);
+			rotateAt *= RotateZ(-90 / FRAME);
+			rotateAt *= Translate(-circle->getX(), -circle->getY(), 0);
 			// refreshAll(LEFT);
 			break;
 		case GLUT_KEY_F1:
@@ -518,6 +541,21 @@ void ReDisplayTimer(int value)
 		Sleep(1000);
 		exit(0);
 	} */
+	
+	if (thetaZ > 0) {
+		thetaZ--;
+		cameraAt = rotateAt * vec4(cameraAt.x, cameraAt.y, 0.0, 1.0);
+		if (thetaZ == 0)
+			rotateAt = mat4();		
+	}
+	else if (thetaZ < 0) {
+		thetaZ++;
+		cameraAt = rotateAt * vec4(cameraAt.x, cameraAt.y, 0.0, 1.0);
+		if (thetaZ == 0)
+			rotateAt = mat4();
+		
+	}
+	
 	circle->drawbody(circle->circleState);
 	glutPostRedisplay();
 	glutTimerFunc(300 / 60, ReDisplayTimer, value); // 타이머는 한번만 불리므로 타이머 함수 안에서 다시 불러준다.

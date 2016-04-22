@@ -32,9 +32,13 @@ vector<portal*> Portal;
 vector<river*> Road;
 vector<logt*> Log;
 world* World;
+
 mat4 wmv;
 string viewMode;
+mat4 rotateAt;
+vec4 cameraAt;
 
+int thetaZ;
 
 
 void init(void);

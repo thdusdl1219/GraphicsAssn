@@ -137,8 +137,8 @@ void cir::drawbody(STATE circlestate) {
 		Mworld_Bdelta--;
 	}
 	if (thetaZ > 0) {
-		body * b = dynamic_cast<body*>(nodes[Torso]); 
-		
+		body * b = dynamic_cast<body*>(nodes[Torso]);
+
 		Zangle = fmod(Zangle + 90 / FRAME, 360);
 		rotate *= Translate(distance, 0, 0);
 		rotate *= RotateZ(90 / FRAME);
