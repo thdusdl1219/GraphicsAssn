@@ -316,15 +316,15 @@ void display(void) {
 	{
 		
 		wmv =
-			Perspective(90.0f, 1, 0.1, 1) *
-			LookAt(vec4(circle->getX(), circle->getY(),0.0, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
+			Perspective(90.0f, 1, 0.03, 1) *
+			LookAt(vec4(circle->getX(), circle->getY(),0.13, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
 
 	}
 	//3인칭 시점, 
 	else if (viewMode == "view2")
 		wmv =
-		Perspective(90.0f, 1, 0.1, 1) *
-		LookAt(vec4(circle->getX() - 0.3, circle->getY(), 0.1, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
+		Perspective(90.0f, 1, 0.05, 1) *
+		LookAt(vec4(circle->getX() - 0.2, circle->getY(), 0.2, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
 	//맵을 위에서 아래로 바라보는 모드
 	else if(viewMode == "view3")
 		wmv = Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T);
@@ -449,6 +449,9 @@ void specialkeyboard(int key, int x, int y) {
 		case GLUT_KEY_UP:
 			printf("%d\n", s);
 			refreshAll(circle->circleState);
+
+
+
 			//printf("cameraAt.x = %f\n", cameraAt.x);
 			break;
 		case GLUT_KEY_DOWN:

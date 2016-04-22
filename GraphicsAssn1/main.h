@@ -34,9 +34,15 @@ vector<logt*> Log;
 world* World;
 
 mat4 wmv;
-string viewMode;
 mat4 rotateAt;
+mat4 cTranslate;
 vec4 cameraAt;
+
+
+string viewMode;
+
+
+
 
 int thetaZ;
 
