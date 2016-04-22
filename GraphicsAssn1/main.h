@@ -32,6 +32,10 @@ vector<portal*> Portal;
 vector<river*> Road;
 vector<logt*> Log;
 world* World;
+mat4 wmv;
+string viewMode;
+
+
 
 void init(void);
 void display(void);

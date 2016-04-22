@@ -37,7 +37,7 @@ int nGrass = 0;
 int nRoad = 0;
 
 void init(void) {
-	
+	viewMode = "view3";
 	glClearColor(13.05 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 0.0);
 
 	glShadeModel(GL_FLAT);
@@ -288,6 +288,7 @@ void init(void) {
 	World_R = WORLD_SIZE / DIVIDE_WINDOW;
 	World_T = WORLD_SIZE / DIVIDE_WINDOW;
 
+	
 }
 
 
@@ -307,13 +308,18 @@ void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-
-	mat4 wmv =
-
-		//Perspective(120.0f, 1, 0.001, 20) *
-		//LookAt(vec4(1, 0, 0, 0.0), vec4(0, 0, -1, 0.0), vec4(0, 1, 0, 0.0)) *
-		Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T );
-
+	if (viewMode == "view1")
+	{
+		wmv =
+			Perspective(90.0f, 1, 0.1, 1) *
+			LookAt(vec4(circle->getX(), circle->getY(), 0, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
+	}
+	else if (viewMode == "view2")
+		wmv =
+		Perspective(90.0f, 1, 0.1, 1) *
+		LookAt(vec4(circle->getX() - 0.3, circle->getY(), 0, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
+	else if(viewMode == "view3")
+		wmv = Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T);
 		//LookAt(vec4(circle->getX() - 0.1, circle->getY() - 0.1, 0.1, 0.0), vec4(0, 150, -10, 0.0), vec4(0, 0, 1, 0.0));
 		//Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T) * LookAt(vec4(-1.0, -1.0, 0.5, 0.0), vec4(150, 0, 0.5, 0.0), vec4(0, 1, 0, 0.0));
 	World->traverse(wmv);
@@ -444,6 +450,14 @@ void specialkeyboard(int key, int x, int y) {
 			circle->circleState = (STATE)((s + 1) % 4);
 			circle->MthetaZ += FRAME;
 			// refreshAll(LEFT);
+			break;
+		case GLUT_KEY_F1:
+			if (viewMode == "view1")
+				viewMode = "view2";			
+			else if (viewMode == "view2")
+				viewMode = "view3";
+			else if (viewMode == "view3")
+				viewMode = "view1";			
 			break;
 		}
 	}
