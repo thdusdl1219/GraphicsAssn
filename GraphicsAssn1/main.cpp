@@ -47,7 +47,6 @@ void init(void) {
 	glShadeModel(GL_FLAT);
 	srand(time(NULL));
 	nGrass = rand() % 4 + 6;
-	nGrass = 10;
 	nRoad = ((nGrass - 1) / 4) * 10;
 	switch ((nGrass - 1) % 4) {
 	case 0: 
@@ -501,9 +500,9 @@ void ReDisplayTimer(int value)
 {
 	
 	if (value == 0){
-	//	Sleep(1000);
-	//	printf("value is zero\n");
-	//	exit(0);
+		//Sleep(1000);
+		printf("value is zero\n");
+		exit(0);
 	}
 
 	if (circle->getX() >= 1.0 - incX) {
