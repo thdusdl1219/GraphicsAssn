@@ -1,10 +1,9 @@
-#include "tree.h"
+#include "chicken.h"
 #include "default.h"
 
 
-const float padding = WORLD_SIZE / 300.0;
 
-tree::tree(float x, float y, CObjLoader* obj, vec3 color, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader) {
+chicken::chicken(float x, float y, CObjLoader* obj, vec3 color, mat4& m, list<Node*> *child, Shader* shader) : Node(x, y, m, child, shader) {
 	this->color = color;
 	this->obj = obj;
 
@@ -21,7 +20,7 @@ tree::tree(float x, float y, CObjLoader* obj, vec3 color, mat4& m, list<Node*> *
 
 }
 
-void tree::draw(mat4 m) {
+void chicken::draw(mat4 m) {
 	glUseProgram(shader);
 
 
@@ -31,10 +30,10 @@ void tree::draw(mat4 m) {
 		glUniformMatrix4fv(Mloc, 1, GL_FALSE, m);
 	}
 	else {
-	//	std::cout << "get uniform error1" << std::endl;
+		//	std::cout << "get uniform error1" << std::endl;
 	}
 
-	
+
 	obj->Draw(shader, vbo);
 
 }

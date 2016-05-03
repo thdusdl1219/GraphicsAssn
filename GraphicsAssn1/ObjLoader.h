@@ -13,6 +13,13 @@ struct sTexCoord
 	float u, v;
 };
 
+struct sAllVertex
+{
+	sVertex v;
+	sVertex vn;
+	sTexCoord vt;
+};
+
 struct sMaterial
 {	
 	char name[256];
@@ -48,7 +55,8 @@ struct sFace
 struct sPart
 {
 	char name[256];
-	vector<int> vIndices;
+	
+	//vector<int> vIndices;
 	vector<sFace> faces;
 
 	sPart() {
@@ -63,7 +71,9 @@ public:
 
 	void loadMaterialsTexture ();
 	bool Load (char *objfile, char *mtlfile = NULL);
-	void Draw (GLuint);
+	void Draw (GLuint, GLuint);
+	vector<sAllVertex> allVertexes;
+	
 
 private:
 	vector<sMaterial> materials;
@@ -71,7 +81,6 @@ private:
 	vector<sVertex> vertexes;
 	vector<sTexCoord> texcoords;
 	vector<sVertex> normals;
-
 	vector<sPart> parts;
 
 	bool loadObjects (char *fileName);

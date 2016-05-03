@@ -3,7 +3,7 @@
 Node::Node(float x, float y, mat4 m, list<Node*> *child, Shader* shader) {
 	this->x = x - 1;
 	this->y = y - 1;
-	transform = m;
+	//transform = m;
 	rotate = mat4(1.0);
 	this->child = child;
 	this->shaderP = shader;

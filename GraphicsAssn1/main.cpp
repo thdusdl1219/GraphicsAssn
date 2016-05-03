@@ -144,6 +144,7 @@ void init(void) {
 	list<Node*> *grassList = new list<Node*>;
 	//init portals
 	Shader *shader = new Shader("object.vs", "object.fs");
+	Shader *textureshader = new Shader("textureobject.vs", "textureobject.fs");
 	
 	Portal.push_back(new portal(gPos[1], incY * 19, vec3(1, 0, 1), iMat, NULL, shader));
 	Portal.push_back(new portal(gPos[4], incY * 19, vec3(1, 0, 1), iMat, NULL, shader));
@@ -154,12 +155,12 @@ void init(void) {
 	
 	//init Tree
 	CObjLoader* treeobjP = new CObjLoader();
-	treeobjP->Load("object\\christmastree\\christmas_tree.obj", "object\\christmastree\\christmas_tree.mtl");
+	treeobjP->Load("object\\christmastree\\christmas_tree.obj", NULL);
 	for (int i = 0; i < gPos.size() - 2; i++)
 	{
 		for (int j = 0; j < NTREE_IN_GRASS; j++) {
 			int yPos = rand() % NTREE_IN_GRASS;
-			Tree.push_back(new tree(gPos[i + 1], incY * yPos * 2, treeobjP, vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), iMat, NULL, shader));
+			Tree.push_back(new tree(gPos[i + 1], incY * yPos * 2, treeobjP, vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), iMat, NULL, textureshader));
 			grassList->push_back(Tree[i * NTREE_IN_GRASS + j]);
 		}
 	}
@@ -191,14 +192,17 @@ void init(void) {
 	//init Car	
 	int count = 0;
 	CObjLoader* carobjP = new CObjLoader();
-	carobjP->Load("object\\taxi\\Taxi.obj", "object\\taxi\\Taxi.mtl");
+	carobjP->Load("object\\taxi\\Taxi.obj", NULL);
 	for (int i = 0; i < roadPos.size(); i++)
 	{
+		iMat = mat4(1.0);
 		std::string dir;
 		float yPos;
 		if (i % 2 == 0)
 		{
 			dir = "UP";
+			//iMat *= Translate(-incX / 2, -incY / 2, 0) * RotateZ(180) * Translate(incX / 2, incY / 2, 0);
+			iMat *= RotateZ(180);
 			yPos = 0;
 		}
 		else
@@ -212,7 +216,8 @@ void init(void) {
 				yPos -= incY * (rand() % CAR_SPACE + 2) * j;
 			else
 				yPos += incY * (rand() % CAR_SPACE + 2) * j;
-			car* c = new car(roadPos[i], yPos, carobjP, vec3(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0), dir, iMat, NULL, shader);
+			
+			car* c = new car(roadPos[i], yPos, carobjP, vec3(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0), dir, iMat, NULL, textureshader);
 			Car.push_back(c);
 			roadList->push_back(c);
 			count++;
@@ -222,7 +227,7 @@ void init(void) {
 	car::realnCar = count;
 
 	//init Road
-	
+	iMat = mat4(1.0);
 	
 	for (int i = 0; i < roadPos.size(); i++)
 	{
@@ -316,7 +321,7 @@ void display(void) {
 	{
 		
 		wmv =
-			Perspective(100.0f, 1, 0.03, 1) *
+			Perspective(100.0f, 1, 0.05, 1) *
 			LookAt(vec4(cameraPos.x, cameraPos.y, 0.10, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
 
 	}
@@ -501,8 +506,8 @@ void ReDisplayTimer(int value)
 	
 	if (value == 0){
 		//Sleep(1000);
-		printf("value is zero\n");
-		exit(0);
+		//printf("value is zero\n");
+		//exit(0);
 	}
 
 	if (circle->getX() >= 1.0 - incX) {

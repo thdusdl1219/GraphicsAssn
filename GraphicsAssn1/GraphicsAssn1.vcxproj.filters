@@ -57,6 +57,9 @@
     <ClCompile Include="ObjLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="chicken.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -113,12 +116,21 @@
     <ClInclude Include="ObjLoader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="chicken.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="object.fs">
       <Filter>리소스 파일\shaders</Filter>
     </None>
     <None Include="object.vs">
+      <Filter>리소스 파일\shaders</Filter>
+    </None>
+    <None Include="textureobject.fs">
+      <Filter>리소스 파일\shaders</Filter>
+    </None>
+    <None Include="textureobject.vs">
       <Filter>리소스 파일\shaders</Filter>
     </None>
   </ItemGroup>

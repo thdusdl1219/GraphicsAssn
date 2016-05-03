@@ -47,7 +47,9 @@ body::body(vec3 point, vec3 color, float w, float h, float d, mat4& m, list<Node
 		v7,
 		v8,
 	};
-
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec3), &vertices[0], GL_STATIC_DRAW);
 }
 
 void body::draw(mat4 m) {
@@ -62,10 +64,8 @@ void body::draw(mat4 m) {
 	}
 	
 
-	glGenBuffers(1, &vbo);
+	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec3), &vertices[0], GL_STATIC_DRAW);
-
 	GLint posAttrib = glGetAttribLocation(shader, "pos");
 	glEnableVertexAttribArray(posAttrib);
 	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -84,6 +84,5 @@ void body::draw(mat4 m) {
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
 
-	glDeleteBuffers(1, &vbo);
-
+	
 }

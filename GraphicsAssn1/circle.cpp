@@ -474,29 +474,7 @@ bool cir::colDetection(vector<tree*> Tree)
 
 }
 
-/* int cir::colDetection(logt** Log)
-{
-	float cirX = x;
-	float cirY = y;
 
-	for (int i = 0; i < logt::realnLog; i++)
-	{
-		float logX = Log[i]->getX();
-		float logY = Log[i]->getY();
-
-
-
-		if ((cirX >= logX && cirX <= logX + cincX)
-			&&
-			(cirY >= logY && cirY <= logY + cincY))
-		{
-
-			return i;
-		}
-	}
-	return -1;
-
-}*/
 
 bool cir::colDetection(vector<portal*> Portal)
 {
@@ -521,26 +499,3 @@ bool cir::colDetection(vector<portal*> Portal)
 
 }
 
-/* bool cir::colDetection(river** River)
-{
-	float cirX = x;
-	float cirY = y;
-
-	for (int i = 0; i < nRiver; i++)
-	{
-		float riverX = River[i]->getX();
-		float riverY = River[i]->getY();
-
-
-
-		if ((cirX >= riverX && cirX <= riverX + cincX)
-			&&
-			(cirY >= riverY && cirY <= riverY + 2.0))
-		{
-
-			return true;
-		}
-	}
-	return false;
-
-} */

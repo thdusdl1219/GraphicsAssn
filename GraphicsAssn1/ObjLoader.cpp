@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include "include\SOIL.h"
 
 #include "ObjLoader.h"
 
@@ -35,12 +35,35 @@ bool CObjLoader::Load (char *objfile, char *mtlfile)
 		loadMaterialsTexture();
 		_loaded = true;
 	}
+
+	int vt_size = vertexes.size();
+	int tc_size = texcoords.size();
+	int no_size = normals.size();
+
 	for (int i = 0; i < parts.size(); i++) {
 		for (int j = 0; j < parts[i].faces.size(); j++) {
-			int* v = parts[i].faces[j].v;
-			parts[i].vIndices.push_back(v[0]);
-			parts[i].vIndices.push_back(v[1]);
-			parts[i].vIndices.push_back(v[2]);
+			for (int k = 0; k < parts[i].faces[j].n; k++) {
+				int& v = parts[i].faces[j].v[k];
+				int& vn = parts[i].faces[j].vn[k];
+				int& vt = parts[i].faces[j].vt[k];
+				sAllVertex ver;
+				if (0 < vn && vn <= no_size) {
+					sVertex &no = normals[vn - 1];
+					ver.vn = no;
+				}
+				if (0 < vt && vt <= tc_size) {
+					sTexCoord &tc = texcoords[vt - 1];
+					ver.vt = tc;
+				}
+				if (0 < v && v <= vt_size) {
+					sVertex &ve = vertexes[v - 1];
+					ver.v = ve;
+				}
+				allVertexes.push_back(ver);
+			}
+			//parts[i].vIndices.push_back(v[0] - 1);
+			//parts[i].vIndices.push_back(v[1] - 1);
+			//parts[i].vIndices.push_back(v[2] - 1);
 		}
 	}
 /*
@@ -106,11 +129,12 @@ bool CObjLoader::loadObjects (char *fileName)
 	if (!fp) return false;
 
 	// 임시로 사용할 것을 하나 만든다
-	sPart part_;
-	part_.name[0] = 0;
-	parts.push_back (part_);
+	//sPart part_;
+	//part_.name[0] = 0;
+	//parts.push_back (part_);
 
-	sPart *part = (sPart *)&(*parts.rbegin ());
+	//sPart *part = (sPart *)&(*parts.rbegin ());
+	sPart *part = NULL;
 	char buffer[1024];
 
 	while (fscanf (fp, "%s", buffer) != EOF) {
@@ -266,18 +290,34 @@ int CObjLoader::findMaterialIndex(char *name)
 
 bool CObjLoader::loadTexture (char *fileName, unsigned int *texture)
 {
+	// http://yamecoder.tistory.com/294
+	int width, height;
+	*texture = SOIL_load_OGL_texture
+		(
+			fileName,
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+			);
+	/*
+	unsigned char* img = NULL;
+	img = 
+	SOIL_load_image(fileName, &width, &height, 0, SOIL_LOAD_RGB); */
 	/* IplImag *img = cvLoadImage (fileName);
 	if (!img) return false;
 
-	cvFlip (img, img);
+	cvFlip (img, img); */
 
-	glGenTextures (1, texture);
+	//glGenTextures (1, texture);
 	glBindTexture (GL_TEXTURE_2D, *texture);
-	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D (GL_TEXTURE_2D, 0, 3, img->width, img->height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, img->imageData);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
 
-	cvReleaseImage (&img);*/
+	//SOIL_free_image_data(img);
+	// cvReleaseImage (&img);
 	return true;
 }
 
@@ -293,26 +333,71 @@ void CObjLoader::loadMaterialsTexture ()
 	}
 }
 
-void CObjLoader::Draw (GLuint shader)
+void CObjLoader::Draw (GLuint shader, GLuint vbo)
 {
-		GLint uColor = glGetUniformLocation(shader, "uColor");
-		if (uColor != -1) {
-			glUniform3fv(uColor, 1, &vColor[0]);
-		}
-		else {
-			std::cout << "get color error" << std::endl;
-		}
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		//glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(sVertex), &vertexes[0], GL_STATIC_DRAW);
 
-		glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(sVertex), &vertexes[0], GL_STATIC_DRAW);
+
+		//glBufferSubData(GL_ARRAY_BUFFER, 0, vertexes.size() * sizeof(sVertex), &vertexes[0]);
+		
+		int stride = sizeof(sVertex) * 2 + sizeof(sTexCoord);
+		GLvoid* offset = (GLvoid*) sizeof(sVertex);
+
 		GLint posAttrib = glGetAttribLocation(shader, "pos");
 		glEnableVertexAttribArray(posAttrib);
-		glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, stride, 0);
+		GLint normalAttrib = glGetAttribLocation(shader, "normal");
+		GLint coordAttrib = glGetAttribLocation(shader, "TexCoord");
+
+		glEnableVertexAttribArray(normalAttrib);
+		glEnableVertexAttribArray(coordAttrib);
+
+		glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_FALSE, stride, offset);
+		offset = (GLvoid*) (sizeof(sVertex) * 2);
+		glVertexAttribPointer(coordAttrib, 2, GL_FLOAT, GL_FALSE, stride, offset);
+
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		vColor = vec3(1, 1, 1);
 		for (int i = 0; i < parts.size(); i++) {
-			if(parts[i].vIndices.size() != 0)
-				glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
+			int index = findMaterialIndex(parts[i].name);
+
+			if (0 <= index) {
+				sMaterial &material = materials[index];
+
+				if (material.texture) {
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, material.texture);
+					GLint uTexture = glGetUniformLocation(shader, "myTexture");
+					if (uTexture != -1) {
+						glUniform1i(uTexture, 0);
+					}
+					else {
+						std::cout << "get texture error" << std::endl;
+					}
+				}
+				else {
+					vColor = vec3(material.Kd[0], material.Kd[1], material.Kd[2]);
+					
+				}
+			}
+			else {
+				vColor = vec3(0.7, 0.7, 0.7);
+			}
+
+			GLint uColor = glGetUniformLocation(shader, "uColor");
+			if (uColor != -1) {
+				glUniform3fv(uColor, 1, &vColor[0]);
+			}
+			else {
+			//	std::cout << "get color error" << std::endl;
+			}
+
+			glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
+			//if(parts[i].vIndices.size() != 0)
+			//	glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
 		}
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
 
 }

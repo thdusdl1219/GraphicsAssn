@@ -47,6 +47,10 @@ portal::portal(float x, float y, vec3 color, mat4& m, list<Node*> *child, Shader
 		v7,
 		v8,
 	};
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec3), &vertices[0], GL_STATIC_DRAW);
+
 }
 
 void portal::draw(mat4 m) {
@@ -59,13 +63,10 @@ void portal::draw(mat4 m) {
 		glUniformMatrix4fv(Mloc, 1, GL_FALSE, m);
 	}
 	else {
-		std::cout << "get uniform error1" << std::endl;
+	//	std::cout << "get uniform error1" << std::endl;
 	}
 
-	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec3), &vertices[0], GL_STATIC_DRAW);
-
 	GLint posAttrib = glGetAttribLocation(shader, "pos");
 	glEnableVertexAttribArray(posAttrib);
 	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -80,11 +81,7 @@ void portal::draw(mat4 m) {
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
 
-	glDeleteBuffers(1, &vbo);
 
-	// glColor3f(1.0, 0.0, 1.0);
-	//printf("%f", ((1.0 / MAP_DIVIDE_X) - TREE_SIZE));
-	// glRectf(x + padding, y, x + incX - padding, y + incY);
-	//glRectf(x, y, x + TREE_SIZE * RATIO, y + TREE_SIZE);
+
 }
 

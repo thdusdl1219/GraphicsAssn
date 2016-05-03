@@ -92,7 +92,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Opengl32.lib;freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.lib;freeglut.lib;glew32.lib;libsoil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Soyeon\Documents\Visual Studio 2015\Projects\GraphicsAssn1\GraphicsAssn1\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -147,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="body.cpp" />
     <ClCompile Include="car.cpp" />
+    <ClCompile Include="chicken.cpp" />
     <ClCompile Include="circle.cpp" />
     <ClCompile Include="grass.cpp" />
     <ClCompile Include="line.cpp" />
@@ -163,6 +165,7 @@
     <ClInclude Include="Angel.h" />
     <ClInclude Include="body.h" />
     <ClInclude Include="car.h" />
+    <ClInclude Include="chicken.h" />
     <ClInclude Include="default.h" />
     <ClInclude Include="grass.h" />
     <ClInclude Include="line.h" />
@@ -182,6 +185,8 @@
   <ItemGroup>
     <None Include="object.fs" />
     <None Include="object.vs" />
+    <None Include="textureobject.fs" />
+    <None Include="textureobject.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
