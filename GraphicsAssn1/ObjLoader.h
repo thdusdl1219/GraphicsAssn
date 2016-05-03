@@ -25,6 +25,7 @@ struct sMaterial
 	char name[256];
 	int illum;
 	char map_Kd[256];
+	char map_bump[256];
 	float Ns;
 	float Ni;
 	float d;
@@ -33,6 +34,7 @@ struct sMaterial
 	float Ks[3];
 	float Tf[3];
 	unsigned int texture;
+	unsigned int nTexture;
 
 	sMaterial() {
 		memset (this, 0, sizeof(sMaterial));
@@ -87,7 +89,7 @@ private:
 	bool loadMaterials (char *fileName);
 
 	int findMaterialIndex(char *name);
-	bool loadTexture (char *fileName, unsigned int *texture);
+	bool loadTexture (char *fileName, char*, unsigned int *texture, unsigned int*);
 
 private:	
 	vec3 vColor;

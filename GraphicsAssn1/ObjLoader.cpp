@@ -212,6 +212,9 @@ bool CObjLoader::loadMaterials (char *fileName)
 		else if (!strcmp ("map_Kd", buffer)) {
 			if (material) fscanf (fp, "%s", material->map_Kd);
 		}
+		else if (!strcmp("map_bump", buffer)) {
+			if (material) fscanf(fp, "%s", material->map_bump);
+		}
 		else if (!strcmp ("Ns", buffer)) {
 			if (material) fscanf (fp, "%f", &material->Ns);
 		}
@@ -237,10 +240,9 @@ int CObjLoader::findMaterialIndex(char *name)
 	return -1;
 }
 
-bool CObjLoader::loadTexture (char *fileName, unsigned int *texture)
+bool CObjLoader::loadTexture(char *fileName, char* nfileName, unsigned int *texture, unsigned int* ntexture)
 {
 	// http://yamecoder.tistory.com/294
-	int width, height;
 	*texture = SOIL_load_OGL_texture
 		(
 			fileName,
@@ -248,25 +250,27 @@ bool CObjLoader::loadTexture (char *fileName, unsigned int *texture)
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
 			);
-	/*
-	unsigned char* img = NULL;
-	img = 
-	SOIL_load_image(fileName, &width, &height, 0, SOIL_LOAD_RGB); */
-	/* IplImag *img = cvLoadImage (fileName);
-	if (!img) return false;
 
-	cvFlip (img, img); */
-
-	//glGenTextures (1, texture);
 	glBindTexture (GL_TEXTURE_2D, *texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
 
-	//SOIL_free_image_data(img);
-	// cvReleaseImage (&img);
+	*ntexture = SOIL_load_OGL_texture
+		(
+			nfileName,
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+			);
+
+	glBindTexture(GL_TEXTURE_2D, *ntexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
 	return true;
 }
 
@@ -276,8 +280,10 @@ void CObjLoader::loadMaterialsTexture ()
 		if (materials[i].map_Kd[0] && !materials[i].texture) {
 			char path[MAX_PATH];
 			_makepath (path, NULL, _work_path, materials[i].map_Kd, NULL);
+			char npath[MAX_PATH];
+			_makepath(npath, NULL, _work_path, materials[i].map_bump, NULL);
 
-			loadTexture (path, &materials[i].texture);
+			loadTexture (path, npath, &materials[i].texture, &materials[i].nTexture);
 		}
 	}
 }
@@ -306,11 +312,18 @@ void CObjLoader::Draw (GLuint shader)
 		offset = (GLvoid*) (sizeof(sVertex) * 2);
 		glVertexAttribPointer(coordAttrib, 2, GL_FLOAT, GL_FALSE, stride, offset);
 
+		vec3 falloff = vec3(0.05);
+		vec2 resolution = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+		vec4 lightpos = vec4(0, 0.5, 0, 1);
+		glUniform3fv(glGetUniformLocation(shader, "Falloff"), 1, &falloff[0]);
+		glUniform2fv(glGetUniformLocation(shader, "Resolution"), 1, &resolution[0]);
+		glUniform4fv(glGetUniformLocation(shader, "LightPos"), 1, &lightpos[0]);
+
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		vColor = vec3(1, 1, 1);
+	
 		for (int i = 0; i < parts.size(); i++) {
 			int index = findMaterialIndex(parts[i].name);
-
+			vec4 aColor = vec4(0);
 			if (0 <= index) {
 				sMaterial &material = materials[index];
 
@@ -325,10 +338,23 @@ void CObjLoader::Draw (GLuint shader)
 						std::cout << "get texture error" << std::endl;
 					}
 				}
-				else {
-					vColor = vec3(material.Kd[0], material.Kd[1], material.Kd[2]);
-					
+				if (material.nTexture) {
+					glActiveTexture(GL_TEXTURE1);
+					glBindTexture(GL_TEXTURE_2D, material.nTexture);
+					GLint uTexture = glGetUniformLocation(shader, "noTexture");
+					if (uTexture != -1) {
+						glUniform1i(uTexture, 1);
+					}
+					else {
+						std::cout << "get ntexture error" << std::endl;
+					}
 				}
+				else {
+					GLint uTexture = glGetUniformLocation(shader, "noTexture");
+					//glUniform1i(uTexture, -1);
+				}
+				vColor = vec3(material.Kd[0], material.Kd[1], material.Kd[2]);
+				aColor = vec4(material.Ka[0], material.Ka[1], material.Ka[2], 1.0);
 			}
 			else {
 				vColor = vec3(0.7, 0.7, 0.7);
@@ -338,10 +364,10 @@ void CObjLoader::Draw (GLuint shader)
 			if (uColor != -1) {
 				glUniform3fv(uColor, 1, &vColor[0]);
 			}
-			else {
-			//	std::cout << "get color error" << std::endl;
-			}
-
+			
+			glUniform4fv(glGetUniformLocation(shader, "AmbientColor"), 1, &aColor[0]);
+			
+			
 			glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
 			//if(parts[i].vIndices.size() != 0)
 			//	glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);

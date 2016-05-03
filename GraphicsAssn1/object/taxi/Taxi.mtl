@@ -8,4 +8,4 @@ newmtl Taxi-tex.tex
 	Ks 0.0 0.0 0.0
 	Ka 0.2 0.2 0.2
 	map_Kd Taxi-tex.tex.png
-
+	map_bump normal_map_for_taxi.jpg
