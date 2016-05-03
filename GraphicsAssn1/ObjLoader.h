@@ -71,13 +71,13 @@ public:
 
 	void loadMaterialsTexture ();
 	bool Load (char *objfile, char *mtlfile = NULL);
-	void Draw (GLuint, GLuint);
+	void Draw (GLuint);
 	vector<sAllVertex> allVertexes;
 	
 
 private:
 	vector<sMaterial> materials;
-
+	GLuint vbo;
 	vector<sVertex> vertexes;
 	vector<sTexCoord> texcoords;
 	vector<sVertex> normals;

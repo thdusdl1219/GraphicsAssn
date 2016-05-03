@@ -10,6 +10,7 @@
 #include "river.h"
 #include "world.h"
 #include "log.h"
+#include "chicken.h"
 #include <vector>
 
 

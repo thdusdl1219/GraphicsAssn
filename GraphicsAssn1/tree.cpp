@@ -15,10 +15,6 @@ tree::tree(float x, float y, CObjLoader* obj, vec3 color, mat4& m, list<Node*> *
 	this->transform *= Translate(vec3(transX, transY, GRASS_ROAD_D + 0.00001));
 	this->transform *= Scale(1.0 / scale);
 	this->transform *= RotateX(90);
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, obj->allVertexes.size() * sizeof(sAllVertex), &obj->allVertexes[0], GL_STATIC_DRAW);
-
 }
 
 void tree::draw(mat4 m) {
@@ -35,6 +31,6 @@ void tree::draw(mat4 m) {
 	}
 
 	
-	obj->Draw(shader, vbo);
+	obj->Draw(shader);
 
 }

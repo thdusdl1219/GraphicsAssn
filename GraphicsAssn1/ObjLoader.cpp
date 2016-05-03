@@ -61,65 +61,14 @@ bool CObjLoader::Load (char *objfile, char *mtlfile)
 				}
 				allVertexes.push_back(ver);
 			}
-			//parts[i].vIndices.push_back(v[0] - 1);
-			//parts[i].vIndices.push_back(v[1] - 1);
-			//parts[i].vIndices.push_back(v[2] - 1);
+			
 		}
 	}
-/*
-	int vt_size = vertexes.size();
-	int tc_size = texcoords.size();
-	int no_size = normals.size();
-	
 
-	for (unsigned int h = 0; h < parts.size(); ++h) {
-		int index = findMaterialIndex(parts[h].name);
-		vector<sFace> &faces = parts[h].faces;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, allVertexes.size() * sizeof(sAllVertex), &allVertexes[0], GL_STATIC_DRAW);
 
-		if (0 <= index) {
-			sMaterial &material = materials[index];
-
-			if (material.texture) {
-				glEnable(GL_TEXTURE_2D);
-				glBindTexture(GL_TEXTURE_2D, material.texture);
-			}
-			else {
-				// glColor3f(material.Kd[0], material.Kd[1], material.Kd[2]);
-				vColor = vec3(material.Kd[0], material.Kd[1], material.Kd[2]);
-			}
-		}
-		else {
-			// glColor3f(0.7f, 0.7f, 0.7f);
-			vColor = vec3(0.7f, 0.7f, 0.7f);
-		}
-
-
-		for (unsigned int i = 0, ip = faces.size(); i < ip; ++i) {
-			//glBegin (GL_POLYGON);
-
-			for (int j = 0, jn = faces[i].n; j < jn; ++j) {
-				int &v = faces[i].v[j];
-				int &vt = faces[i].vt[j];
-				int &vn = faces[i].vn[j];
-
-				/*if (0 < vn && vn <= no_size) {
-				sVertex &no = normals[vn - 1];
-				glNormal3f (no.x, no.y, no.z);
-				}
-				if (0 < vt && vt <= tc_size) {
-				sTexCoord &tc = texcoords[vt - 1];
-				glTexCoord2f (tc.u, tc.v);
-				}
-				if (0 < v && v <= vt_size) {
-					sVertex &vt = vertexes[v - 1];
-					vertices.push_back(vec3(vt.x, vt.y, vt.x));
-					//					glVertex3f (scale*vt.x, scale*vt.y, scale*vt.z);
-				}
-			}
-			//glEnd ();  
-		}
-	}
-	*/
 	return result;
 }
 
@@ -333,7 +282,7 @@ void CObjLoader::loadMaterialsTexture ()
 	}
 }
 
-void CObjLoader::Draw (GLuint shader, GLuint vbo)
+void CObjLoader::Draw (GLuint shader)
 {
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		//glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(sVertex), &vertexes[0], GL_STATIC_DRAW);

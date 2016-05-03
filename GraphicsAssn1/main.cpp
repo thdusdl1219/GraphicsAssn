@@ -239,53 +239,7 @@ void init(void) {
 
 	}
 
-	/*
-	//init log	
-	list<Node*> *riverList = new list<Node*>;
-	count = 0;
-	LogShader = new Shader("object.vs", "log.fs");
-	for (int i = 0; i < nRiver; i++)
-	{
-		std::string dir;
-		float yPos;
-		if (i % 2 == 0)
-		{
-			dir = "UP";
-			yPos = 0;
-		}
-		else
-		{
-			dir = "DOWN";
-			yPos = WORLD_SIZE;
-		}
-		for (int j = 0; j < (rand() % MAX_LOGN) + 30; j++)
-		{
-			if (yPos)
-				yPos -= incY * (rand() % CAR_SPACE + 4);
-			else
-				yPos += incY * (rand() % CAR_SPACE + 4);
-			Log[count] = new logt(riverPos[i], yPos, dir, iMat, NULL, LogShader);
-			riverList->push_back(Log[count]);
-			count++;
-			Ocount++;
-		}
-
-	}
-	logt::realnLog = count;
 	
-
-
-	//init River
-	RiverShader = new Shader("object.vs", "river.fs");
-	for (int i = 0; i < nRiver; i++)
-	{
-		if(i == nRiver - 1)
-			River[i] = new river(riverPos[i], 0, iMat, riverList, RiverShader);
-		else
-			River[i] = new river(riverPos[i], 0, iMat, NULL, RiverShader);
-		worldList->push_back(River[i]);
-		Ocount++;
-	}*/
 
 	//init circle, player
 	
@@ -295,22 +249,16 @@ void init(void) {
 	cameraPos = vec4(circle->getX(), circle->getY(), 0.0, 1);
 	worldList->push_back(circle);
 
+	CObjLoader* cobjP = new CObjLoader();
+	cobjP->Load("object\\chicken\\Chicken.obj", NULL);
+	chicken* chick = new chicken(circle->getX(), circle->getY() + incY * 2, cobjP, vec3(1.0), iMat, NULL, textureshader);
+	worldList->push_back(chick);
+
 	World = new world(iMat, worldList);
 	World_R = WORLD_SIZE / DIVIDE_WINDOW;
 	World_T = WORLD_SIZE / DIVIDE_WINDOW;
 }
 
-
-void renderBitmapCharacter(float x, float y, void *font, char *string)
-{
-	/* glColor3f(1.0, 0.0, 0.0);
-	char *c;
-	glRasterPos2f(x, y);
-	for (c = string; *c != '\0'; c++)
-	{
-		glutBitmapCharacter(font, *c);		
-	} */
-}
 
 void display(void) {
 
@@ -531,26 +479,6 @@ void ReDisplayTimer(int value)
 		//exit(0);
 	}
 
-	/* int logNum = circle->colDetection(Log);
-
-	bool colRiver = circle->colDetection(River);
-
-	for (int i = 0; i < logt::realnLog; i++) {
-		if (logNum == i) {
-			//mat4 m = Translate(Log[i]->getX());
-			mat4 m = Log[i]->move();
-			m = Translate(0, Log[i] -> getY() - (circle->getY() - 0.5 * cincY), 0);
-			circle->move(Log[i]->getX(), Log[i]->getY(), m);
-		}
-		else
-			Log[i]->move();
-	}
-
-	 if (colRiver && logNum == -1) {
-		printf("circle falls in river... forever...\n");
-		Sleep(1000);
-		exit(0);
-	} */
 	
 	//1인칭 시점에서 카메라를 부드럽게 움직이게 하기 위한 코드
 	if (thetaZ > 0) {

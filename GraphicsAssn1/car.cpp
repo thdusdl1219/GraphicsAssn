@@ -18,10 +18,6 @@ car::car(float x, float y, CObjLoader* obj, vec3 color, const std::string direct
 	this->transform *= Scale(1.0 / carScale);
 	this->transform *= m;
 	rotate = RotateX(90);
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, obj->allVertexes.size() * sizeof(sAllVertex), &obj->allVertexes[0], GL_STATIC_DRAW);
-
 }
 
 void car::draw(mat4 m) {
@@ -39,7 +35,7 @@ void car::draw(mat4 m) {
 	//	std::cout << "get uniform error1" << std::endl;
 	}
 
-	obj->Draw(shader, vbo);
+	obj->Draw(shader);
 
 
 
