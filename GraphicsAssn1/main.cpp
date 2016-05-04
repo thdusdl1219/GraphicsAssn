@@ -46,7 +46,7 @@ void init(void) {
 
 	glClearColor(13.05 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 0.0);
 
-	glShadeModel(GL_SMOOTH);
+	//glShadeModel(GL_SMOOTH);
 	srand(time(NULL));
 	nGrass = rand() % 4 + 6;
 	nRoad = ((nGrass - 1) / 4) * 10;

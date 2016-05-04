@@ -55,4 +55,5 @@ void main()
 	vec3 FinalColor = DiffuseColor.rgb * Intensity;
 
 	gl_FragColor = color * vec4(FinalColor, DiffuseColor.a);
+	//gl_FragColor = color;
 } 
