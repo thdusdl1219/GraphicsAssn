@@ -18,6 +18,7 @@ struct sAllVertex
 	sVertex v;
 	sVertex vn;
 	sTexCoord vt;
+	sVertex tangent;
 };
 
 struct sMaterial

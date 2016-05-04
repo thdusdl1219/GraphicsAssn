@@ -17,11 +17,11 @@ tree::tree(float x, float y, CObjLoader* obj, vec3 color, mat4& m, list<Node*> *
 	this->transform *= RotateX(90);
 }
 
-void tree::draw(mat4 m) {
+void tree::draw(mat4 view, mat4 project, mat4 modelM) {
 	glUseProgram(shader);
 
-
-	GLint Mloc = glGetUniformLocation(shader, "ModelView");
+	mat4 m = transpose(modelM);
+	GLint Mloc = glGetUniformLocation(shader, "Model");
 	if (Mloc != -1)
 	{
 		glUniformMatrix4fv(Mloc, 1, GL_FALSE, m);
@@ -30,6 +30,8 @@ void tree::draw(mat4 m) {
 	//	std::cout << "get uniform error1" << std::endl;
 	}
 
+	glUniformMatrix4fv(glGetUniformLocation(shader, "View"), 1, GL_FALSE, transpose(view));
+	glUniformMatrix4fv(glGetUniformLocation(shader, "Projection"), 1, GL_FALSE, transpose(project));
 	
 	obj->Draw(shader);
 

@@ -4,5 +4,5 @@
 class world : public Node {
 public:
 	world(mat4& m, list<Node*> *child);
-	void draw(mat4);
+	void draw(mat4, mat4, mat4);
 };

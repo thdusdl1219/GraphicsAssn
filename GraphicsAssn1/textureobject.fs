@@ -4,7 +4,7 @@ uniform sampler2D myTexture;
 uniform sampler2D noTexture;
 
 
-uniform vec4 LightPos;        //light position, normalized
+in vec4 LightPos;        //light position, normalized
 uniform vec2 Resolution;      //resolution of screen
 uniform vec4 AmbientColor;    //ambient RGBA -- alpha is intensity 
 uniform vec3 Falloff;         //attenuation coefficients
@@ -12,33 +12,51 @@ uniform vec3 Falloff;         //attenuation coefficients
 in vec2 vTexCoord;
 in vec4 color;
 in vec3 vNormal;
+in vec3 vtangent;
+in vec3 vPosition;
 
+vec3 CalcNormal()
+{
+    vec3 Normal = normalize(vNormal);
+    vec3 Tangent = normalize(vtangent);
+    Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
+    vec3 Bitangent = cross(Tangent, Normal);
+    vec3 BumpMapNormal = texture(noTexture, vTexCoord).rgb;
+    BumpMapNormal = 2.0 * BumpMapNormal - vec3(1.0, 1.0, 1.0);
+    vec3 NewNormal;
+    mat3 TBN = mat3(Tangent, Bitangent, Normal);
+    NewNormal = TBN * BumpMapNormal;
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
 
 void main() 
 { 
-	//vec3 norm = normalize(vNormal);
 	vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
 	vec3 NormalMap = texture2D(noTexture, vTexCoord).rgb;
 	vec4 LightColor = vec4(1.0);
 
-	vec3 LightDir = vec3(LightPos.xy - (gl_FragCoord.xy / Resolution.xy), LightPos.z);
+	//vec3 LightDir = vec3(LightPos.xy - (gl_FragCoord.xy / Resolution.xy), LightPos.z);
+	vec3 LightDir = vec3(LightPos.xy - (vPosition.xy), LightPos.z - vPosition.z);
 	if(LightPos.w == 0) // directional light
 	{
 		LightDir = vec3(LightPos.xyz);
 	}
-	LightDir.x *= Resolution.x / Resolution.y;
+	//LightDir.x *= Resolution.x / Resolution.y;
 
 	 //Determine distance (used for attenuation) BEFORE we normalize our LightDir
     float D = length(LightDir);
 
 	//normalize our vectors
-    //vec3 N = normalize(NormalMap * 2.0 - 1.0);
-	vec3 N = normalize(vNormal);
+    vec3 N = CalcNormal();
+	//vec3 N = normalize(vNormal);
     vec3 L = normalize(LightDir);
+	
 
 	//Pre-multiply light color with intensity
     //Then perform "N dot L" to determine our diffuse term
 	vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);
+
 
 	//pre-multiply ambient color with intensity
     vec3 Ambient = AmbientColor.rgb * AmbientColor.a;

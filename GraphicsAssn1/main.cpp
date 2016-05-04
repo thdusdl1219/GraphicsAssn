@@ -266,27 +266,31 @@ void display(void) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
+	mat4 view = mat4(1.0);
+	mat4 projection = mat4(1.0);
 	//1인칭 시점, 3인칭 시점과 다르게 캐릭터가 회전하면 카메라도 같이 회전해야 한다.
 	if (viewMode == "view1")
 	{
-		
-		wmv =
-			Perspective(100.0f, 1, 0.05, 1) *
-			LookAt(vec4(cameraPos.x, cameraPos.y, 0.10, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
+
+
+		projection = Perspective(100.0f, 1, 0.05, 1);
+		view = LookAt(vec4(cameraPos.x, cameraPos.y, 0.10, 0.0), vec4(cameraAt.x, cameraAt.y, 0, 0.0), vec4(0, 0, 1, 0.0));
 
 	}
 	//3인칭 시점, 
-	else if (viewMode == "view2")
-		wmv =
-		Perspective(90.0f, 1, 0.05, 1) *
-		LookAt(vec4(circle->getX() - 0.2, circle->getY(), 0.2, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
+	else if (viewMode == "view2") {
+
+		projection = Perspective(90.0f, 1, 0.05, 1);
+		view = LookAt(vec4(circle->getX() - 0.2, circle->getY(), 0.2, 0.0), vec4(circle->getX() + 1, circle->getY(), 0, 0.0), vec4(0, 0, 1, 0.0));
+	}
 	//맵을 위에서 아래로 바라보는 모드
-	else if(viewMode == "view3")
-		wmv = Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T);
+	else if (viewMode == "view3") {
+		view = Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T);
+	}
 		//LookAt(vec4(circle->getX() - 0.1, circle->getY() - 0.1, 0.1, 0.0), vec4(0, 150, -10, 0.0), vec4(0, 0, 1, 0.0));
 		//Ortho2D(defaultX + World_L, defaultX + World_R, defaultY + World_B, defaultY + World_T) * LookAt(vec4(-1.0, -1.0, 0.5, 0.0), vec4(150, 0, 0.5, 0.0), vec4(0, 1, 0, 0.0));
 	
-	World->traverse(wmv);
+	World->traverse(view, projection, mat4(1.0));
 	glDisable(GL_DEPTH_TEST);
 
 	//glutPostRedisplay();
@@ -451,7 +455,7 @@ void specialkeyboard(int key, int x, int y) {
 			break;
 		}
 	}
-	printf("CPos : %f %f %f %f\n", circle->getX(), circle->getY(), incX, cincX);
+	//printf("CPos : %f %f %f %f\n", circle->getX(), circle->getY(), incX, cincX);
 
 	//glutPostRedisplay();
 	//glutSwapBuffers();

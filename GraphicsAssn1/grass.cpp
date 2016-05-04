@@ -56,12 +56,12 @@ grass::grass(float x, float y, vec3 color, mat4& m, list<Node*> *child, Shader* 
 
 }
 
-void grass::draw(mat4 m) {
+void grass::draw(mat4 view, mat4 project, mat4 modelM) {
 
 	glUseProgram(shader);
 
-
-	GLint Mloc = glGetUniformLocation(shader, "ModelView");
+	mat4 m = transpose(modelM);
+	GLint Mloc = glGetUniformLocation(shader, "Model");
 	if (Mloc != -1)
 	{
 		glUniformMatrix4fv(Mloc, 1, GL_FALSE, m);
@@ -69,6 +69,8 @@ void grass::draw(mat4 m) {
 	else {
 	//	std::cout << "get uniform error1" << std::endl;
 	}
+	glUniformMatrix4fv(glGetUniformLocation(shader, "View"), 1, GL_FALSE, transpose(view));
+	glUniformMatrix4fv(glGetUniformLocation(shader, "Projection"), 1, GL_FALSE, transpose(project));
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	GLint posAttrib = glGetAttribLocation(shader, "pos");

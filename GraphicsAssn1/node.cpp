@@ -23,19 +23,19 @@ float Node::getY() {
 
 int Node::count = 0;
 
-void Node::traverse(mat4 modelM) {
+void Node::traverse(mat4 viewM, mat4 projectM, mat4 modelM) {
 
 	mat4 curM;
 	//printf("this->y : %f\n", this->y);
 	curM = modelM * transform * rotate;
 
-	mat4 tcurM = transpose(curM);
+	//mat4 tcurM = transpose(curM);
 
-	draw(tcurM);
+	draw(viewM, projectM, curM);
 	if (child) {
 		for (list<Node*>::iterator c = child->begin(); c != child->end(); c++) {
 
-			(*c)->traverse(curM);
+			(*c)->traverse(viewM, projectM, curM);
 		}
 	}
 	//printf("count : %d", count);

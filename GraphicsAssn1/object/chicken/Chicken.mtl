@@ -14,3 +14,4 @@ newmtl Material__1
 	Ke 0.0000 0.0000 0.0000
 	map_Ka Texture1.png
 	map_Kd Texture1.png
+	map_bump normal_map_for_chicken.jpg
