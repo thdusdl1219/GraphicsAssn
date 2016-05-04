@@ -10,6 +10,8 @@ out vec4 color;
 
 void main()
 {		
+
 	color = vec4(uColor, 1.0);	
+
 	gl_Position = ModelView * vec4(pos, 1.0);
 }

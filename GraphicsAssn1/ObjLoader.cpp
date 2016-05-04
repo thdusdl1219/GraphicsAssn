@@ -293,7 +293,7 @@ void CObjLoader::Draw (GLuint shader)
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		//glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(sVertex), &vertexes[0], GL_STATIC_DRAW);
 
-
+		//extern int lightSourceMode;
 		//glBufferSubData(GL_ARRAY_BUFFER, 0, vertexes.size() * sizeof(sVertex), &vertexes[0]);
 		
 		int stride = sizeof(sVertex) * 2 + sizeof(sTexCoord);
@@ -314,7 +314,7 @@ void CObjLoader::Draw (GLuint shader)
 
 		vec3 falloff = vec3(0.05);
 		vec2 resolution = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
-		vec4 lightpos = vec4(0, 0.5, 0, 1);
+		vec4 lightpos = vec4(0, 1, 1, lightSourceMode);
 		glUniform3fv(glGetUniformLocation(shader, "Falloff"), 1, &falloff[0]);
 		glUniform2fv(glGetUniformLocation(shader, "Resolution"), 1, &resolution[0]);
 		glUniform4fv(glGetUniformLocation(shader, "LightPos"), 1, &lightpos[0]);

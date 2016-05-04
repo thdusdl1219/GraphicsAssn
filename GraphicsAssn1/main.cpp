@@ -35,16 +35,18 @@ int main(int argc, char** argv) {
 
 int nGrass = 0;
 int nRoad = 0;
+int lightSourceMode = DIRECTIONAL;
 
 void init(void) {
 	viewMode = "view3";
 	rotateAt = mat4();
+	
 	thetaZ = 0;
 	
 
 	glClearColor(13.05 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 0.0);
 
-	glShadeModel(GL_FLAT);
+	glShadeModel(GL_SMOOTH);
 	srand(time(NULL));
 	nGrass = rand() % 4 + 6;
 	nRoad = ((nGrass - 1) / 4) * 10;
@@ -396,6 +398,7 @@ void refreshAll(STATE s) {
 }
 
 void specialkeyboard(int key, int x, int y) {
+	
 	STATE s = circle->circleState;
 	vec3 prevCirPos;
 	vec3 currCirPos;
@@ -439,6 +442,12 @@ void specialkeyboard(int key, int x, int y) {
 				viewMode = "view3";
 			else if (viewMode == "view3")
 				viewMode = "view1";			
+			break;
+		case GLUT_KEY_F2:
+			if (lightSourceMode == DIRECTIONAL)
+				lightSourceMode = POINTLIGHT;
+			else if (lightSourceMode == POINTLIGHT)
+				lightSourceMode = DIRECTIONAL;
 			break;
 		}
 	}
