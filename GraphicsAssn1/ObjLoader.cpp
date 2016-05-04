@@ -346,11 +346,9 @@ void CObjLoader::Draw (GLuint shader)
 
 		vec3 falloff = vec3(0.2);
 		vec2 resolution = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
-<<<<<<< HEAD
-		vec4 lightpos = vec4(0, 1, 1, lightSourceMode);
-=======
-		vec4 lightpos = vec4(0, 0, 0.5, 1);
->>>>>>> normal map 구현 및 광원 버그 고침
+
+		vec4 lightpos = vec4(0, 0, 0.5, lightSourceMode);
+
 		glUniform3fv(glGetUniformLocation(shader, "Falloff"), 1, &falloff[0]);
 		glUniform2fv(glGetUniformLocation(shader, "Resolution"), 1, &resolution[0]);
 		glUniform4fv(glGetUniformLocation(shader, "vLightPos"), 1, &lightpos[0]);
