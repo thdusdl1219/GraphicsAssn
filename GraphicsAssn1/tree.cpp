@@ -15,6 +15,7 @@ tree::tree(float x, float y, CObjLoader* obj, vec3 color, mat4& m, list<Node*> *
 	this->transform *= Translate(vec3(transX, transY, GRASS_ROAD_D + 0.00001));
 	this->transform *= Scale(1.0 / scale);
 	this->transform *= RotateX(90);
+	drawingMode = shader->getTag();
 }
 
 void tree::draw(mat4 view, mat4 project, mat4 modelM) {
@@ -33,6 +34,12 @@ void tree::draw(mat4 view, mat4 project, mat4 modelM) {
 	glUniformMatrix4fv(glGetUniformLocation(shader, "View"), 1, GL_FALSE, transpose(view));
 	glUniformMatrix4fv(glGetUniformLocation(shader, "Projection"), 1, GL_FALSE, transpose(project));
 	
-	obj->Draw(shader);
+	//for Gouraud shading
+	if (drawingMode == "Gouraud")
+		obj->Draw_Gouraud(shader);
+
+	//for Phong shading
+	else if (drawingMode == "Phong")
+		obj->Draw(shader);
 
 }

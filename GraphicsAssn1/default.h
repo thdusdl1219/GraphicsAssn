@@ -40,8 +40,9 @@ using namespace std;
 extern int nGrass;
 extern int nRoad;
 enum LIGHTMODE { DIRECTIONAL = 0, POINTLIGHT = 1 };
+enum SHADINGMODE { WIRE = 0, FLAT = 1, GOURAUD, PHONG};
 extern int lightSourceMode;
-
+extern int shadingMode;
 
 
 enum STATE {

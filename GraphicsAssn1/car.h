@@ -11,11 +11,13 @@ public:
 	mat4 incrY();
 	mat4 decY();
 	static int realnCar;
-
+	
 private:
 	//String value has 'Up or Down'
+	std::string drawingMode;
 	std::string direction;
 	std::vector<vec3> vertices;
 	GLuint vbo;
 	CObjLoader* obj;
+	
 };

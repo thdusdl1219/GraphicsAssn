@@ -10,7 +10,7 @@ in vec3 V;		 //view vector
 uniform vec4 AmbientColor;    //ambient RGBA -- alpha is intensity 
 uniform vec3 Falloff;         //attenuation coefficients
 
-uniform float specular_power = 128.0;
+uniform float specular_power = 1.0;
 in vec2 vTexCoord;
 in vec4 color;
 in vec3 vNormal;

@@ -14,7 +14,7 @@ chicken::chicken(float x, float y, CObjLoader* obj, vec3 color, mat4& m, list<No
 	this->transform *= Translate(vec3(transX, transY, 0));
 	this->transform *= Scale(1.0 / (scale * 10));
 	this->transform *= RotateX(90);
-
+	drawingMode = shader->getTag();
 }
 
 void chicken::draw(mat4 view, mat4 project, mat4 modelM) {
@@ -33,6 +33,12 @@ void chicken::draw(mat4 view, mat4 project, mat4 modelM) {
 	glUniformMatrix4fv(glGetUniformLocation(shader, "Projection"), 1, GL_FALSE, transpose(project));
 
 
-	obj->Draw(shader);
+	//for Gouraud shading
+	if (drawingMode == "Gouraud")
+		obj->Draw_Gouraud(shader);
+
+	//for Phong shading
+	else if (drawingMode == "Phong")
+		obj->Draw(shader);
 
 }

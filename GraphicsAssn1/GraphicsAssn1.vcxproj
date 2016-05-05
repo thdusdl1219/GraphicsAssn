@@ -184,6 +184,8 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="gouraud.fs" />
+    <None Include="gouraud.vs" />
     <None Include="object.fs" />
     <None Include="object.vs" />
     <None Include="textureobject.fs" />
