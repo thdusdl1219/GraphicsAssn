@@ -6,7 +6,7 @@
 class car : public Node {
 public:
 	car(float x, float y, CObjLoader*, vec3, const std::string direction, mat4& m, list<Node*> *child, Shader* shader);
-	void draw(mat4);
+	void draw(mat4, mat4, mat4);
 	void move();
 	mat4 incrY();
 	mat4 decY();

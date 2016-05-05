@@ -345,10 +345,10 @@ void cir::initNode()
 
 
 
-void cir::draw(mat4 m)
+void cir::draw(mat4 view, mat4 project, mat4 modelM)
 {
 	
-	nodes[Torso]->traverse(transpose(m));	
+	nodes[Torso]->traverse(view, project, modelM);	
 	
 }
 

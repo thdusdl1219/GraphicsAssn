@@ -3,41 +3,71 @@
 in vec3 pos;
 in vec3 normal;
 in vec2 TexCoord;
+in vec3 tangent;
 
 out vec4 color;
 out vec2 vTexCoord;
 out vec3 vNormal;
-uniform mat4 ModelView;
-uniform vec3 uColor;
+out vec3 vtangent;
+out vec3 vPosition;
+out vec4 L;
+out vec3 V;
 
-uniform vec3 light_pos = vec3(0,1,1);
-uniform vec3 diffuse_albedo = vec3(0.5, 0.2, 0.7);
-uniform vec3 specular_albedo = vec3(0.7);
-uniform vec3 ambient = vec3(0.1, 0.1, 0.1);
-uniform float specular_power = 128.0;
+uniform mat4 Model;
+uniform mat4 View;
+uniform mat4 Projection;
+uniform vec3 uColor;
+uniform vec4 vLightPos;
+
+
 
 void main()
-{			
+{		
+	//float bug = 0.0;
 	vTexCoord = TexCoord;
-	vNormal = normal;
-	//color = vec4(uColor, 1.0);	
-	vec4 position = ModelView * vec4(pos, 1.0);
+
+	mat4 mvp = View * Model;
+	mat3 normalMatrix = mat3(mvp);
+	normalMatrix = inverse(normalMatrix);
+	normalMatrix = transpose(normalMatrix);
 	
-	vec4 P = position;
-	vec3 N = mat3(ModelView) * vNormal;
-	vec3 L = light_pos - P.xyz;
-	vec3 V = -P.xyz;
+	
+	vec3 Normal = normalize(normalMatrix * normal);
 
-	N = normalize(N);
-	L = normalize(L);
-	V = normalize(V);
+	// for debug
+	//if(Normal.z != 1.0)
+	//	bug = 1.0;
+	//vec4 Normal = vec4(normal, 1.0);
 
-	vec3 R = reflect(-L,N);
 
-	vec3 diffuse = max(dot(N,L), 0.0) * diffuse_albedo;
-	vec3 specular = pow(max(dot(R,V), 0.0), specular_power) * specular_albedo;
+	//≥Î∏ª ∫§≈Õ ∞ËªÍ
+	vNormal = Normal.xyz;
+	
+		
+	vec4 position = Projection * View * Model * vec4(pos, 1.0);
 
-	color = vec4(ambient + diffuse + specular, 1.0);
+	vec3 Tangent = normalize(normalMatrix * tangent);
+	//vec4 Tangent = vec4(tangent, 1.0);
+	vtangent = Tangent.xyz;
 
+	
+
+	mat3 v = mat3(View);
+	mat3 m = mat3(Model);
+	vec3 ViewPos = v * m * pos;
+	//vec4 LightPostmp = View * vec4(vLightPos.xyz, 1.0);
+	
+	
+	vec3 LV = (v * m * vLightPos.xyz) - ViewPos;
+	//∫‰ ∞¯∞£ ∂Û¿Ã∆Æ ∫§≈Õ ∞ËªÍ
+	L = vec4(LV, vLightPos.w);
+	
+	//∫‰ ∫§≈Õ ∞ËªÍ
+	V = -ViewPos;
+
+	vPosition = position.xyz;
+
+	color = vec4(uColor.x, uColor.yz, 1.0);
 	gl_Position = position;
+
 }

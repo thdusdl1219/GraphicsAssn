@@ -59,6 +59,33 @@ bool CObjLoader::Load (char *objfile, char *mtlfile)
 					sVertex &ve = vertexes[v - 1];
 					ver.v = ve;
 				}
+				int* vv = parts[i].faces[j].v;
+				sVertex& v0 = vertexes[vv[0] - 1];
+				sVertex& v1 = vertexes[vv[1] - 1];
+				sVertex& v2 = vertexes[vv[2] - 1];
+
+				int* vvt = parts[i].faces[j].vt;
+				sTexCoord& vt0 = texcoords[vvt[0] - 1];
+				sTexCoord& vt1 = texcoords[vvt[1] - 1];
+				sTexCoord& vt2 = texcoords[vvt[2] - 1];
+
+				vec3 Edge1 = vec3(v1.x, v1.y, v1.z) - vec3(v0.x, v0.y, v0.z);
+				vec3 Edge2 = vec3(v2.x, v2.y, v2.z) - vec3(v0.x, v0.y, v0.z);
+
+				float DeltaU1 = vt1.u - vt0.u;
+				float DeltaV1 = vt1.v - vt0.v;
+				float DeltaU2 = vt2.u - vt0.u;
+				float DeltaV2 = vt2.v - vt0.v;
+
+				float f = 1.0f / (DeltaU1 * DeltaV2 - DeltaU2 * DeltaV1);
+
+				sVertex Tangent;
+				Tangent.x = f * (DeltaV2 * Edge1.x - DeltaV1 * Edge2.x);
+				Tangent.y = f * (DeltaV2 * Edge1.y - DeltaV1 * Edge2.y);
+				Tangent.z = f * (DeltaV2 * Edge1.z - DeltaV1 * Edge2.z);
+
+				ver.tangent = Tangent;
+
 				allVertexes.push_back(ver);
 			}
 			
@@ -296,7 +323,7 @@ void CObjLoader::Draw (GLuint shader)
 		//extern int lightSourceMode;
 		//glBufferSubData(GL_ARRAY_BUFFER, 0, vertexes.size() * sizeof(sVertex), &vertexes[0]);
 		
-		int stride = sizeof(sVertex) * 2 + sizeof(sTexCoord);
+		int stride = sizeof(sVertex) * 3 + sizeof(sTexCoord);
 		GLvoid* offset = (GLvoid*) sizeof(sVertex);
 
 		GLint posAttrib = glGetAttribLocation(shader, "pos");
@@ -304,20 +331,27 @@ void CObjLoader::Draw (GLuint shader)
 		glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, stride, 0);
 		GLint normalAttrib = glGetAttribLocation(shader, "normal");
 		GLint coordAttrib = glGetAttribLocation(shader, "TexCoord");
+		GLint tangentAttrib = glGetAttribLocation(shader, "tangent");
 
 		glEnableVertexAttribArray(normalAttrib);
 		glEnableVertexAttribArray(coordAttrib);
+		glEnableVertexAttribArray(tangentAttrib);
 
 		glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_FALSE, stride, offset);
 		offset = (GLvoid*) (sizeof(sVertex) * 2);
 		glVertexAttribPointer(coordAttrib, 2, GL_FLOAT, GL_FALSE, stride, offset);
+		offset = (GLvoid*)(sizeof(sVertex) * 2 + sizeof(sTexCoord));
+		glVertexAttribPointer(tangentAttrib, 3, GL_FLOAT, GL_FALSE, stride, offset);
 
-		vec3 falloff = vec3(0.05);
+
+		vec3 falloff = vec3(0.2);
 		vec2 resolution = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
-		vec4 lightpos = vec4(0, 1, 1, lightSourceMode);
+
+		vec4 lightpos = vec4(1, 1, 0.5, lightSourceMode);
+
 		glUniform3fv(glGetUniformLocation(shader, "Falloff"), 1, &falloff[0]);
 		glUniform2fv(glGetUniformLocation(shader, "Resolution"), 1, &resolution[0]);
-		glUniform4fv(glGetUniformLocation(shader, "LightPos"), 1, &lightpos[0]);
+		glUniform4fv(glGetUniformLocation(shader, "vLightPos"), 1, &lightpos[0]);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
@@ -335,7 +369,7 @@ void CObjLoader::Draw (GLuint shader)
 						glUniform1i(uTexture, 0);
 					}
 					else {
-						std::cout << "get texture error" << std::endl;
+						//std::cout << "get texture error" << std::endl;
 					}
 				}
 				if (material.nTexture) {
@@ -346,11 +380,11 @@ void CObjLoader::Draw (GLuint shader)
 						glUniform1i(uTexture, 1);
 					}
 					else {
-						std::cout << "get ntexture error" << std::endl;
+						//std::cout << "get ntexture error" << std::endl;
 					}
 				}
 				else {
-					GLint uTexture = glGetUniformLocation(shader, "noTexture");
+					//GLint uTexture = glGetUniformLocation(shader, "noTexture");
 					//glUniform1i(uTexture, -1);
 				}
 				vColor = vec3(material.Kd[0], material.Kd[1], material.Kd[2]);

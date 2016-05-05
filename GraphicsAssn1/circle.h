@@ -57,7 +57,7 @@ public:
 	//scenenode nodes[10];
 	
 	cir(float x, float y, float r, mat4& m, list<Node*> *child, Shader* shader);
-	void draw(mat4);
+	void draw(mat4, mat4, mat4);
 	
 	void incrY(bool);
 	void decY(bool);

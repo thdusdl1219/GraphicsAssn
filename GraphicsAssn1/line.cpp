@@ -14,11 +14,11 @@ line::line(float x, float y, vec3 color, mat4& m, list<Node*> *child, Shader* sh
 
 }
 
-void line::draw(mat4 m) {
+void line::draw(mat4 view, mat4 project, mat4 modelM) {
 	glUseProgram(shader);
 
-
-	GLint Mloc = glGetUniformLocation(shader, "ModelView");
+	mat4 m = transpose(modelM);
+	GLint Mloc = glGetUniformLocation(shader, "Model");
 	if (Mloc != -1)
 	{
 		glUniformMatrix4fv(Mloc, 1, GL_FALSE, m);
@@ -26,6 +26,8 @@ void line::draw(mat4 m) {
 	else {
 	//	std::cout << "get uniform error1" << std::endl;
 	}
+	glUniformMatrix4fv(glGetUniformLocation(shader, "View"), 1, GL_FALSE, transpose(view));
+	glUniformMatrix4fv(glGetUniformLocation(shader, "Projection"), 1, GL_FALSE, transpose(project));
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -38,7 +40,7 @@ void line::draw(mat4 m) {
 		glUniform3fv(uColor, 1, &color[0]);
 	}
 	else {
-		std::cout << "get color error" << std::endl;
+		//std::cout << "get color error" << std::endl;
 	}
 
 	glDrawArrays(GL_LINES, 0, vertices.size());

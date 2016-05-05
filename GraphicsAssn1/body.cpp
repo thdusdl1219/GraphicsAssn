@@ -52,17 +52,19 @@ body::body(vec3 point, vec3 color, float w, float h, float d, mat4& m, list<Node
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec3), &vertices[0], GL_STATIC_DRAW);
 }
 
-void body::draw(mat4 m) {
+void body::draw(mat4 view, mat4 project, mat4 modelM) {
 	
+	mat4 m = transpose(modelM);
 	glUseProgram(shader);
 	m = transpose(model) * m;
 
-	GLint loc = glGetUniformLocation(shader, "ModelView");
+	GLint loc = glGetUniformLocation(shader, "Model");
 	if (loc != -1)
 	{
 		glUniformMatrix4fv(loc, 1, GL_FALSE, m);
 	}
-	
+	glUniformMatrix4fv(glGetUniformLocation(shader, "View"), 1, GL_FALSE, transpose(view));
+	glUniformMatrix4fv(glGetUniformLocation(shader, "Projection"), 1, GL_FALSE, transpose(project));
 
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);

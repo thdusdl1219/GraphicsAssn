@@ -10,8 +10,8 @@ class Node {
 public :
 	Node(float x, float y, mat4 m, list<Node*> *child, Shader* shader);
 	Node() : transform(NULL), child(NULL), shaderP(NULL), shader(NULL) {};
-	void traverse(mat4 modelM);
-	virtual void draw(mat4) = 0;
+	void traverse(mat4 viewM, mat4 projectM, mat4 modelM);
+	virtual void draw(mat4, mat4, mat4) = 0;
 	float getX();
 	float getY();
 	MatrixStack mvStack;
