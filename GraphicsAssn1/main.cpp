@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 int nGrass = 0;
 int nRoad = 0;
 int lightSourceMode = DIRECTIONAL;
-int shadingMode = PHONG;
+int shadingMode = GOURAUD;
 
 void init(void) {
 	viewMode = "view3";
@@ -146,11 +146,10 @@ void init(void) {
 	
 	list<Node*> *grassList = new list<Node*>;
 	//init portals
-	Shader *shader = new Shader("object.vs", "object.fs","Object");
+	Shader *shader = new Shader("object.vs", "object.fs");
 	// this is for Phong shading
-	Shader *textureshader = new Shader("textureobject.vs", "textureobject.fs","Phong");
-	// this is for Gouraud shading
-	Shader *gouraudShader = new Shader("gouraud.vs", "gouraud.fs","Gouraud");
+	Shader *textureshader = new Shader("textureobject.vs", "textureobject.fs");	
+	
 	
 	Portal.push_back(new portal(gPos[1], incY * 19, vec3(1, 0, 1), iMat, NULL, shader));
 	Portal.push_back(new portal(gPos[4], incY * 19, vec3(1, 0, 1), iMat, NULL, shader));
@@ -166,10 +165,8 @@ void init(void) {
 	{
 		for (int j = 0; j < NTREE_IN_GRASS; j++) {
 			int yPos = rand() % NTREE_IN_GRASS;
-			if (shadingMode == PHONG)
-				Tree.push_back(new tree(gPos[i + 1], incY * yPos * 2, treeobjP, vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), iMat, NULL, textureshader));
-			else if (shadingMode == GOURAUD)
-				Tree.push_back(new tree(gPos[i + 1], incY * yPos * 2, treeobjP, vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), iMat, NULL, gouraudShader));
+			Tree.push_back(new tree(gPos[i + 1], incY * yPos * 2, treeobjP, vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), iMat, NULL, textureshader));
+
 			grassList->push_back(Tree[i * NTREE_IN_GRASS + j]);
 		}
 	}
@@ -226,10 +223,8 @@ void init(void) {
 			else
 				yPos += incY * (rand() % CAR_SPACE + 2) * j;
 			car* c = nullptr;
-			if (shadingMode == PHONG)
-				c = new car(roadPos[i], yPos, carobjP, vec3(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0), dir, iMat, NULL, textureshader);
-			else if (shadingMode == GOURAUD)
-				c = new car(roadPos[i], yPos, carobjP, vec3(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0), dir, iMat, NULL, gouraudShader);
+			c = new car(roadPos[i], yPos, carobjP, vec3(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0), dir, iMat, NULL, textureshader);
+			
 			Car.push_back(c);
 			roadList->push_back(c);
 			count++;
@@ -264,10 +259,7 @@ void init(void) {
 	CObjLoader* cobjP = new CObjLoader();
 	cobjP->Load("object\\chicken\\Chicken.obj", NULL);
 	chicken* chick = nullptr;
-	if (shadingMode == PHONG)
-		chick = new chicken(circle->getX(), circle->getY() + incY * 2, cobjP, vec3(1.0), iMat, NULL, textureshader);
-	else if (shadingMode == GOURAUD)
-		chick = new chicken(circle->getX(), circle->getY() + incY * 2, cobjP, vec3(1.0), iMat, NULL, gouraudShader);
+	chick = new chicken(circle->getX(), circle->getY() + incY * 2, cobjP, vec3(1.0), iMat, NULL, textureshader);
 
 	worldList->push_back(chick);
 
@@ -472,7 +464,7 @@ void specialkeyboard(int key, int x, int y) {
 			if (shadingMode == GOURAUD)
 				shadingMode = PHONG;
 			else if (shadingMode == PHONG)
-				shadingMode = WIRE;
+				shadingMode = WIRE;				
 			else if (shadingMode == FLAT)
 				shadingMode = GOURAUD;
 			break;

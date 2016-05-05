@@ -25,10 +25,10 @@ std::string Shader::readFile(const char* filePath) {
 	return content;
 }
 
-Shader::Shader(const char *vertex_path, const char* fragment_path, const std::string tag) {
+Shader::Shader(const char *vertex_path, const char* fragment_path) {
 	GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
 	GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	this->tag = tag;
+	
 	// Read shaders
 	std::string vertShaderStr = readFile(vertex_path);
 	std::string fragShaderStr = readFile(fragment_path);
@@ -84,8 +84,4 @@ GLuint Shader::getShader() {
 
 GLuint Shader::getShader2() {
 	return program;
-}
-std::string Shader::getTag()
-{
-	return tag;
 }

@@ -74,10 +74,13 @@ public:
 
 	void loadMaterialsTexture ();
 	bool Load (char *objfile, char *mtlfile = NULL);
-	//for Phong shading
+	
 	void Draw (GLuint);
 	//for Gouraud shading
 	void Draw_Gouraud(GLuint);
+	//for Phong shading
+	void Draw_Phong(GLuint);
+
 
 	vector<sAllVertex> allVertexes;
 	

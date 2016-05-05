@@ -14,7 +14,7 @@ public:
 	
 private:
 	//String value has 'Up or Down'
-	std::string drawingMode;
+	
 	std::string direction;
 	std::vector<vec3> vertices;
 	GLuint vbo;

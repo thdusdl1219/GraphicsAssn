@@ -7,7 +7,7 @@ public:
 	void draw(mat4, mat4, mat4);
 	
 private:
-	std::string drawingMode;
+	
 	std::vector<vec3> vertices;
 	CObjLoader* obj;
 	GLuint vbo;

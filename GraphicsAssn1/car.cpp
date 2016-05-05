@@ -18,8 +18,6 @@ car::car(float x, float y, CObjLoader* obj, vec3 color, const std::string direct
 	this->transform *= Scale(1.0 / carScale);
 	this->transform *= m;
 	rotate = RotateX(90);
-
-	drawingMode = shader->getTag();
 }
 
 void car::draw(mat4 view, mat4 project, mat4 modelM) {
@@ -39,13 +37,9 @@ void car::draw(mat4 view, mat4 project, mat4 modelM) {
 	glUniformMatrix4fv(glGetUniformLocation(shader, "View"), 1, GL_FALSE, transpose(view));
 	glUniformMatrix4fv(glGetUniformLocation(shader, "Projection"), 1, GL_FALSE, transpose(project));
 
-	//for Gouraud shading
-	if (drawingMode == "Gouraud")
-		obj->Draw_Gouraud(shader);
 
-	//for Phong shading
-	else if(drawingMode == "Phong")
-		obj->Draw(shader);
+
+	obj->Draw(shader);
 
 
 
