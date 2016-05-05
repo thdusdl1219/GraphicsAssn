@@ -21,8 +21,8 @@ void main()
 { 
 	//shaidngMode 2 , Gouraud shading
 	if(shadingMode == 2){
-		vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
-		gl_FragColor = vec4(color.xyz * DiffuseColor.rgb, 5);
+		//vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
+		gl_FragColor = color;
 	}		
 
 	//shadingMode 3 , Phong shading

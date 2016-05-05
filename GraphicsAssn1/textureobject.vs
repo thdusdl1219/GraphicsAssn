@@ -1,6 +1,6 @@
 #version 430 core
 
-
+uniform sampler2D myTexture;
 
 
 in vec3 pos;
@@ -88,15 +88,18 @@ void main()
 			vec3 FinalColor;
 			vec3 Intensity = Ambient + Diffuse;
 
+			vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
 			if(L.w == 0) // directional light
 			{		
-				FinalColor =  Intensity;		
+				FinalColor =  Intensity * DiffuseColor.rgb;		
+				color = vec4(FinalColor, 1.0);
 			}
 			else{
-				specular = Attenuation * Specular;	
-				FinalColor = Intensity;
+				
+				FinalColor = Intensity * DiffuseColor.rgb + Attenuation * Specular;
+				color = vec4(FinalColor, 1.0);
 			}
-			color = vec4(FinalColor, 1.0);
+			
 		}
 
 		else if(shadingMode == 3)
