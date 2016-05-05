@@ -347,7 +347,7 @@ void CObjLoader::Draw (GLuint shader)
 		vec3 falloff = vec3(0.2);
 		vec2 resolution = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-		vec4 lightpos = vec4(1, 1, 0.5, lightSourceMode);
+		vec4 lightpos = vec4(0.0, 1.0, 0, lightSourceMode);
 
 		glUniform3fv(glGetUniformLocation(shader, "Falloff"), 1, &falloff[0]);
 		glUniform2fv(glGetUniformLocation(shader, "Resolution"), 1, &resolution[0]);

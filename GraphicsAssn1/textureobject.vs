@@ -8,8 +8,6 @@ in vec3 tangent;
 out vec4 color;
 out vec2 vTexCoord;
 out vec3 vNormal;
-out vec3 vtangent;
-out vec3 vPosition;
 out vec4 L;
 out vec3 V;
 
@@ -45,27 +43,19 @@ void main()
 	
 		
 	vec4 position = Projection * View * Model * vec4(pos, 1.0);
-
-	vec3 Tangent = normalize(normalMatrix * tangent);
-	//vec4 Tangent = vec4(tangent, 1.0);
-	vtangent = Tangent.xyz;
-
-	
-
 	mat3 v = mat3(View);
 	mat3 m = mat3(Model);
-	vec3 ViewPos = v * m * pos;
-	//vec4 LightPostmp = View * vec4(vLightPos.xyz, 1.0);
-	
+	vec3 ViewPos = v * m * pos;	
 	
 	vec3 LV = (v * m * vLightPos.xyz) - ViewPos;
+	
 	//∫‰ ∞¯∞£ ∂Û¿Ã∆Æ ∫§≈Õ ∞ËªÍ
 	L = vec4(LV, vLightPos.w);
 	
 	//∫‰ ∫§≈Õ ∞ËªÍ
 	V = -ViewPos;
 
-	vPosition = position.xyz;
+	
 
 	color = vec4(uColor.x, uColor.yz, 1.0);
 	gl_Position = position;

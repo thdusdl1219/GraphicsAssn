@@ -10,12 +10,12 @@ in vec3 V;		 //view vector
 uniform vec4 AmbientColor;    //ambient RGBA -- alpha is intensity 
 uniform vec3 Falloff;         //attenuation coefficients
 
-uniform float specular_power = 1.0;
+uniform float specular_power = 128.0;
 in vec2 vTexCoord;
 in vec4 color;
 in vec3 vNormal;
 in vec3 vtangent;
-in vec3 vPosition;
+
 
 void main() 
 { 
@@ -25,9 +25,9 @@ void main()
 		
 
 	//Determine distance (used for attenuation) BEFORE we normalize our LightDir
-    
-	vec3 Normal = normalize(vNormal);
-	float D = length(L);
+    float D = length(L);
+
+	vec3 Normal = normalize(vNormal);	
 	vec4 Light = normalize(L);
 	vec3 View = normalize(V);
 	vec3 R = reflect(-Light.xyz,Normal);
@@ -46,18 +46,17 @@ void main()
     vec3 Attenuation = vec3(1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));		
 	Diffuse = Attenuation * Diffuse;
 
-	vec3 Specular = pow(max(dot(R,View),0.0), specular_power) * vec3(1.0);
+	vec3 Specular = pow(max(dot(R,View),0.0), specular_power) * vec3(0.7);
 	vec3 FinalColor;
-	vec3 Intensity;
+	vec3 Intensity = Ambient + Diffuse;
 
 	if(Light.w == 0) // directional light
-	{
-		Intensity = Ambient + Diffuse;
+	{		
 		FinalColor =  DiffuseColor.rgb * Intensity;
+		
 	}
-	else FinalColor = DiffuseColor.rgb * Diffuse + Specular;
-	 
-
-	gl_FragColor = color * vec4(FinalColor, DiffuseColor.a);
-	//gl_FragColor = color;
+	else FinalColor = DiffuseColor.rgb * Intensity + Attenuation * Specular;	 
+	
+	gl_FragColor = vec4(FinalColor, DiffuseColor.a);
+	
 } 
