@@ -321,22 +321,21 @@ void CObjLoader::Draw (GLuint shader)
 		if (shadingMode == PHONG)
 		{
 			glUniform1i(glGetUniformLocation(shader, "shadingMode"), 3);
-			Draw_Phong(shader);			
+			Draw_Object(shader);			
 		}					
 		else if (shadingMode == GOURAUD)
 		{
 			glUniform1i(glGetUniformLocation(shader, "shadingMode"), 2);
-			Draw_Gouraud(shader);
+			Draw_Object(shader);
 		}
 		else if (shadingMode == FLAT)
 		{
 			glUniform1i(glGetUniformLocation(shader, "shadingMode"), 1);
-			Draw_Flat(shader);
-		}
-			
+			Draw_Object(shader);
+		}			
 }
 
-void CObjLoader::Draw_Flat(GLuint shader)
+void CObjLoader::Draw_Object(GLuint shader)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	int stride = sizeof(sVertex) * 3 + sizeof(sTexCoord);
@@ -364,241 +363,64 @@ void CObjLoader::Draw_Flat(GLuint shader)
 	vec2 resolution = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	vec4 lightpos = vec4(0.0, 1.0, 0, lightSourceMode);
+	vec4 lightpos2 = vec4(0.0, 0.0, 1.0, lightSourceMode);
 
 	glUniform3fv(glGetUniformLocation(shader, "Falloff"), 1, &falloff[0]);
 	glUniform2fv(glGetUniformLocation(shader, "Resolution"), 1, &resolution[0]);
 	glUniform4fv(glGetUniformLocation(shader, "vLightPos"), 1, &lightpos[0]);
+	glUniform4fv(glGetUniformLocation(shader, "vLightPos2"), 1, &lightpos2[0]);
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	for (int i = 0; i < parts.size(); i++) {
-		int index = findMaterialIndex(parts[i].name);
-		vec4 aColor = vec4(0);
-		if (0 <= index) {
-			sMaterial &material = materials[index];
-
-			if (material.texture) {
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, material.texture);
-				GLint uTexture = glGetUniformLocation(shader, "myTexture");
-				if (uTexture != -1) {
-					glUniform1i(uTexture, 0);
-				}
-				else {
-					//std::cout << "get texture error" << std::endl;
-				}
-			}
-			if (material.nTexture) {
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, material.nTexture);
-				GLint uTexture = glGetUniformLocation(shader, "noTexture");
-				if (uTexture != -1) {
-					glUniform1i(uTexture, 1);
-				}
-				else {
-					//std::cout << "get ntexture error" << std::endl;
-				}
-			}
-			else {
-				//GLint uTexture = glGetUniformLocation(shader, "noTexture");
-				//glUniform1i(uTexture, -1);
-			}
-			vColor = vec3(material.Kd[0], material.Kd[1], material.Kd[2]);
-			aColor = vec4(material.Ka[0], material.Ka[1], material.Ka[2], 1.0);
-		}
-		else {
-			vColor = vec3(0.7, 0.7, 0.7);
-		}
-
-		GLint uColor = glGetUniformLocation(shader, "uColor");
-		if (uColor != -1) {
-			glUniform3fv(uColor, 1, &vColor[0]);
-		}
-
-		glUniform4fv(glGetUniformLocation(shader, "AmbientColor"), 1, &aColor[0]);
-
-
-		glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
-		//if(parts[i].vIndices.size() != 0)
-		//	glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
-	}
-}
-
-void CObjLoader::Draw_Gouraud(GLuint shader)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	int stride = sizeof(sVertex) * 3 + sizeof(sTexCoord);
-	GLvoid* offset = (GLvoid*) sizeof(sVertex);
-
-	GLint posAttrib = glGetAttribLocation(shader, "pos");
-	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, stride, 0);
-	GLint normalAttrib = glGetAttribLocation(shader, "normal");
-	GLint coordAttrib = glGetAttribLocation(shader, "TexCoord");
-	GLint tangentAttrib = glGetAttribLocation(shader, "tangent");
-
-	glEnableVertexAttribArray(normalAttrib);
-	glEnableVertexAttribArray(coordAttrib);
-	glEnableVertexAttribArray(tangentAttrib);
-
-	glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_FALSE, stride, offset);
-	offset = (GLvoid*)(sizeof(sVertex) * 2);
-	glVertexAttribPointer(coordAttrib, 2, GL_FLOAT, GL_FALSE, stride, offset);
-	offset = (GLvoid*)(sizeof(sVertex) * 2 + sizeof(sTexCoord));
-	glVertexAttribPointer(tangentAttrib, 3, GL_FLOAT, GL_FALSE, stride, offset);
-
-
-	vec3 falloff = vec3(0.2);
-	vec2 resolution = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
-
-	vec4 lightpos = vec4(0.0, 1.0, 0, lightSourceMode);
-
-	glUniform3fv(glGetUniformLocation(shader, "Falloff"), 1, &falloff[0]);
-	glUniform2fv(glGetUniformLocation(shader, "Resolution"), 1, &resolution[0]);
-	glUniform4fv(glGetUniformLocation(shader, "vLightPos"), 1, &lightpos[0]);
-
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	for (int i = 0; i < parts.size(); i++) {
-		int index = findMaterialIndex(parts[i].name);
-		vec4 aColor = vec4(0);
-		if (0 <= index) {
-			sMaterial &material = materials[index];
-
-			if (material.texture) {
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, material.texture);
-				GLint uTexture = glGetUniformLocation(shader, "myTexture");
-				if (uTexture != -1) {
-					glUniform1i(uTexture, 0);
-				}
-				else {
-					//std::cout << "get texture error" << std::endl;
-				}
-			}
-			if (material.nTexture) {
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, material.nTexture);
-				GLint uTexture = glGetUniformLocation(shader, "noTexture");
-				if (uTexture != -1) {
-					glUniform1i(uTexture, 1);
-				}
-				else {
-					//std::cout << "get ntexture error" << std::endl;
-				}
-			}
-			else {
-				//GLint uTexture = glGetUniformLocation(shader, "noTexture");
-				//glUniform1i(uTexture, -1);
-			}
-			vColor = vec3(material.Kd[0], material.Kd[1], material.Kd[2]);
-			aColor = vec4(material.Ka[0], material.Ka[1], material.Ka[2], 1.0);
-		}
-		else {
-			vColor = vec3(0.7, 0.7, 0.7);
-		}
-
-		GLint uColor = glGetUniformLocation(shader, "uColor");
-		if (uColor != -1) {
-			glUniform3fv(uColor, 1, &vColor[0]);
-		}
-
-		glUniform4fv(glGetUniformLocation(shader, "AmbientColor"), 1, &aColor[0]);
-
-
-		glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
-		//if(parts[i].vIndices.size() != 0)
-		//	glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
-	}
-
-
-}
-
-void CObjLoader::Draw_Phong(GLuint shader)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	int stride = sizeof(sVertex) * 3 + sizeof(sTexCoord);
-	GLvoid* offset = (GLvoid*) sizeof(sVertex);
-
-	GLint posAttrib = glGetAttribLocation(shader, "pos");
-	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, stride, 0);
-	GLint normalAttrib = glGetAttribLocation(shader, "normal");
-	GLint coordAttrib = glGetAttribLocation(shader, "TexCoord");
-	GLint tangentAttrib = glGetAttribLocation(shader, "tangent");
-
-	glEnableVertexAttribArray(normalAttrib);
-	glEnableVertexAttribArray(coordAttrib);
-	glEnableVertexAttribArray(tangentAttrib);
-
-	glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_FALSE, stride, offset);
-	offset = (GLvoid*)(sizeof(sVertex) * 2);
-	glVertexAttribPointer(coordAttrib, 2, GL_FLOAT, GL_FALSE, stride, offset);
-	offset = (GLvoid*)(sizeof(sVertex) * 2 + sizeof(sTexCoord));
-	glVertexAttribPointer(tangentAttrib, 3, GL_FLOAT, GL_FALSE, stride, offset);
-
-
-	vec3 falloff = vec3(0.2);
-	vec2 resolution = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
-
-	vec4 lightpos = vec4(0.0, 1.0, 0, lightSourceMode);
-
-	glUniform3fv(glGetUniformLocation(shader, "Falloff"), 1, &falloff[0]);
-	glUniform2fv(glGetUniformLocation(shader, "Resolution"), 1, &resolution[0]);
-	glUniform4fv(glGetUniformLocation(shader, "vLightPos"), 1, &lightpos[0]);
-
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	for (int i = 0; i < parts.size(); i++) {
-		int index = findMaterialIndex(parts[i].name);
-		vec4 aColor = vec4(0);
-		if (0 <= index) {
-			sMaterial &material = materials[index];
-
-			if (material.texture) {
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, material.texture);
-				GLint uTexture = glGetUniformLocation(shader, "myTexture");
-				if (uTexture != -1) {
-					glUniform1i(uTexture, 0);
-				}
-				else {
-					//std::cout << "get texture error" << std::endl;
-				}
-			}
-			if (material.nTexture) {
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, material.nTexture);
-				GLint uTexture = glGetUniformLocation(shader, "noTexture");
-				if (uTexture != -1) {
-					glUniform1i(uTexture, 1);
-				}
-				else {
-					//std::cout << "get ntexture error" << std::endl;
-				}
-			}
-			else {
-				//GLint uTexture = glGetUniformLocation(shader, "noTexture");
-				//glUniform1i(uTexture, -1);
-			}
-			vColor = vec3(material.Kd[0], material.Kd[1], material.Kd[2]);
-			aColor = vec4(material.Ka[0], material.Ka[1], material.Ka[2], 1.0);
-		}
-		else {
-			vColor = vec3(0.7, 0.7, 0.7);
-		}
-
-		GLint uColor = glGetUniformLocation(shader, "uColor");
-		if (uColor != -1) {
-			glUniform3fv(uColor, 1, &vColor[0]);
-		}
-
-		glUniform4fv(glGetUniformLocation(shader, "AmbientColor"), 1, &aColor[0]);
-
-
-		glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
-		//if(parts[i].vIndices.size() != 0)
-		//	glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
-	}
 	
+
+	for (int i = 0; i < parts.size(); i++) {
+		int index = findMaterialIndex(parts[i].name);
+		vec4 aColor = vec4(0);
+		if (0 <= index) {
+			sMaterial &material = materials[index];
+
+			if (material.texture) {
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, material.texture);
+				GLint uTexture = glGetUniformLocation(shader, "myTexture");
+				if (uTexture != -1) {
+					glUniform1i(uTexture, 0);
+				}
+				else {
+					//std::cout << "get texture error" << std::endl;
+				}
+			}
+			if (material.nTexture) {
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, material.nTexture);
+				GLint uTexture = glGetUniformLocation(shader, "noTexture");
+				if (uTexture != -1) {
+					glUniform1i(uTexture, 1);
+				}
+				else {
+					//std::cout << "get ntexture error" << std::endl;
+				}
+			}
+			else {
+				//GLint uTexture = glGetUniformLocation(shader, "noTexture");
+				//glUniform1i(uTexture, -1);
+			}
+			vColor = vec3(material.Kd[0], material.Kd[1], material.Kd[2]);
+			aColor = vec4(material.Ka[0], material.Ka[1], material.Ka[2], 1.0);
+		}
+		else {
+			vColor = vec3(0.7, 0.7, 0.7);
+		}
+
+		GLint uColor = glGetUniformLocation(shader, "uColor");
+		if (uColor != -1) {
+			glUniform3fv(uColor, 1, &vColor[0]);
+		}
+
+		glUniform4fv(glGetUniformLocation(shader, "AmbientColor"), 1, &aColor[0]);
+
+
+		glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
+		//if(parts[i].vIndices.size() != 0)
+		//	glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
+	}
 }

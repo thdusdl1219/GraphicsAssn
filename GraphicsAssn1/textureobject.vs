@@ -13,6 +13,7 @@ out vec4 color;
 out vec2 vTexCoord;
 out vec3 vNormal;
 out vec4 L;
+out vec4 L2;
 out vec3 V;
 out vec3 specular;
 
@@ -21,6 +22,7 @@ uniform mat4 View;
 uniform mat4 Projection;
 uniform vec3 uColor;
 uniform vec4 vLightPos;
+uniform vec4 vLightPos2;
 uniform int shadingMode;
 
 uniform vec4 AmbientColor;    //ambient RGBA -- alpha is intensity 
@@ -63,10 +65,12 @@ void main()
 		vec3 ViewPos = v * m * pos;	
 	
 		vec3 LV = (v * m * vLightPos.xyz) - ViewPos;
-	
+		vec3 LV2 = (v * m * vLightPos2.xyz) - ViewPos;
 		//ºä °ø°£ ¶óÀÌÆ® º¤ÅÍ °è»ê
 		L = vec4(LV, vLightPos.w);
+		L2 = vec4(LV2, vLightPos.w);
 		float D = length(L);
+		float D2 = length(L2);
 		//ºä º¤ÅÍ °è»ê
 		V = -ViewPos;
 		
@@ -74,32 +78,37 @@ void main()
 		{
 			vNormal = normalize(vNormal);
 			L = normalize(L);
+			L2 = normalize(L2);
 			V = normalize(V);
 			vec3 R = reflect(-L.xyz,vNormal);
+			vec3 R2 = reflect(-L2.xyz,vNormal);
 
 
 			//°¨¼è
 			vec3 Attenuation = vec3(1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
-
+			vec3 Attenuation2 = vec3(1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));	
 
 			//Ambient, diffuse, specular °è»ê
 			vec3 Ambient = AmbientColor.rgb * AmbientColor.a;
 			vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(vNormal, L.xyz), 0.0);
+			vec3 Diffuse2 = (LightColor.rgb * LightColor.a) * max(dot(vNormal, L2.xyz), 0.0);
 			vec3 Specular = pow(max(dot(R,V),0.0), specular_power) * vec3(0.7);
-			vec3 FinalColor;
+			vec3 Specular2 = pow(max(dot(R2,V),0.0), specular_power) * vec3(0.7);
 			vec3 Intensity = Ambient + Attenuation * Diffuse;
+			vec3 Intensity2 = Ambient + Attenuation * Diffuse2;
 
+
+			vec3 FinalColor;
 			vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
 			if(L.w == 0) // directional light
 			{		
 				//directional light´Â attenuation ¼ººÐÀÌ ¾øÀ½.
-				FinalColor =  (Ambient + Diffuse) * DiffuseColor.rgb;		
+				FinalColor =  (2 * Ambient + Diffuse + Diffuse2) * DiffuseColor.rgb;		
 				color = vec4(FinalColor, 1.0);
 				flat_color = vec4(FinalColor, 1.0);
 			}
-			else{
-				
-				FinalColor = Intensity * DiffuseColor.rgb + Attenuation * Specular;
+			else{				
+				FinalColor = (Intensity + Intensity2) * DiffuseColor.rgb + Attenuation * Specular + Attenuation2 * Specular2;
 				color = vec4(FinalColor, 1.0);
 				flat_color = vec4(FinalColor, 1.0);
 			}

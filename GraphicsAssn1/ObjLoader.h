@@ -76,12 +76,7 @@ public:
 	bool Load (char *objfile, char *mtlfile = NULL);
 	
 	void Draw (GLuint);
-	//for Gouraud shading
-	void Draw_Gouraud(GLuint);
-	//for Phong shading
-	void Draw_Phong(GLuint);
-	//for Flat shading
-	void Draw_Flat(GLuint);
+	void Draw_Object(GLuint);
 
 
 	vector<sAllVertex> allVertexes;
