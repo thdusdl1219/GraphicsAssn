@@ -425,10 +425,15 @@ void CObjLoader::Draw_Object(GLuint shader)
 
 		glUniform4fv(glGetUniformLocation(shader, "AmbientColor"), 1, &aColor[0]);
 
-		if(shadingMode == WIRE)
-			glDrawArrays(GL_LINE_LOOP, 0, allVertexes.size());
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		if (shadingMode == WIRE) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 		else glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
-
+		glDisable(GL_CULL_FACE);
 		//if(parts[i].vIndices.size() != 0)
 		//	glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
 	}
