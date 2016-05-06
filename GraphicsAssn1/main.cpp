@@ -464,9 +464,12 @@ void specialkeyboard(int key, int x, int y) {
 			if (shadingMode == GOURAUD)
 				shadingMode = PHONG;
 			else if (shadingMode == PHONG)
-				shadingMode = WIRE;				
+				shadingMode = WIRE;			
+			else if (shadingMode == WIRE)
+				shadingMode = FLAT;
 			else if (shadingMode == FLAT)
 				shadingMode = GOURAUD;
+
 			break;
 		}
 

@@ -8,6 +8,7 @@ in vec3 normal;
 in vec2 TexCoord;
 in vec3 tangent;
 
+flat out vec4 flat_color;
 out vec4 color;
 out vec2 vTexCoord;
 out vec3 vNormal;
@@ -33,7 +34,7 @@ void main()
 	
 	vec4 LightColor = vec4(1.0);
 	//shadingMode = 2 은 Gouraud shading
-	if(shadingMode == 2 || shadingMode == 3)
+	if(shadingMode == 1 || shadingMode == 2 || shadingMode == 3)
 	{
 		//float bug = 0.0;
 		vTexCoord = TexCoord;
@@ -69,7 +70,7 @@ void main()
 		//뷰 벡터 계산
 		V = -ViewPos;
 		
-		if(shadingMode == 2)
+		if(shadingMode == 1 || shadingMode == 2)
 		{
 			vNormal = normalize(vNormal);
 			L = normalize(L);
@@ -86,29 +87,32 @@ void main()
 			vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(vNormal, L.xyz), 0.0);
 			vec3 Specular = pow(max(dot(R,V),0.0), specular_power) * vec3(0.7);
 			vec3 FinalColor;
-			vec3 Intensity = Ambient + Diffuse;
+			vec3 Intensity = Ambient + Attenuation * Diffuse;
 
 			vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
 			if(L.w == 0) // directional light
 			{		
-				FinalColor =  Intensity * DiffuseColor.rgb;		
+				//directional light는 attenuation 성분이 없음.
+				FinalColor =  (Ambient + Diffuse) * DiffuseColor.rgb;		
 				color = vec4(FinalColor, 1.0);
+				flat_color = vec4(FinalColor, 1.0);
 			}
 			else{
 				
 				FinalColor = Intensity * DiffuseColor.rgb + Attenuation * Specular;
 				color = vec4(FinalColor, 1.0);
+				flat_color = vec4(FinalColor, 1.0);
 			}
 			
 		}
 
+		//shadingMode = 3 은 Phong shading
 		else if(shadingMode == 3)
 		{
-			color = vec4(uColor.x, uColor.yz, 1.0);
-			
+			color = vec4(uColor.x, uColor.yz, 1.0);			
 		}
 		gl_Position = position;
 	}
-	//shadingMode = 3 은 Phong shading
+	
 
 }

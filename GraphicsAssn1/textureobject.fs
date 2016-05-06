@@ -13,15 +13,20 @@ in vec3 V;		 //view vector
 
 in vec2 vTexCoord;
 in vec4 color;
+flat in vec4 flat_color;
 in vec3 vNormal;
 in vec3 vtangent;
 in vec3 specular;
 
 void main() 
 { 
+
+	//shadingMode 1, Flat shading
+	if(shadingMode == 1)
+		gl_FragColor = flat_color;
+
 	//shaidngMode 2 , Gouraud shading
-	if(shadingMode == 2){
-		//vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
+	if(shadingMode == 2){		
 		gl_FragColor = color;
 	}		
 

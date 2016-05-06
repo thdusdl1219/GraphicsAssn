@@ -80,6 +80,8 @@ public:
 	void Draw_Gouraud(GLuint);
 	//for Phong shading
 	void Draw_Phong(GLuint);
+	//for Flat shading
+	void Draw_Flat(GLuint);
 
 
 	vector<sAllVertex> allVertexes;
