@@ -1,6 +1,8 @@
 #version 430 core
 
 uniform sampler2D myTexture;
+uniform sampler2D noTexture;
+
 uniform int shadingMode;
 
 
@@ -24,11 +26,13 @@ void main()
 { 
 
 	//shadingMode 1, Flat shading
-	if(shadingMode == 1)
+	if (shadingMode == 0)
+		gl_FragColor = color;
+	else if(shadingMode == 1)
 		gl_FragColor = flat_color;
 
 	//shaidngMode 2 , Gouraud shading
-	if(shadingMode == 2){		
+	else if(shadingMode == 2){		
 		gl_FragColor = color;
 	}		
 

@@ -1,7 +1,7 @@
 #version 430 core
 
 uniform sampler2D myTexture;
-
+uniform sampler2D noTexture;
 
 in vec3 pos;
 in vec3 normal;
@@ -32,11 +32,12 @@ uniform float specular_power = 1.0;
 
 
 void main()
-{		
-	
+{			
 	vec4 LightColor = vec4(1.0);
+
+	//shadingMode = 1 ¿∫ Flat shading
 	//shadingMode = 2 ¿∫ Gouraud shading
-	if(shadingMode == 1 || shadingMode == 2 || shadingMode == 3)
+	if(shadingMode == 0 || shadingMode == 1 || shadingMode == 2 || shadingMode == 3)
 	{
 		//float bug = 0.0;
 		vTexCoord = TexCoord;
@@ -74,7 +75,7 @@ void main()
 		//∫‰ ∫§≈Õ ∞ËªÍ
 		V = -ViewPos;
 		
-		if(shadingMode == 1 || shadingMode == 2)
+		if(shadingMode == 0 || shadingMode == 1 || shadingMode == 2)
 		{
 			vNormal = normalize(vNormal);
 			L = normalize(L);
