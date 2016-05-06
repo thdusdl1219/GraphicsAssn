@@ -22,6 +22,22 @@ in vec3 vNormal;
 in vec3 vtangent;
 in vec3 specular;
 
+vec3 CalcNormal()
+{
+    vec3 Normal = normalize(vNormal);
+    vec3 Tangent = normalize(vtangent);
+    Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
+    vec3 Bitangent = cross(Tangent, Normal);
+    vec3 BumpMapNormal = texture(noTexture, vTexCoord).rgb;
+    BumpMapNormal = 2.0 * BumpMapNormal - vec3(1.0, 1.0, 1.0);
+    vec3 NewNormal;
+    mat3 TBN = mat3(Tangent, Bitangent, Normal);
+    NewNormal = TBN * BumpMapNormal;
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
+
+
 void main() 
 { 
 
@@ -39,15 +55,17 @@ void main()
 	//shadingMode 3 , Phong shading
 	else if(shadingMode == 3){
 		vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
-		//vec3 NormalMap = texture2D(noTexture, vTexCoord).rgb;
+		vec3 NormalMap = texture2D(noTexture, vTexCoord).rgb;
 		vec4 LightColor = vec4(1.0);
 		
 
 		//Determine distance (used for attenuation) BEFORE we normalize our LightDir
-		float D = length(L);
-		float D2 = length(L2);
+		
+		float D = length(L.xyz);
+		float D2 = length(L2.xyz);
 
-		vec3 Normal = normalize(vNormal);	
+		//vec3 Normal = normalize(vNormal);	
+		vec3 Normal = CalcNormal();
 		vec4 Light = normalize(L);
 		vec4 Light2 = normalize(L2);
 		vec3 View = normalize(V);
