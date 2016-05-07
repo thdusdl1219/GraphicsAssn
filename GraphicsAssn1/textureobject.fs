@@ -9,6 +9,8 @@ uniform int shadingMode;
 uniform vec4 AmbientColor;    //ambient RGBA -- alpha is intensity 
 uniform vec3 Falloff;         //attenuation coefficients
 uniform float specular_power;
+uniform vec4 vLightPos;
+uniform vec4 vLightPos2;
 
 in vec4 L;        //light vector
 in vec4 L2;
@@ -66,8 +68,8 @@ void main()
 
 		//vec3 Normal = normalize(vNormal);	
 		vec3 Normal = CalcNormal();
-		vec4 Light = normalize(L);
-		vec4 Light2 = normalize(L2);
+		vec4 Light = vec4(normalize(L.xyz),vLightPos.w);
+		vec4 Light2 = vec4(normalize(L2.xyz),vLightPos2.w);;
 		vec3 View = normalize(V);
 		vec3 R = reflect(-Light.xyz,Normal);
 		vec3 R2 = reflect(-Light2.xyz,Normal);
@@ -84,8 +86,8 @@ void main()
 		vec3 Ambient = AmbientColor.rgb * AmbientColor.a;
 
 		//calculate attenuation
-		vec3 Attenuation = vec3(1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
-		vec3 Attenuation2 = vec3(1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));		
+		float Attenuation = (1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
+		float Attenuation2 = (1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));		
 		
 		//Diffuse = Attenuation * Diffuse;
 		//Diffuse2 = Attenuation2 * Diffuse2;
@@ -99,10 +101,9 @@ void main()
 
 		if(Light.w == 0) // directional light
 		{		
-			FinalColor =  DiffuseColor.rgb * (2 * Ambient + Diffuse + Diffuse2);
-		
+			FinalColor =  DiffuseColor.rgb * (2 * Ambient + Diffuse + Diffuse2);		
 		}
-		else FinalColor = DiffuseColor.rgb * (Intensity + Intensity2) + Attenuation * Specular + Attenuation2 * Specular2;	 
+		else FinalColor = DiffuseColor.rgb * (Intensity + Intensity2) + Attenuation * Specular + Attenuation2 * Specular2 ;	 
 	
 		gl_FragColor = vec4(FinalColor, DiffuseColor.a);
 	}

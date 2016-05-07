@@ -82,15 +82,20 @@ void main()
 		vec3 Tangent = normalize(normalMatrix * tangent);
 		vtangent = Tangent.xyz;
 
-		mat3 v = mat3(View);	
-		mat3 m = mat3(Model);
+		//mat3 v = mat3(View);	
+		//mat3 m = mat3(Model);
 		
-		vec3 ViewPos = v * m * pos;	
-			
-		vec3 LV = (v * vLightPos.xyz) - ViewPos;
-		vec3 LV2 = (v * vLightPos2.xyz) - ViewPos;
-		
-		//∫‰ ∞¯∞£ ∂Û¿Ã∆Æ ∫§≈Õ ∞ËªÍ		
+		vec4 tmp = View * Model * vec4(pos, 1.0);	
+		vec3 ViewPos = tmp.xyz;
+		vec3 LV = (View * vLightPos).xyz - ViewPos.xyz;
+		vec3 LV2 = (View * vLightPos2).xyz - ViewPos.xyz;
+		if(vLightPos.w == 0)
+		{
+			LV = -ViewPos.xyz;
+			LV2 = -ViewPos.xyz;
+		}
+		//∫‰ ∞¯∞£ ∂Û¿Ã∆Æ ∫§≈Õ ∞ËªÍ
+				
 		L = vec4(LV, vLightPos.w);
 		L2 = vec4(LV2, vLightPos2.w);
 		float D = length(LV);
@@ -102,6 +107,7 @@ void main()
 		{
 			//vNormal = normalize(vNormal);
 			vNormal = CalcNormal();
+			vNormal = normalize(vNormal);
 			L = normalize(L);
 			L2 = normalize(L2);
 			V = normalize(V);
@@ -110,8 +116,8 @@ void main()
 
 
 			//∞®ºË
-			vec3 Attenuation = vec3(1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
-			vec3 Attenuation2 = vec3(1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));	
+			float Attenuation = (1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
+			float Attenuation2 = (1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));	
 
 			//Ambient, diffuse, specular ∞ËªÍ
 			vec3 Ambient = AmbientColor.rgb * AmbientColor.a;
@@ -119,8 +125,8 @@ void main()
 			vec3 Diffuse2 = (LightColor.rgb * LightColor.a) * max(dot(vNormal, L2.xyz), 0.0);
 			vec3 Specular = pow(max(dot(R,V),0.0), specular_power) * vec3(0.7);
 			vec3 Specular2 = pow(max(dot(R2,V),0.0), specular_power) * vec3(0.7);
-			vec3 Intensity = Ambient + Attenuation * Diffuse;
-			vec3 Intensity2 = Ambient + Attenuation * Diffuse2;
+			vec3 Intensity = (Ambient + Attenuation) * Diffuse;
+			vec3 Intensity2 = (Ambient + Attenuation) * Diffuse2;
 
 
 			vec3 FinalColor;
