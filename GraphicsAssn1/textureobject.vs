@@ -31,7 +31,7 @@ uniform int shadingMode;
 uniform vec4 AmbientColor;    //ambient RGBA -- alpha is intensity 
 uniform vec3 Falloff;         //attenuation coefficients
 
-uniform float specular_power = 1.0;
+uniform float specular_power = 10.0;
 
 vec3 CalcNormal()
 {
