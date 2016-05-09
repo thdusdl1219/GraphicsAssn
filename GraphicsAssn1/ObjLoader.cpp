@@ -366,11 +366,11 @@ void CObjLoader::Draw_Object(GLuint shader)
 	glVertexAttribPointer(tangentAttrib, 3, GL_FLOAT, GL_FALSE, stride, offset);
 
 
-	vec3 falloff = vec3(0.2);
+	vec3 falloff = vec3(0.5);
 	vec2 resolution = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	vec4 lightpos = vec4(0.0, 1.0, 0, lightSourceMode);
-	vec4 lightpos2 = vec4(0.0, 0.0, 1.0, lightSourceMode);
+	vec4 lightpos = vec4(-0.5, -0.5, 0.5, lightSourceMode);
+	vec4 lightpos2 = vec4(0.5, 0.3, 0.5, lightSourceMode);
 
 	glUniform3fv(glGetUniformLocation(shader, "Falloff"), 1, &falloff[0]);
 	glUniform2fv(glGetUniformLocation(shader, "Resolution"), 1, &resolution[0]);
@@ -425,13 +425,15 @@ void CObjLoader::Draw_Object(GLuint shader)
 
 		glUniform4fv(glGetUniformLocation(shader, "AmbientColor"), 1, &aColor[0]);
 
-		if(shadingMode == WIRE){
-			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glDrawArrays(GL_LINE_LOOP, 0, allVertexes.size());
-			
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		if (shadingMode == WIRE) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 		else glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
-
+		glDisable(GL_CULL_FACE);
 		//if(parts[i].vIndices.size() != 0)
 		//	glDrawElements(GL_POLYGON, parts[i].vIndices.size(), GL_UNSIGNED_INT, &parts[i].vIndices[0]);
 	}

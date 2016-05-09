@@ -9,6 +9,8 @@ uniform int shadingMode;
 uniform vec4 AmbientColor;    //ambient RGBA -- alpha is intensity 
 uniform vec3 Falloff;         //attenuation coefficients
 uniform float specular_power;
+uniform vec4 vLightPos;
+uniform vec4 vLightPos2;
 
 in vec4 L;        //light vector
 in vec4 L2;
@@ -21,6 +23,22 @@ flat in vec4 flat_color;
 in vec3 vNormal;
 in vec3 vtangent;
 in vec3 specular;
+
+vec3 CalcNormal()
+{
+    vec3 Normal = normalize(vNormal);
+    vec3 Tangent = normalize(vtangent);
+    Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
+    vec3 Bitangent = cross(Tangent, Normal);
+    vec3 BumpMapNormal = texture(noTexture, vTexCoord).rgb;
+    BumpMapNormal = 2.0 * BumpMapNormal - vec3(1.0, 1.0, 1.0);
+    vec3 NewNormal;
+    mat3 TBN = mat3(Tangent, Bitangent, Normal);
+    NewNormal = TBN * BumpMapNormal;
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
+
 
 void main() 
 { 
@@ -39,17 +57,19 @@ void main()
 	//shadingMode 3 , Phong shading
 	else if(shadingMode == 3){
 		vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
-		//vec3 NormalMap = texture2D(noTexture, vTexCoord).rgb;
+		vec3 NormalMap = texture2D(noTexture, vTexCoord).rgb;
 		vec4 LightColor = vec4(1.0);
 		
 
 		//Determine distance (used for attenuation) BEFORE we normalize our LightDir
-		float D = length(L);
-		float D2 = length(L2);
+		
+		float D = length(L.xyz);
+		float D2 = length(L2.xyz);
 
-		vec3 Normal = normalize(vNormal);	
-		vec4 Light = normalize(L);
-		vec4 Light2 = normalize(L2);
+		//vec3 Normal = normalize(vNormal);	
+		vec3 Normal = CalcNormal();
+		vec4 Light = vec4(normalize(L.xyz),vLightPos.w);
+		vec4 Light2 = vec4(normalize(L2.xyz),vLightPos2.w);;
 		vec3 View = normalize(V);
 		vec3 R = reflect(-Light.xyz,Normal);
 		vec3 R2 = reflect(-Light2.xyz,Normal);
@@ -66,8 +86,8 @@ void main()
 		vec3 Ambient = AmbientColor.rgb * AmbientColor.a;
 
 		//calculate attenuation
-		vec3 Attenuation = vec3(1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
-		vec3 Attenuation2 = vec3(1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));		
+		float Attenuation = (1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
+		float Attenuation2 = (1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));		
 		
 		//Diffuse = Attenuation * Diffuse;
 		//Diffuse2 = Attenuation2 * Diffuse2;
@@ -81,10 +101,9 @@ void main()
 
 		if(Light.w == 0) // directional light
 		{		
-			FinalColor =  DiffuseColor.rgb * (2 * Ambient + Diffuse + Diffuse2);
-		
+			FinalColor =  DiffuseColor.rgb * (2 * Ambient + Diffuse + Diffuse2);		
 		}
-		else FinalColor = DiffuseColor.rgb * (Intensity + Intensity2) + Attenuation * Specular + Attenuation2 * Specular2;	 
+		else FinalColor = DiffuseColor.rgb * (Intensity + Intensity2) + Attenuation * Specular + Attenuation2 * Specular2 ;	 
 	
 		gl_FragColor = vec4(FinalColor, DiffuseColor.a);
 	}

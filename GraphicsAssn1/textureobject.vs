@@ -16,6 +16,9 @@ out vec4 L;
 out vec4 L2;
 out vec3 V;
 out vec3 specular;
+out vec3 vtangent;
+
+out vec3 vPosition;
 
 uniform mat4 Model;
 uniform mat4 View;
@@ -28,12 +31,27 @@ uniform int shadingMode;
 uniform vec4 AmbientColor;    //ambient RGBA -- alpha is intensity 
 uniform vec3 Falloff;         //attenuation coefficients
 
-uniform float specular_power = 1.0;
+uniform float specular_power = 10.0;
 
+vec3 CalcNormal()
+{
+    vec3 Normal = normalize(vNormal);
+    vec3 Tangent = normalize(vtangent);
+    Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
+    vec3 Bitangent = cross(Tangent, Normal);
+    vec3 BumpMapNormal = texture(noTexture, vTexCoord).rgb;
+    BumpMapNormal = 2.0 * BumpMapNormal - vec3(1.0, 1.0, 1.0);
+    vec3 NewNormal;
+    mat3 TBN = mat3(Tangent, Bitangent, Normal);
+    NewNormal = TBN * BumpMapNormal;
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
 
 void main()
 {			
 	vec4 LightColor = vec4(1.0);
+	vec3 NormalMap = texture2D(noTexture, vTexCoord).rgb;
 
 	//shadingMode = 1 ¿∫ Flat shading
 	//shadingMode = 2 ¿∫ Gouraud shading
@@ -61,22 +79,34 @@ void main()
 	
 		
 		vec4 position = Projection * View * Model * vec4(pos, 1.0);
-		mat3 v = mat3(View);
-		mat3 m = mat3(Model);
-		vec3 ViewPos = v * m * pos;	
-	
-		vec3 LV = (v * m * vLightPos.xyz) - ViewPos;
-		vec3 LV2 = (v * m * vLightPos2.xyz) - ViewPos;
+		vec3 Tangent = normalize(normalMatrix * tangent);
+		vtangent = Tangent.xyz;
+
+		//mat3 v = mat3(View);	
+		//mat3 m = mat3(Model);
+		
+		vec4 tmp = View * Model * vec4(pos, 1.0);	
+		vec3 ViewPos = tmp.xyz;
+		vec3 LV = (View * vLightPos).xyz - ViewPos.xyz;
+		vec3 LV2 = (View * vLightPos2).xyz - ViewPos.xyz;
+		if(vLightPos.w == 0)
+		{
+			LV = -ViewPos.xyz;
+			LV2 = -ViewPos.xyz;
+		}
 		//∫‰ ∞¯∞£ ∂Û¿Ã∆Æ ∫§≈Õ ∞ËªÍ
+				
 		L = vec4(LV, vLightPos.w);
-		L2 = vec4(LV2, vLightPos.w);
-		float D = length(L);
-		float D2 = length(L2);
+		L2 = vec4(LV2, vLightPos2.w);
+		float D = length(LV);
+		float D2 = length(LV2);
 		//∫‰ ∫§≈Õ ∞ËªÍ
 		V = -ViewPos;
 		
 		if(shadingMode == 0 || shadingMode == 1 || shadingMode == 2)
 		{
+			//vNormal = normalize(vNormal);
+			vNormal = CalcNormal();
 			vNormal = normalize(vNormal);
 			L = normalize(L);
 			L2 = normalize(L2);
@@ -86,8 +116,8 @@ void main()
 
 
 			//∞®ºË
-			vec3 Attenuation = vec3(1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
-			vec3 Attenuation2 = vec3(1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));	
+			float Attenuation = (1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
+			float Attenuation2 = (1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));	
 
 			//Ambient, diffuse, specular ∞ËªÍ
 			vec3 Ambient = AmbientColor.rgb * AmbientColor.a;
@@ -95,8 +125,8 @@ void main()
 			vec3 Diffuse2 = (LightColor.rgb * LightColor.a) * max(dot(vNormal, L2.xyz), 0.0);
 			vec3 Specular = pow(max(dot(R,V),0.0), specular_power) * vec3(0.7);
 			vec3 Specular2 = pow(max(dot(R2,V),0.0), specular_power) * vec3(0.7);
-			vec3 Intensity = Ambient + Attenuation * Diffuse;
-			vec3 Intensity2 = Ambient + Attenuation * Diffuse2;
+			vec3 Intensity = (Ambient + Attenuation) * Diffuse;
+			vec3 Intensity2 = (Ambient + Attenuation) * Diffuse2;
 
 
 			vec3 FinalColor;

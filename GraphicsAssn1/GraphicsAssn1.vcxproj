@@ -94,7 +94,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Opengl32.lib;freeglut.lib;glew32.lib;libsoil.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\JUNSUKPARK\Documents\Visual Studio 2015\Projects\Assignment4\GraphicsAssn\GraphicsAssn1\lib;C:\Users\Soyeon\Documents\Visual Studio 2015\Projects\GraphicsAssn1\GraphicsAssn1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\ParkJunseok\Source\Repos\GraphicsAssn\GraphicsAssn1\lib;C:\Users\JUNSUKPARK\Documents\Visual Studio 2015\Projects\Assignment4\GraphicsAssn\GraphicsAssn1\lib;C:\Users\Soyeon\Documents\Visual Studio 2015\Projects\GraphicsAssn1\GraphicsAssn1\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -184,8 +184,6 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="gouraud.fs" />
-    <None Include="gouraud.vs" />
     <None Include="object.fs" />
     <None Include="object.vs" />
     <None Include="textureobject.fs" />
