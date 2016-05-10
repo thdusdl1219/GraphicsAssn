@@ -427,11 +427,21 @@ void CObjLoader::Draw_Object(GLuint shader)
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
+		
 		if (shadingMode == WIRE) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			
+			glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 			glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+			
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDepthFunc(GL_LEQUAL);
+			glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
+			glDepthFunc(GL_LESS);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			
 		}
+
 		else glDrawArrays(GL_TRIANGLES, 0, allVertexes.size());
 		glDisable(GL_CULL_FACE);
 		//if(parts[i].vIndices.size() != 0)

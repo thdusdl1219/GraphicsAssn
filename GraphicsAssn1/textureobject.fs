@@ -106,5 +106,7 @@ void main()
 		else FinalColor = DiffuseColor.rgb * (Intensity + Intensity2) + Attenuation * Specular + Attenuation2 * Specular2 ;	 
 	
 		gl_FragColor = vec4(FinalColor, DiffuseColor.a);
+		
 	}
+
 } 

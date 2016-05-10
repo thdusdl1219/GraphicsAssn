@@ -94,6 +94,10 @@ void main()
 			LV = -ViewPos.xyz;
 			LV2 = -ViewPos.xyz;
 		}
+
+		
+			
+
 		//뷰 공간 라이트 벡터 계산
 				
 		L = vec4(LV, vLightPos.w);
@@ -151,6 +155,7 @@ void main()
 		{
 			color = vec4(uColor.x, uColor.yz, 1.0);			
 		}
+
 		gl_Position = position;
 	}
 	

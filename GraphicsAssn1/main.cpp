@@ -158,18 +158,7 @@ void init(void) {
 	grassList->push_back(Portal[1]);
 	grassList->push_back(Portal[0]);
 	
-	//init Tree
-	CObjLoader* treeobjP = new CObjLoader();
-	treeobjP->Load("object\\christmastree\\christmas_tree.obj", NULL);
-	for (int i = 0; i < gPos.size() - 2; i++)
-	{
-		for (int j = 0; j < NTREE_IN_GRASS; j++) {
-			int yPos = rand() % NTREE_IN_GRASS;
-			Tree.push_back(new tree(gPos[i + 1], incY * yPos * 2, treeobjP, vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), iMat, NULL, textureshader));
 
-			grassList->push_back(Tree[i * NTREE_IN_GRASS + j]);
-		}
-	}
 
 	//init Grass
 	
@@ -193,8 +182,32 @@ void init(void) {
 		Line.push_back(l);
 		roadList->push_back(l);
 	}
+		
+
+	//init Road
+	iMat = mat4(1.0);
 	
-	
+	for (int i = 0; i < roadPos.size(); i++)
+	{
+		if (i == nRoad - 1)
+			Road.push_back(new river(roadPos[i], 0, vec3(0.3, 0.3, 0.4), iMat, roadList, shader));
+		else
+			Road.push_back(new river(roadPos[i], 0, vec3(0.3, 0.3, 0.4), iMat, NULL, shader));
+		worldList->push_back(Road[i]);
+
+	}
+	//init Tree
+	CObjLoader* treeobjP = new CObjLoader();
+	treeobjP->Load("object\\christmastree\\christmas_tree.obj", NULL);
+	for (int i = 0; i < gPos.size() - 2; i++)
+	{
+		for (int j = 0; j < NTREE_IN_GRASS; j++) {
+			int yPos = rand() % NTREE_IN_GRASS;
+			Tree.push_back(new tree(gPos[i + 1], incY * yPos * 2, treeobjP, vec3(112.0 / 255.0, 56.0 / 255.0, 0.0), iMat, NULL, textureshader));
+
+			grassList->push_back(Tree[i * NTREE_IN_GRASS + j]);
+		}
+	}
 	//init Car	
 	int count = 0;
 	CObjLoader* carobjP = new CObjLoader();
@@ -224,7 +237,7 @@ void init(void) {
 				yPos += incY * (rand() % CAR_SPACE + 2) * j;
 			car* c = nullptr;
 			c = new car(roadPos[i], yPos, carobjP, vec3(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0), dir, iMat, NULL, textureshader);
-			
+
 			Car.push_back(c);
 			roadList->push_back(c);
 			count++;
@@ -232,21 +245,6 @@ void init(void) {
 
 	}
 	car::realnCar = count;
-
-	//init Road
-	iMat = mat4(1.0);
-	
-	for (int i = 0; i < roadPos.size(); i++)
-	{
-		if (i == nRoad - 1)
-			Road.push_back(new river(roadPos[i], 0, vec3(0.3, 0.3, 0.4), iMat, roadList, shader));
-		else
-			Road.push_back(new river(roadPos[i], 0, vec3(0.3, 0.3, 0.4), iMat, NULL, shader));
-		worldList->push_back(Road[i]);
-
-	}
-
-	
 
 	//init circle, player
 	
