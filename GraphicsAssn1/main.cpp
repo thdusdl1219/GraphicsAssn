@@ -45,7 +45,7 @@ void init(void) {
 	thetaZ = 0;
 	
 
-	glClearColor(13.05 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 0.0);
+	glClearColor(0.3, 0.3, 0.4, 0.0);
 
 	//glShadeModel(GL_SMOOTH);
 	srand(time(NULL));
@@ -160,8 +160,7 @@ void init(void) {
 	
 
 
-	//init Grass
-	
+	//init Grass	
 	for (int i = 0; i < gPos.size(); i++)
 	{
 		vec3 color = vec3(0, 1, 0);

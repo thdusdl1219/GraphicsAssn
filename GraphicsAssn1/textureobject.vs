@@ -94,7 +94,6 @@ void main()
 			LV = -ViewPos.xyz;
 			LV2 = -ViewPos.xyz;
 		}
-
 		
 			
 
