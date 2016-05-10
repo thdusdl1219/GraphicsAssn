@@ -91,8 +91,9 @@ void main()
 		vec3 LV2 = (View * vLightPos2).xyz - ViewPos.xyz;
 		if(vLightPos.w == 0)
 		{
-			LV = -ViewPos.xyz;
-			LV2 = -ViewPos.xyz;
+			mat3 m = mat3(View);
+			LV = m * vLightPos.xyz;
+			LV2 = m * vLightPos2.xyz;
 		}
 		
 			
@@ -129,11 +130,11 @@ void main()
 			vec3 Specular = pow(max(dot(R,V),0.0), specular_power) * vec3(0.7);
 			vec3 Specular2 = pow(max(dot(R2,V),0.0), specular_power) * vec3(0.7);
 			vec3 Intensity = (Ambient + Attenuation) * Diffuse;
-			vec3 Intensity2 = (Ambient + Attenuation) * Diffuse2;
+			vec3 Intensity2 = (Ambient + Attenuation2) * Diffuse2;
 
 
 			vec3 FinalColor;
-			vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
+			vec4 DiffuseColor = vec4(uColor, 1.0) * texture2D(myTexture, vTexCoord);
 			if(L.w == 0) // directional light
 			{		
 				//directional light는 attenuation 성분이 없음.
