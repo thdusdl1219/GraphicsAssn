@@ -481,9 +481,9 @@ void ReDisplayTimer(int value)
 {
 	
 	if (value == 0){
-		//Sleep(1000);
-		//printf("value is zero\n");
-		//exit(0);
+		Sleep(500);
+		printf("value is zero\n");
+		exit(0);
 	}
 
 	if (circle->getX() >= 1.0 - incX) {

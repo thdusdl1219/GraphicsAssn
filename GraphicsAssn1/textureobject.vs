@@ -91,8 +91,9 @@ void main()
 		vec3 LV2 = (View * vLightPos2).xyz - ViewPos.xyz;
 		if(vLightPos.w == 0)
 		{
-			LV = -ViewPos.xyz;
-			LV2 = -ViewPos.xyz;
+			mat3 m = mat3(View);
+			LV = m * vLightPos.xyz;
+			LV2 = m * vLightPos2.xyz;
 		}
 		
 			
@@ -108,32 +109,40 @@ void main()
 		
 		if(shadingMode == 0 || shadingMode == 1 || shadingMode == 2)
 		{
-			//vNormal = normalize(vNormal);
-			vNormal = CalcNormal();
-			vNormal = normalize(vNormal);
-			L = normalize(L);
-			L2 = normalize(L2);
-			V = normalize(V);
-			vec3 R = reflect(-L.xyz,vNormal);
-			vec3 R2 = reflect(-L2.xyz,vNormal);
+			//vec3 Normal = normalize(vNormal);	
+		vec3 Normal = CalcNormal();
+		vec4 Light = vec4(normalize(L.xyz),vLightPos.w);
+		vec4 Light2 = vec4(normalize(L2.xyz),vLightPos2.w);;
+		vec3 View = normalize(V);
+		vec3 R = reflect(-Light.xyz,Normal);
+		vec3 R2 = reflect(-Light2.xyz,Normal);
+	
+	
+
+		//Pre-multiply light color with intensity
+		//Then perform "N dot L" to determine our diffuse term
+		vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(Normal, Light.xyz), 0.0);
+		vec3 Diffuse2 = (LightColor.rgb * LightColor.a) * max(dot(Normal, Light2.xyz), 0.0);
 
 
-			//감쇠
-			float Attenuation = (1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
-			float Attenuation2 = (1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));	
+		//pre-multiply ambient color with intensity
+		vec3 Ambient = AmbientColor.rgb * AmbientColor.a;
 
-			//Ambient, diffuse, specular 계산
-			vec3 Ambient = AmbientColor.rgb * AmbientColor.a;
-			vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(vNormal, L.xyz), 0.0);
-			vec3 Diffuse2 = (LightColor.rgb * LightColor.a) * max(dot(vNormal, L2.xyz), 0.0);
-			vec3 Specular = pow(max(dot(R,V),0.0), specular_power) * vec3(0.7);
-			vec3 Specular2 = pow(max(dot(R2,V),0.0), specular_power) * vec3(0.7);
-			vec3 Intensity = (Ambient + Attenuation) * Diffuse;
-			vec3 Intensity2 = (Ambient + Attenuation) * Diffuse2;
+		//calculate attenuation
+		float Attenuation = (1.0 / ( Falloff.x + (Falloff.y * D) + (Falloff.z * D * D)));	
+		float Attenuation2 = (1.0 / ( Falloff.x + (Falloff.y * D2) + (Falloff.z * D2 * D2)));		
+		
+		//Diffuse = Attenuation * Diffuse;
+		//Diffuse2 = Attenuation2 * Diffuse2;
 
-
-			vec3 FinalColor;
-			vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
+		vec3 Specular = pow(max(dot(R,View),0.0), specular_power) * vec3(0.7);
+		vec3 Specular2 = pow(max(dot(R2,View),0.0), specular_power) * vec3(0.7);
+		
+		vec3 FinalColor;
+		vec3 Intensity = Ambient + Diffuse * Attenuation;
+		vec3 Intensity2 = Ambient + Diffuse2 * Attenuation2;
+		
+			vec4 DiffuseColor = vec4(uColor, 1.0) * texture2D(myTexture, vTexCoord);
 			if(L.w == 0) // directional light
 			{		
 				//directional light는 attenuation 성분이 없음.

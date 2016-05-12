@@ -11,6 +11,7 @@ uniform vec3 Falloff;         //attenuation coefficients
 uniform float specular_power;
 uniform vec4 vLightPos;
 uniform vec4 vLightPos2;
+uniform vec3 uColor;
 
 in vec4 L;        //light vector
 in vec4 L2;
@@ -56,7 +57,7 @@ void main()
 
 	//shadingMode 3 , Phong shading
 	else if(shadingMode == 3){
-		vec4 DiffuseColor = texture2D(myTexture, vTexCoord);
+		vec4 DiffuseColor = vec4(uColor, 1.0) * texture2D(myTexture, vTexCoord);
 		vec3 NormalMap = texture2D(noTexture, vTexCoord).rgb;
 		vec4 LightColor = vec4(1.0);
 		
@@ -105,7 +106,8 @@ void main()
 		}
 		else FinalColor = DiffuseColor.rgb * (Intensity + Intensity2) + Attenuation * Specular + Attenuation2 * Specular2 ;	 
 	
-		gl_FragColor = vec4(FinalColor, DiffuseColor.a);
+		
+		gl_FragColor = vec4(FinalColor, 1.0);
 		
 	}
 
