@@ -466,7 +466,6 @@ void specialkeyboard(int key, int x, int y) {
 				shadingMode = FLAT;
 			else if (shadingMode == FLAT)
 				shadingMode = GOURAUD;
-
 			break;
 		}
 
